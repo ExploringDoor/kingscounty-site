@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Seed Firebase — KCSL Admin Tool</title>
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,sans-serif;background:#0A0E1A;color:#F8F9FA;margin:0;padding:40px 24px;line-height:1.6}
+  .wrap{max-width:720px;margin:0 auto}
+  h1{font-family:'Barlow Condensed',Impact,sans-serif;font-weight:900;font-size:44px;text-transform:uppercase;letter-spacing:.02em;color:#E63946;margin:0 0 8px}
+  h2{font-family:'Barlow Condensed',Impact,sans-serif;font-weight:800;font-size:22px;text-transform:uppercase;margin:32px 0 12px;color:#3A86FF}
+  p{color:rgba(248,249,250,.82);margin:8px 0}
+  ol{color:rgba(248,249,250,.82);padding-left:24px}
+  ol li{margin:8px 0}
+  code{background:rgba(255,255,255,.08);padding:2px 6px;border-radius:4px;font-size:13px}
+  pre{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:16px;overflow-x:auto;font-size:12px;color:#90E0EF}
+  .btn{display:inline-block;background:#E63946;color:#fff;border:none;border-radius:8px;padding:14px 32px;font-family:'Barlow Condensed',Impact,sans-serif;font-weight:800;font-size:17px;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;margin:12px 8px 12px 0}
+  .btn:hover{background:#C81D28}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .btn.secondary{background:#3A86FF}
+  .btn.secondary:hover{background:#1D4ED8}
+  .status{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:16px;margin:16px 0;max-height:300px;overflow-y:auto;font-family:'SF Mono',Monaco,monospace;font-size:12px;white-space:pre-wrap}
+  .ok{color:#06D6A0}
+  .err{color:#EF476F}
+  .warn{color:#FFD166}
+  .field{display:block;margin:8px 0}
+  .field label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:rgba(248,249,250,.6);margin-bottom:4px}
+  .field input{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#F8F9FA;padding:10px 14px;border-radius:6px;font-family:'SF Mono',Monaco,monospace;font-size:13px}
+  a{color:#3A86FF}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>⚾ Seed KCSL Firebase</h1>
+<p>One-time setup tool to push your scraped LeagueLineup data into Firebase Firestore. After seeding, <code>admin.html</code> and the live site will read from Firebase instead of the hardcoded fallback, and edits will persist.</p>
+
+<h2>Step 1 — Create the Firebase project</h2>
+<ol>
+  <li>Go to <a href="https://console.firebase.google.com/" target="_blank">console.firebase.google.com</a> and click <b>Add project</b>.</li>
+  <li>Name it <code>kcsl-softball</code> (or whatever you want — just copy the generated project ID).</li>
+  <li>Skip Google Analytics.</li>
+  <li>In the left sidebar, click <b>Build → Firestore Database → Create database</b>. Pick <b>Start in production mode</b>, then choose a region near Brooklyn (<code>us-east4</code> or <code>us-east1</code>).</li>
+  <li>Click <b>Build → Authentication → Get started → Email/Password</b>. Enable Email/Password sign-in so you can add admin users later.</li>
+  <li>On the project Overview page (gear icon → Project settings → General), scroll to <b>Your apps → Web</b>, click <b>&lt;/&gt;</b> to add a web app, call it "KCSL Site", and copy the <code>firebaseConfig</code> object.</li>
+</ol>
+
+<h2>Step 2 — Paste the config below</h2>
+<p>Paste the <code>firebaseConfig</code> object values here. This page will wire up Firebase with those credentials and then push the seed data.</p>
+<div class="field"><label>apiKey</label><input id="f-apiKey" placeholder="AIza..."></div>
+<div class="field"><label>authDomain</label><input id="f-authDomain" placeholder="kcsl-softball.firebaseapp.com"></div>
+<div class="field"><label>projectId</label><input id="f-projectId" placeholder="kcsl-softball"></div>
+<div class="field"><label>storageBucket</label><input id="f-storageBucket" placeholder="kcsl-softball.firebasestorage.app"></div>
+<div class="field"><label>messagingSenderId</label><input id="f-messagingSenderId" placeholder="123456789"></div>
+<div class="field"><label>appId</label><input id="f-appId" placeholder="1:123...:web:abc"></div>
+
+<h2>Step 3 — Update Firestore rules</h2>
+<p>In the Firebase console, go to <b>Firestore Database → Rules</b> and paste this (for now, public-read so the live site works without auth):</p>
+<pre>rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+  }
+}</pre>
+<p>Hit <b>Publish</b>. This lets anyone read (for the public site) and only authenticated users write (admin only).</p>
+
+<h2>Step 4 — Seed the data</h2>
+<p>Click below to push all 41 teams, 19 games, and 5 divisions into Firestore.</p>
+<button class="btn" id="seed-btn" onclick="runSeed()">🌱 Seed Firebase Now</button>
+<button class="btn secondary" onclick="updateAllHtmlConfig()">📝 Print config to copy into HTML files</button>
+
+<div class="status" id="status">Ready.</div>
+
+<h2>Step 5 — Update HTML files</h2>
+<p>After seeding, click <b>Print config</b> above. Copy the output into these files, replacing the existing <code>FIREBASE_CONFIG</code> block:</p>
+<ul>
+  <li><code>index.html</code> (line ~2302)</li>
+  <li><code>admin.html</code> (line ~873)</li>
+  <li><code>schedule.html</code></li>
+  <li><code>playoffs.html</code></li>
+  <li><code>notifications.html</code></li>
+</ul>
+<p>Also in <code>index.html</code>, flip <code>const USE_FIREBASE = false;</code> to <code>true</code> (around line 2495) to enable the Firebase code path.</p>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js';
+import { getFirestore, collection, doc, setDoc, getDocs } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js';
+
+const statusEl = document.getElementById('status');
+function log(msg, cls='') {
+  const line = document.createElement('div');
+  if (cls) line.className = cls;
+  line.textContent = msg;
+  statusEl.appendChild(line);
+  statusEl.scrollTop = statusEl.scrollHeight;
+}
+function clear() { statusEl.innerHTML = ''; }
+
+function getConfig() {
+  return {
+    apiKey: document.getElementById('f-apiKey').value.trim(),
+    authDomain: document.getElementById('f-authDomain').value.trim(),
+    projectId: document.getElementById('f-projectId').value.trim(),
+    storageBucket: document.getElementById('f-storageBucket').value.trim(),
+    messagingSenderId: document.getElementById('f-messagingSenderId').value.trim(),
+    appId: document.getElementById('f-appId').value.trim(),
+  };
+}
+
+async function loadKcslData() {
+  const res = await fetch('data/kcsl-data.json');
+  if (!res.ok) throw new Error('Could not fetch data/kcsl-data.json');
+  return res.json();
+}
+
+window.runSeed = async function() {
+  clear();
+  const cfg = getConfig();
+  if (!cfg.apiKey || !cfg.projectId) {
+    log('❌ Please fill in all Firebase config fields first.', 'err');
+    return;
+  }
+  document.getElementById('seed-btn').disabled = true;
+  log(`▶ Initializing Firebase app for project "${cfg.projectId}"...`);
+  try {
+    const app = initializeApp(cfg);
+    const db = getFirestore(app);
+    log('✓ Firebase connected', 'ok');
+
+    log('▶ Loading local KCSL data from data/kcsl-data.json...');
+    const data = await loadKcslData();
+    log(`✓ Loaded ${data.teams.length} teams, ${data.games.length} games, ${data.divisions.length} divisions`, 'ok');
+
+    // Check if already seeded
+    log('▶ Checking existing Firestore data...');
+    const existingTeams = await getDocs(collection(db, 'teams'));
+    if (existingTeams.size > 0) {
+      if (!confirm(`Firestore already has ${existingTeams.size} teams. Overwrite?`)) {
+        log('⚠ Seed cancelled by user', 'warn');
+        document.getElementById('seed-btn').disabled = false;
+        return;
+      }
+    }
+
+    // Seed divisions
+    log('▶ Seeding divisions...');
+    for (const d of data.divisions) {
+      await setDoc(doc(db, 'divisions', d.code), {
+        code: d.code, label: d.label, name: d.label,
+        leagueLineupId: d.id || ''
+      });
+    }
+    log(`✓ ${data.divisions.length} divisions seeded`, 'ok');
+
+    // Seed teams
+    log('▶ Seeding teams...');
+    let teamCount = 0;
+    for (const t of data.teams) {
+      const { leaguelineupTeamId, ...teamData } = t;
+      await setDoc(doc(db, 'teams', t.id), {
+        ...teamData,
+        active: t.active !== false,
+        created: new Date().toISOString()
+      });
+      teamCount++;
+      if (teamCount % 10 === 0) log(`  ... ${teamCount}/${data.teams.length} teams`);
+    }
+    log(`✓ ${teamCount} teams seeded`, 'ok');
+
+    // Seed games
+    log('▶ Seeding games...');
+    let gameCount = 0;
+    const realGames = data.games.filter(g => !g.bye);
+    for (let i = 0; i < realGames.length; i++) {
+      const g = realGames[i];
+      await setDoc(doc(db, 'games', `kcsl-g${String(i+1).padStart(3,'0')}`), {
+        wk: g.wk || 1,
+        date: g.date,
+        rawDate: g.rawDate || '',
+        day: g.day,
+        time: g.time,
+        field: g.field || '',
+        addr: g.addr || '',
+        away: g.awayId || g.away,
+        home: g.homeId || g.home,
+        div: g.div,
+        away_score: null,
+        home_score: null,
+        done: false,
+        status: g.status || 'TBP'
+      });
+      gameCount++;
+    }
+    log(`✓ ${gameCount} games seeded`, 'ok');
+
+    log('');
+    log('🎉 Seeding complete! Next steps:', 'ok');
+    log('  1. Click "Print config" below to copy it into your HTML files', 'ok');
+    log('  2. In index.html, flip USE_FIREBASE = true', 'ok');
+    log('  3. Reload admin.html — it will now read from Firebase', 'ok');
+
+  } catch(e) {
+    log('❌ ERROR: ' + e.message, 'err');
+    console.error(e);
+  }
+  document.getElementById('seed-btn').disabled = false;
+};
+
+window.updateAllHtmlConfig = function() {
+  const cfg = getConfig();
+  if (!cfg.apiKey) { alert('Fill in the config fields first.'); return; }
+  clear();
+  log('▶ Copy-paste this into FIREBASE_CONFIG in each HTML file:');
+  log('');
+  log(`const FIREBASE_CONFIG = {`);
+  log(`  apiKey: "${cfg.apiKey}",`);
+  log(`  authDomain: "${cfg.authDomain}",`);
+  log(`  projectId: "${cfg.projectId}",`);
+  log(`  storageBucket: "${cfg.storageBucket}",`);
+  log(`  messagingSenderId: "${cfg.messagingSenderId}",`);
+  log(`  appId: "${cfg.appId}"`);
+  log(`};`);
+  log('');
+  log('Files to update: index.html, admin.html, schedule.html, playoffs.html, notifications.html', 'warn');
+  log('Also in index.html, change USE_FIREBASE = false to USE_FIREBASE = true', 'warn');
+};
+
+log('Tool ready. Fill in your Firebase config above, then click "Seed Firebase Now".');
+</script>
+</div>
+</body>
+</html>

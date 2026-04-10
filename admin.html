@@ -1112,35 +1112,94 @@ async function fbFetch(coll, orderField) {
   return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 }
 
-async function loadAllData() {
+// Load hardcoded KCSL data from data/kcsl-data.json as a fallback whenever
+// Firebase is empty or unreachable. This lets the admin work before the
+// Firebase project is set up, and also means the admin can always edit
+// content even if Firestore has a hiccup.
+async function loadKcslFallback() {
   try {
-    const [teams, games, players, recaps] = await Promise.all([
-      fbFetch('teams', 'name'),
-      fbFetch('games', 'wk'),
-      fbFetch('players').catch(() => []),
-      fbFetch('recaps', 'wk').catch(() => [])
-    ]);
-    TEAMS = teams.filter(t => t.active !== false).sort((a,b) => (b.pct||0) - (a.pct||0));
-    GAMES = games.sort((a,b) => (a.wk||0) - (b.wk||0) || (a.time||'').localeCompare(b.time||''));
-    PLAYERS = players;
-    RECAPS_DATA = recaps;
-
-    renderDashboard();
-    renderScores();
-    renderSchedule();
-    populateTeamDropdowns();
-    renderStandings();
-    renderRecaps();
-    loadBanner();
-    loadAnnouncements();
-    loadActivityLog();
-    loadCaptains();
-    loadScoreReviews();
-    loadFinancials();
+    const res = await fetch('data/kcsl-data.json');
+    if (!res.ok) throw new Error('kcsl-data.json fetch failed: ' + res.status);
+    const data = await res.json();
+    const teams = (data.teams || []).map(t => ({
+      id: t.id, name: t.name, short: t.short, div: t.div, color: t.color,
+      active: t.active !== false,
+      w: t.w||0, l: t.l||0, ti: t.ti||0, pct: t.pct||0,
+      gb: t.gb||'—', streak: t.streak||'—',
+      rs: t.rs||0, ra: t.ra||0, founded: t.founded||2026, field: t.field||'TBD'
+    }));
+    const games = (data.games || []).filter(g => !g.bye).map((g, i) => ({
+      id: 'kcsl-' + i,
+      wk: g.wk || 1,
+      date: g.date,
+      day: g.day,
+      time: g.time,
+      field: g.field || '',
+      addr: g.addr || '',
+      away: g.awayId || g.away,
+      home: g.homeId || g.home,
+      div: g.div,
+      away_score: null, home_score: null,
+      done: !!g.done
+    }));
+    return { teams, games };
   } catch(e) {
-    console.error('Data load failed:', e);
-    toast('Failed to load data: ' + e.message, 'error');
+    console.error('Fallback load failed:', e);
+    return { teams: [], games: [] };
   }
+}
+
+async function loadAllData() {
+  // Try Firebase first (with a 3-second timeout so we don't hang forever
+  // when the project doesn't exist), then fall back to hardcoded KCSL data.
+  let fbTeams = [], fbGames = [], fbPlayers = [], fbRecaps = [];
+  let firebaseWorked = false;
+  const withTimeout = (p, ms, def) => Promise.race([
+    p.catch(() => def),
+    new Promise(resolve => setTimeout(() => resolve(def), ms))
+  ]);
+  try {
+    const results = await Promise.all([
+      withTimeout(fbFetch('teams', 'name'), 3000, []),
+      withTimeout(fbFetch('games', 'wk'),  3000, []),
+      withTimeout(fbFetch('players'),      3000, []),
+      withTimeout(fbFetch('recaps', 'wk'), 3000, [])
+    ]);
+    [fbTeams, fbGames, fbPlayers, fbRecaps] = results;
+    firebaseWorked = (fbTeams.length + fbGames.length) > 0;
+  } catch(e) {
+    console.warn('Firebase unavailable, using hardcoded fallback:', e.message);
+  }
+
+  // If Firebase returned no teams or games, load the hardcoded KCSL data
+  if (fbTeams.length === 0 || fbGames.length === 0) {
+    const fallback = await loadKcslFallback();
+    if (fbTeams.length === 0) fbTeams = fallback.teams;
+    if (fbGames.length === 0) fbGames = fallback.games;
+    if (!firebaseWorked) {
+      toast('Using local KCSL data — Firebase not yet configured. Changes will not persist.', 'warning');
+    } else if (fallback.teams.length || fallback.games.length) {
+      toast('Firebase is empty — showing local KCSL data. Use "Seed Firebase" to import it.', 'warning');
+    }
+  }
+
+  TEAMS = fbTeams.filter(t => t.active !== false).sort((a,b) => (b.pct||0) - (a.pct||0));
+  GAMES = fbGames.sort((a,b) => (a.wk||0) - (b.wk||0) || (a.time||'').localeCompare(b.time||''));
+  PLAYERS = fbPlayers;
+  RECAPS_DATA = fbRecaps;
+
+  try { renderDashboard(); } catch(e) { console.error(e); }
+  try { renderScores(); } catch(e) { console.error(e); }
+  try { renderSchedule(); } catch(e) { console.error(e); }
+  try { populateTeamDropdowns(); } catch(e) { console.error(e); }
+  try { renderStandings(); } catch(e) { console.error(e); }
+  try { renderRecaps(); } catch(e) { console.error(e); }
+  try { loadBanner(); } catch(e) { console.error(e); }
+  try { loadAnnouncements(); } catch(e) { console.error(e); }
+  try { loadActivityLog(); } catch(e) { console.error(e); }
+  try { loadCaptains(); } catch(e) { console.error(e); }
+  try { loadScoreReviews(); } catch(e) { console.error(e); }
+  try { loadFinancials(); } catch(e) { console.error(e); }
 }
 
 function getTeamName(id) {

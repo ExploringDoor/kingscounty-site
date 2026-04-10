@@ -33,7 +33,7 @@ body.dark .nav-links li a.active,body.dark .nav-links li .active{color:#5b9aff!i
 body.dark .nav-brand{color:#5b9aff!important}
 body.dark .nav-signup-btn{background:#5b9aff!important}
 body.dark #darkToggle{border-color:rgba(255,255,255,.15)!important}
-body.dark #score-ticker{background:#1a1a2e!important}
+body.dark #score-ticker{background:#C81D28!important}
 body.dark .preview-card{background:#1a1a1f!important;border-color:rgba(255,255,255,.08)!important}
 body.dark .preview-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.4)!important}
 body.dark .score-row:hover{background:rgba(255,255,255,.03)!important}
@@ -728,7 +728,7 @@ body.ci-active .nav{opacity:0;pointer-events:none}
 /* ── ESPN-STYLE SCORE TICKER ─────────────────────────────────────────── */
 #score-ticker{
   position:fixed;top:0;left:0;right:0;z-index:200;
-  background:#002D72;border-bottom:1px solid rgba(0,0,0,.15);
+  background:#E63946;border-bottom:1px solid rgba(0,0,0,.15);
   height:48px;display:flex;align-items:stretch;overflow:visible;
   transition:transform .3s ease,opacity .3s ease;color:#ffffff;
 }
@@ -774,6 +774,20 @@ body.ci-active .nav{opacity:0;pointer-events:none}
 /* Push nav and content down by ticker height */
 /* nav top controlled by JS scroll handler */
 body.ticker-hidden #score-ticker{display:none}
+
+/* KCSL HERO HEADER BANNER */
+.kcsl-hero-header{
+  width:100%;margin-top:110px;background:#0A0E1A;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;line-height:0;
+}
+.kcsl-hero-header-img{
+  width:100%;height:auto;max-height:340px;object-fit:cover;object-position:center;display:block;
+}
+@media(max-width:768px){
+  .kcsl-hero-header{margin-top:104px}
+  .kcsl-hero-header-img{max-height:200px}
+}
 
 /* SCORES */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -1846,7 +1860,7 @@ thead th.sorted-col .sarrow{opacity:1}
 }
 </style>
 </head>
-<body class="ci-active">
+<body class="intro-done">
 <script>if(localStorage.getItem('kcsl-dark')==='1')document.body.classList.add('dark');</script>
 
 <!-- ── ESPN SCORE TICKER ── -->
@@ -1864,13 +1878,7 @@ thead th.sorted-col .sarrow{opacity:1}
   <button onclick="document.getElementById('site-banner').style.display='none'" style="background:none;border:none;color:inherit;font-size:22px;cursor:pointer;position:absolute;right:20px;top:50%;transform:translateY(-50%);opacity:.8">×</button>
 </div>
 
-<!-- ══ DUST INTRO ══ -->
-<div id="ci" onclick="skipCI()">
-  <canvas id="ci-canvas"></canvas>
-  <img class="ci-logo" id="ci-logo" src="kcsl-logo.svg" alt="KCSL">
-  <div class="ci-sub" id="ci-sub">Kings County Softball League &middot; 2026</div>
-  <div class="ci-skip">tap to skip</div>
-</div>
+<!-- Intro disabled — site loads directly -->
 
 
 
@@ -1984,11 +1992,8 @@ thead th.sorted-col .sarrow{opacity:1}
 <!-- ═══ HOME PAGE ═══ -->
 <div class="page show" id="pg-home">
   <!-- HERO -->
-  <div class="hero">
-    <div class="hero-img-bg"></div>
-    <div class="hero-bg1"></div>
-    <div class="hero-bg2"></div>
-
+  <div class="kcsl-hero-header">
+    <img src="logos/header.png" alt="Kings County Softball League" class="kcsl-hero-header-img">
   </div>
 
 
@@ -2832,16 +2837,18 @@ function initNextGame(){
   }
   const g = NEXT_GAME_DATA;
   if(!g.away){ return; }
-  document.getElementById('ng-away').textContent = g.away;
-  document.getElementById('ng-away').style.color = 'var(--white)';
-  document.getElementById('ng-home').textContent = g.home;
-  document.getElementById('ng-home').style.color = 'var(--white)';
-  document.getElementById('ng-date').textContent = g.date;
-  document.getElementById('ng-time').textContent = g.time;
-  document.getElementById('ng-field').textContent = g.field;
-  document.getElementById('wx-field-name').textContent = g.field + (g.addr ? ' · ' + g.addr : '');
-  startCountdown(g.date + ' ' + g.time);
-  fetchWeather(g.lat, g.lon);
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  const setColor = (id, color) => { const el = document.getElementById(id); if (el) el.style.color = color; };
+  set('ng-away', g.away);
+  setColor('ng-away', 'var(--white)');
+  set('ng-home', g.home);
+  setColor('ng-home', 'var(--white)');
+  set('ng-date', g.date);
+  set('ng-time', g.time);
+  set('ng-field', g.field);
+  set('wx-field-name', g.field + (g.addr ? ' · ' + g.addr : ''));
+  try { startCountdown(g.date + ' ' + g.time); } catch(e) {}
+  try { fetchWeather(g.lat, g.lon); } catch(e) {}
 }
 
 function startCountdown(dateStr){
@@ -3964,8 +3971,11 @@ function observeAll(){document.querySelectorAll('.div-card,.ldr-card,.game-row,.
 
 // ════════════════════════════ INIT ═══════════════════════════════════════
 // ── INIT: Load from Supabase then render ──────────────────────
+// KCSL: loadAllData() is now synchronous (no Firebase), so we can build
+// immediately. We still expose _dataPromise for code that awaits it.
 window._dataPromise = loadAllData();
-window._dataPromise.then(() => {
+
+function kcslInitRender() {
   // Check for cross-page player navigation first (before anything can crash)
   const _pn = sessionStorage.getItem('kcsl_goPlayerName');
   if(_pn){
@@ -3973,21 +3983,29 @@ window._dataPromise.then(() => {
     const _found = PLAYERS.find(p=>p.name.toLowerCase()===_pn.toLowerCase());
     if(_found){ goPage('home'); setTimeout(()=>openModal(_found.id),300); }
   }
-  try{ buildTicker(); }catch(e){}
-  try{ buildTicker2(); }catch(e){}
-  try{ populateTeamsDropdown(); }catch(e){}
-  try{ buildStandings(); }catch(e){}
-  try{ buildHomeSidebar(); }catch(e){}
-  try{ buildSchedule(); }catch(e){}
-  try{ initNextGame(); }catch(e){}
-  try{ buildLeaderboard(); }catch(e){}
-  try{ buildRecaps(); }catch(e){}
-  try{ buildHistory(); }catch(e){}
-  try{ buildTeamsBigCards(); }catch(e){}
-  loadSiteBanner();
-  setTimeout(checkActiveAlert, 800);
-  setTimeout(observeAll, 100);
-});
+  try{ buildTicker(); }catch(e){console.error('buildTicker',e);}
+  try{ buildTicker2(); }catch(e){console.error('buildTicker2',e);}
+  try{ populateTeamsDropdown(); }catch(e){console.error('populateTeamsDropdown',e);}
+  try{ buildStandings(); }catch(e){console.error('buildStandings',e);}
+  try{ buildHomeSidebar(); }catch(e){console.error('buildHomeSidebar',e);}
+  try{ buildSchedule(); }catch(e){console.error('buildSchedule',e);}
+  try{ initNextGame(); }catch(e){console.error('initNextGame',e);}
+  try{ buildLeaderboard(); }catch(e){console.error('buildLeaderboard',e);}
+  try{ buildRecaps(); }catch(e){console.error('buildRecaps',e);}
+  try{ buildHistory(); }catch(e){console.error('buildHistory',e);}
+  try{ buildTeamsBigCards(); }catch(e){console.error('buildTeamsBigCards',e);}
+  try{ if (typeof buildStand2026==='function') buildStand2026(); }catch(e){console.error('buildStand2026',e);}
+  try{ loadSiteBanner(); }catch(e){}
+  setTimeout(()=>{ try{checkActiveAlert()}catch(e){} }, 800);
+  setTimeout(()=>{ try{observeAll()}catch(e){} }, 100);
+}
+// Run immediately AND after DOMContentLoaded (belt + suspenders — the scripts
+// live at the end of <body> so DOM is already parsed by this point)
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', kcslInitRender);
+} else {
+  kcslInitRender();
+}
 
 async function checkActiveAlert(){
   if(sessionStorage.getItem('alertDismissed')) return;
