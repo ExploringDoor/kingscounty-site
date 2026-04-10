@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>League Leaders — KCSL Softball</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,700;1,900&family=Inter:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #ffffff; --bg2: #f5f5f5; --card: #ffffff; --card2: #f8f8f8;
+  --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.15);
+  --gold: #002D72; --gold2: #001a45; --gold-dim: rgba(0,45,114,0.08);
+  --gold-glow: rgba(0,45,114,0.1);
+  --white: #1a1a1a; --muted: rgba(0,0,0,0.45); --muted2: rgba(0,0,0,0.3);
+  --red: #c8102e; --green: #22c55e; --blue: #002D72;
+}
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--white); font-family: 'Inter', sans-serif; overflow-x: clip; line-height: 1.6; }
+
+/* NAV */
+nav { position: fixed; top: 48px; left: 0; right: 0; z-index: 400; height: 62px; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; background: rgba(255,255,255,.97); backdrop-filter: blur(24px) saturate(180%); border-bottom: 1px solid var(--border); }
+.nav-logo { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 19px; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+.nav-logo img { height: 28px; opacity: .85; }
+.nav-links { display: flex; gap: 4px; list-style: none; margin: 0 auto; padding: 0; }
+.nav-links li a,.nav-links li span { font-size: 11.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); text-decoration: none; cursor: pointer; padding: 7px 13px; border-radius: 6px; transition: all .2s; display: block; }
+.nav-links li a:hover,.nav-links li span:hover { color: #0057d8; background: rgba(0,87,216,.08); }
+.nav-links li.active span,.nav-links li.active a { color: #0057d8; background: rgba(0,87,216,.1); }
+/* dropdown */
+.nav-dd-wrap { position: relative; }
+.nav-dd-wrap:hover .nav-dropdown { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.nav-dropdown { position: absolute; top: calc(100% + 8px); right: 0; min-width: 200px; background: rgba(255,255,255,.98); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 8px 32px rgba(0,0,0,.12); padding: 6px; opacity: 0; pointer-events: none; transform: translateY(-4px); transition: opacity .15s, transform .15s; z-index: 500; }
+.nav-dd-item { display: block; padding: 8px 14px; border-radius: 7px; font-size: 12px; font-weight: 600; color: var(--muted); text-decoration: none; transition: background .12s, color .12s; white-space: nowrap; }
+.nav-dd-item:hover { background: rgba(0,87,216,.07); color: #0057d8; }
+.nav-dd-arrow { width: 9px; height: 6px; margin-left: 4px; vertical-align: middle; opacity: .6; }
+.hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
+.hamburger span { display: block; width: 22px; height: 2px; background: var(--white); border-radius: 2px; transition: all .3s; }
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+.mob-menu { display: none; position: fixed; top: 110px; left: 0; right: 0; z-index: 199; background: rgba(255,255,255,.97); backdrop-filter: blur(24px); border-bottom: 1px solid var(--border); flex-direction: column; padding: 16px 20px 24px; }
+.mob-menu.open { display: flex; }
+.mob-menu a { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px; text-transform: uppercase; color: var(--white); text-decoration: none; padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,.06); }
+.mob-menu a:last-child { border-bottom: none; }
+
+/* PAGE */
+.page-wrap { padding-top: 110px; min-height: 100vh; }
+
+/* PAGE HEADER */
+.page-header { padding: 130px 48px 28px; }
+.page-header-inner { max-width: 1100px; margin: 0 auto; }
+.page-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: clamp(36px, 6vw, 54px); text-transform: uppercase; line-height: .95; letter-spacing: -.01em; }
+
+/* LOADING / EMPTY */
+.loading-wrap { display: flex; align-items: center; justify-content: center; min-height: 40vh; flex-direction: column; gap: 16px; }
+.loading-wrap .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-wrap .msg { font-size: 14px; color: var(--muted); }
+.empty-msg { text-align: center; padding: 80px 24px; color: var(--muted); font-size: 15px; line-height: 1.7; }
+
+/* LEADER CARDS */
+.leader-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; max-width: 1100px; margin: 0 auto; padding: 0 48px 32px; }
+.leader-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px 16px; text-align: center; transition: box-shadow .2s, transform .2s; cursor: default; }
+.leader-card:hover { box-shadow: 0 4px 20px rgba(0,45,114,.08); transform: translateY(-2px); }
+.leader-card.active-card { border-color: var(--gold); background: var(--gold-dim); }
+.lc-label { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.lc-value { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 36px; color: var(--gold); line-height: 1; }
+.lc-name { font-size: 13px; font-weight: 600; color: var(--white); margin-top: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lc-team { font-size: 11px; color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* STAT TABS */
+.stat-tabs { display: flex; flex-wrap: nowrap; gap: 0; max-width: 1100px; margin: 0 auto; padding: 0 48px; border-bottom: 2px solid var(--border); overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.stat-tabs::-webkit-scrollbar { display: none; }
+.stat-tab { flex-shrink: 0; white-space: nowrap; }
+.stat-tab { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); background: none; border: none; border-bottom: 3px solid transparent; padding: 12px 20px; cursor: pointer; transition: all .15s; margin-bottom: -2px; }
+.stat-tab:hover { color: var(--white); }
+.stat-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* LEADERS TABLE */
+.leaders-section { max-width: 1100px; margin: 0 auto; padding: 24px 48px 80px; }
+.leaders-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; }
+.leaders-table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 500px; }
+.leaders-table thead th { background: var(--bg2); font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); padding: 12px 18px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+.leaders-table thead th.col-stat { text-align: right; }
+.leaders-table tbody tr { border-bottom: 1px solid rgba(0,0,0,.05); transition: background .12s; }
+.leaders-table tbody tr:hover { background: rgba(0,45,114,.03); }
+.leaders-table tbody tr:last-child { border-bottom: none; }
+.leaders-table td { padding: 12px 18px; }
+.leaders-table .col-rank { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 14px; color: var(--muted2); width: 50px; }
+.leaders-table .col-player { font-weight: 600; }
+.leaders-table .col-player a { color: var(--white); text-decoration: none; transition: color .15s; }
+.leaders-table .col-player a:hover { color: var(--gold); }
+.leaders-table .col-team { white-space: nowrap; color: var(--muted); font-size: 13px; }
+.leaders-table .col-stat { text-align: right; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; }
+.team-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+
+/* Rank 1 highlight */
+.leaders-table tbody tr.rank-1 { background: linear-gradient(90deg, rgba(0,45,114,.06), transparent 70%); }
+.leaders-table tbody tr.rank-1 .col-rank { color: #D4A017; font-size: 16px; }
+.leaders-table tbody tr.rank-1 .col-stat { color: var(--gold); font-size: 22px; }
+.leaders-table tbody tr.rank-1 .col-player a { color: var(--gold); }
+
+/* FOOTER */
+footer { padding: 40px 48px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; background: var(--bg2); }
+.ft-logo { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 17px; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); }
+.ft-links { display: flex; gap: 0; flex-wrap: wrap; }
+.ft-links a { font-size: 11px; color: var(--muted); text-decoration: none; padding: 2px 14px; border-right: 1px solid var(--border); transition: color .15s; }
+.ft-links a:last-child { border-right: none; }
+.ft-links a:hover { color: var(--white); }
+.ft-copy { font-size: 11px; color: rgba(0,0,0,.35); }
+
+/* MOBILE */
+@media (max-width: 768px) {
+  nav { padding: 0 20px; }
+  .nav-links { display: none; }
+  #hbg { display: flex !important; }
+  .page-header { padding: 20px 20px 20px; }
+  .leader-cards { padding: 0 20px 24px; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .lc-value { font-size: 28px; }
+  .leader-card { padding: 14px 10px; }
+  .stat-tabs { padding: 0 20px; overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap; scrollbar-width: none; }
+  .stat-tabs::-webkit-scrollbar { display: none; }
+  .stat-tab { padding: 10px 14px; font-size: 13px; flex-shrink: 0; white-space: nowrap; }
+  .leaders-section { padding: 16px 20px 60px; }
+  footer { flex-direction: column; padding: 32px 20px; gap: 16px; text-align: center; }
+  .ft-links { justify-content: center; }
+}
+@media (max-width: 480px) {
+  .leader-cards { grid-template-columns: repeat(2, 1fr); }
+}
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: #ffffff; }
+::-webkit-scrollbar-thumb { background: rgba(0,45,114,0.3); border-radius: 2px; }
+body.dark{--bg:#0d0d11;--dark:#141418;--card:#1a1a1f;--card2:#22222a;--border:rgba(255,255,255,.08);--gold:#5b9aff;--gold-dim:rgba(91,154,255,.1);--white:#ededed;--muted:rgba(237,237,237,.5);--red:#f87171;--green:#4ade80;--blue:#5b9aff}body.dark nav{background:rgba(13,13,17,.95)!important;border-color:rgba(255,255,255,.08)!important}body.dark .nav-logo{color:#5b9aff!important}body.dark .nav-links a{color:rgba(237,237,237,.55)!important}body.dark .nav-links a:hover{color:#ededed!important}body.dark .nav-links a.active{color:#5b9aff!important}body.dark .mob-menu{background:#0d0d11!important}body.dark .mob-menu a{color:#ededed!important}body.dark .hamburger span{background:#ededed!important}body.dark h1,body.dark h2,body.dark h3{color:#ededed!important}body.dark .ft{background:#0d0d11!important}body.dark .ft *{color:rgba(237,237,237,.4)!important}body.dark #score-ticker{background:#1a1a2e!important}
+#st-track::-webkit-scrollbar{display:none}
+.st-game{display:flex;align-items:center;padding:0 18px;border-right:1px solid rgba(255,255,255,.1);cursor:pointer;flex-shrink:0;transition:background .15s}
+.st-game:hover{background:rgba(255,255,255,.08)}
+.st-game-inner{display:flex;flex-direction:column;justify-content:center;gap:2px}
+.st-datetime{font-size:9px;font-weight:500;color:rgba(255,255,255,.5);letter-spacing:.04em}
+.st-row{display:flex;align-items:center;gap:6px}
+.st-abbr{font-weight:700;font-size:12px;min-width:36px;color:#fff}
+.st-rec{font-size:9px;color:rgba(255,255,255,.5);min-width:28px}</style>
+</head>
+<body>
+<script>if(localStorage.getItem("kcsl-dark")==="1")document.body.classList.add("dark");</script>
+
+<div id="score-ticker" style="position:fixed;top:0;left:0;right:0;z-index:200;background:#002D72;border-bottom:1px solid rgba(0,0,0,.15);height:48px;display:flex;align-items:stretch;overflow:hidden;color:#fff;font-family:'Barlow Condensed',sans-serif">
+  <div style="display:flex;align-items:center;padding:0 14px;background:rgba(0,0,0,.15);border-right:1px solid rgba(255,255,255,.15);font-weight:600;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.9);white-space:nowrap;flex-shrink:0">⬡ KCSL</div>
+  <div id="st-track" style="flex:1;display:flex;align-items:stretch;overflow-x:auto;scrollbar-width:none"></div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <img src="kcsl-logo.svg" alt="KCSL">KCSL
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="index.html#scores">Scores</a></li>
+    <li><a href="index.html#schedule">Schedule</a></li>
+    <li><a href="index.html#standings">Standings</a></li>
+    <li><a href="index.html#stats">Stats</a></li>
+    <li class="active"><a href="leaders.html">Leaders</a></li>
+    <li><a href="index.html#players">Teams</a></li>
+    <li class="nav-dd-wrap">
+      <span>More<svg class="nav-dd-arrow" viewBox="0 0 9 6" fill="none"><path d="M1 1l3.5 4L8 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <div class="nav-dropdown">
+        <a class="nav-dd-item" href="playoffs.html">🏆 Brackets</a>
+        <a class="nav-dd-item" href="rules.html">📋 Field Guide</a>
+        <a class="nav-dd-item" href="photos.html">📷 Gallery</a>
+        <a class="nav-dd-item" href="registration.html">📝 Player Signup</a>
+        <a class="nav-dd-item" href="captain.html">⚾ Captain Dashboard</a>
+        <a class="nav-dd-item" href="admin.html" style="color:rgba(0,45,114,.6)">⚙ Admin</a>
+      </div>
+    </li>
+  </ul>
+</nav>
+<button class="hamburger" id="hbg" style="position:fixed;top:58px;right:14px;z-index:600;display:none;background:rgba(0,0,0,.55);border-radius:7px;padding:8px 10px"><span style="display:block;width:22px;height:2px;background:#fff;border-radius:2px;transition:all .3s"></span><span style="display:block;width:22px;height:2px;background:#fff;border-radius:2px;transition:all .3s"></span><span style="display:block;width:22px;height:2px;background:#fff;border-radius:2px;transition:all .3s"></span></button>
+<div class="mob-menu" id="mobMenu">
+  <a href="index.html">Home</a>
+  <a href="index.html#scores">Scores</a>
+  <a href="index.html#schedule">Schedule</a>
+  <a href="index.html#standings">Standings</a>
+  <a href="index.html#stats">Stats</a>
+  <a href="leaders.html">Leaders</a>
+  <a href="index.html#players">Teams</a>
+  <a href="playoffs.html">Brackets</a>
+  <a href="rules.html">Field Guide</a>
+  <a href="photos.html">Gallery</a>
+  <a href="registration.html">Player Signup</a>
+  <a href="captain.html">Captain Dashboard</a>
+  <a href="admin.html" style="color:rgba(0,45,114,.6)">⚙ Admin</a>
+</div>
+
+<!-- PAGE CONTENT -->
+<div class="page-wrap">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="page-header-inner">
+      <h1 class="page-title">League Leaders</h1>
+    </div>
+  </div>
+
+  <!-- Main content container -->
+  <div id="content">
+    <div class="loading-wrap" id="loadingState">
+      <div class="spinner"></div>
+      <div class="msg">Loading league leaders...</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft-logo">&#x2B21; KCSL</div>
+  <div class="ft-links"><a href="index.html">Home</a><a href="index.html#scores">Scores</a><a href="index.html#scores">Schedule</a><a href="index.html#standings">Standings</a><a href="index.html#stats">Stats</a><a href="leaders.html">Leaders</a><a href="index.html#players">Teams</a><a href="playoffs.html">Brackets</a><a href="rules.html">Field Guide</a><a href="photos.html">Gallery</a></div>
+  <div class="ft-copy">&copy; 2026 KCSL &middot; Kings County Softball League</div>
+</footer>
+
+<script>
+// ============ FIREBASE CONFIG ============
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDXuC-R0aPEX4F7lN5AKq48UC3r5whYzdg",
+  authDomain: "kcsl-292dd.firebaseapp.com",
+  projectId: "kcsl-292dd",
+  storageBucket: "kcsl-292dd.firebasestorage.app",
+  messagingSenderId: "145862305559",
+  appId: "1:145862305559:web:153ec455bad57e17517952"
+};
+
+let _db = null;
+let _fbMods = null;
+
+async function getDb() {
+  if (_db) return _db;
+  const { initializeApp } = await import('https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js');
+  const fb = await import('https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js');
+  const app = initializeApp(FIREBASE_CONFIG);
+  _db = fb.getFirestore(app);
+  _fbMods = fb;
+  return _db;
+}
+
+// ============ HAMBURGER ============
+const hb = document.getElementById('hbg');
+const mm = document.getElementById('mobMenu');
+let _mobScrollY=0;
+if (hb) hb.addEventListener('click', () => {
+  hb.classList.toggle('open'); mm.classList.toggle('open');
+  if(mm.classList.contains('open')){
+    _mobScrollY=window.scrollY||0;
+    document.body.style.overflow='hidden';
+    document.body.style.position='fixed';
+    document.body.style.top='-'+_mobScrollY+'px';
+    document.body.style.width='100%';
+  } else {
+    document.body.style.overflow='';document.body.style.position='';
+    document.body.style.top='';document.body.style.width='';
+    window.scrollTo(0,_mobScrollY);
+  }
+});
+if (mm) mm.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { hb.classList.remove('open'); mm.classList.remove('open'); document.body.style.overflow='';document.body.style.position='';document.body.style.top='';document.body.style.width='';window.scrollTo(0,_mobScrollY); }));
+
+// ============ HELPERS ============
+function normalizeName(n) {
+  return (n || '').trim().toLowerCase().replace(/\s+/g, ' ');
+}
+
+// ============ STAT CATEGORIES ============
+const CATEGORIES = [
+  { key: 'avg', label: 'AVG', format: v => v.toFixed(3), isRate: true },
+  { key: 'hr',  label: 'HR',  format: v => v, isRate: false },
+  { key: 'rbi', label: 'RBI', format: v => v, isRate: false },
+  { key: 'r',   label: 'R',   format: v => v, isRate: false },
+  { key: 'h',   label: 'H',   format: v => v, isRate: false },
+  { key: 'bb',  label: 'BB',  format: v => v, isRate: false },
+  { key: 'so',  label: 'SO',  format: v => v, isRate: false },
+];
+
+let allPlayers = [];
+let teamsMap = {};
+let currentCat = 'avg';
+
+// ============ MAIN ============
+async function loadLeaders() {
+  const contentEl = document.getElementById('content');
+
+  try {
+    const db = await getDb();
+    const { collection, getDocs } = _fbMods;
+
+    // Load teams
+    const teamsSnap = await getDocs(collection(db, 'teams'));
+    teamsSnap.docs.forEach(d => {
+      const t = { id: d.id, ...d.data() };
+      teamsMap[t.id] = t;
+      if (t.short) teamsMap[t.short] = t;
+    });
+
+    // Load all box scores
+    const bsSnap = await getDocs(collection(db, 'box_scores'));
+    const boxScores = bsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    // Use all box scores (they only exist for final games via markGameFinal)
+    if (boxScores.length === 0) {
+      contentEl.innerHTML = `<div class="empty-msg">League leaders will appear once games are played and box scores are entered.</div>`;
+      return;
+    }
+
+    // Aggregate player stats across all games
+    const playerMap = {}; // key: normalized name + team
+
+    for (const bs of boxScores) {
+      // Support both camelCase (live-scorer) and snake_case (legacy) field names
+      const sides = [
+        { lineup: bs.awayLineup || bs.away_lineup, teamId: bs.away },
+        { lineup: bs.homeLineup || bs.home_lineup, teamId: bs.home },
+      ];
+
+      for (const { lineup, teamId } of sides) {
+        if (!Array.isArray(lineup)) continue;
+        for (const p of lineup) {
+          const name = (p.name || '').trim();
+          if (!name) continue;
+          const key = normalizeName(name) + '||' + (teamId || '');
+
+          if (!playerMap[key]) {
+            playerMap[key] = {
+              name: name,
+              team: teamId || '',
+              gp: 0, ab: 0, r: 0, h: 0, hr: 0, rbi: 0, bb: 0, so: 0,
+            };
+          }
+
+          const s = playerMap[key];
+          // Use the properly cased name from first appearance or latest
+          if (name.length > s.name.length || (name[0] === name[0].toUpperCase() && s.name[0] !== s.name[0].toUpperCase())) {
+            s.name = name;
+          }
+          s.gp += 1;
+          s.ab  += parseInt(p.ab) || 0;
+          s.r   += parseInt(p.r) || 0;
+          // hits: live-scorer stores s/d/t/hr separately; legacy stores aggregate h
+          const hits = (parseInt(p.s)||0) + (parseInt(p.d)||0) + (parseInt(p.t)||0) + (parseInt(p.hr)||0);
+          s.h   += hits || parseInt(p.h) || 0;
+          s.hr  += parseInt(p.hr) || 0;
+          s.rbi += parseInt(p.rbi) || 0;
+          s.bb  += parseInt(p.bb) || 0;
+          s.so  += parseInt(p.so) || 0;
+        }
+      }
+    }
+
+    // Compute AVG
+    allPlayers = Object.values(playerMap).map(p => ({
+      ...p,
+      avg: p.ab > 0 ? p.h / p.ab : 0,
+    }));
+
+    // Render the full UI
+    renderUI();
+
+  } catch (err) {
+    console.error('Error loading leaders:', err);
+    contentEl.innerHTML = `<div class="empty-msg">Error loading league leaders. Please try again later.</div>`;
+  }
+}
+
+function getTeamName(id) {
+  const t = teamsMap[id];
+  return t ? (t.short || t.name || id) : (id || '--');
+}
+
+function getTeamColor(id) {
+  const t = teamsMap[id];
+  return t ? (t.color || '#002D72') : '#002D72';
+}
+
+function getTeamFullName(id) {
+  const t = teamsMap[id];
+  return t ? (t.name || t.short || id) : (id || '--');
+}
+
+function getTopPlayer(cat) {
+  const c = CATEGORIES.find(c => c.key === cat);
+  let pool = [...allPlayers];
+  if (c && c.isRate) {
+    pool = pool.filter(p => p.ab >= 10);
+  }
+  // For SO, lower is better? No -- SO leaders means most SO. Keep descending.
+  pool.sort((a, b) => b[cat] - a[cat]);
+  return pool[0] || null;
+}
+
+function getTopPlayers(cat, limit) {
+  const c = CATEGORIES.find(c => c.key === cat);
+  let pool = [...allPlayers];
+  if (c && c.isRate) {
+    pool = pool.filter(p => p.ab >= 10);
+  }
+  pool.sort((a, b) => b[cat] - a[cat]);
+  return pool.slice(0, limit);
+}
+
+function renderUI() {
+  const contentEl = document.getElementById('content');
+
+  // Build leader cards
+  let cardsHtml = '<div class="leader-cards">';
+  for (const cat of CATEGORIES) {
+    const top = getTopPlayer(cat.key);
+    const isActive = cat.key === currentCat;
+    cardsHtml += `<div class="leader-card${isActive ? ' active-card' : ''}" data-cat="${cat.key}" onclick="switchCat('${cat.key}')">`;
+    cardsHtml += `<div class="lc-label">${cat.label} Leader</div>`;
+    if (top) {
+      cardsHtml += `<div class="lc-value">${cat.format(top[cat.key])}</div>`;
+      cardsHtml += `<div class="lc-name">${top.name}</div>`;
+      cardsHtml += `<div class="lc-team">${getTeamFullName(top.team)}</div>`;
+    } else {
+      cardsHtml += `<div class="lc-value">--</div>`;
+      cardsHtml += `<div class="lc-name">--</div>`;
+      cardsHtml += `<div class="lc-team">--</div>`;
+    }
+    cardsHtml += `</div>`;
+  }
+  cardsHtml += '</div>';
+
+  // Build tabs — outer div scrolls, inner div sizes to content
+  let tabsHtml = '<div style="width:100%;overflow-x:scroll;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:2px solid var(--border)">';
+  tabsHtml += '<div style="display:inline-flex;flex-wrap:nowrap;padding:0 20px;min-width:100%;gap:0">';
+  for (const cat of CATEGORIES) {
+    const isActive = cat.key === currentCat;
+    tabsHtml += `<button class="stat-tab${isActive ? ' active' : ''}" data-cat="${cat.key}" onclick="switchCat('${cat.key}')" style="flex-shrink:0;white-space:nowrap">${cat.label}</button>`;
+  }
+  tabsHtml += '</div></div>';
+
+  // Build table
+  const activeCat = CATEGORIES.find(c => c.key === currentCat);
+  const top20 = getTopPlayers(currentCat, 20);
+
+  let tableHtml = '<div class="leaders-section">';
+  if (top20.length === 0) {
+    tableHtml += '<div class="empty-msg">No qualifying players for this category yet.</div>';
+  } else {
+    tableHtml += '<div class="leaders-table-wrap"><table class="leaders-table">';
+    tableHtml += `<thead><tr>
+      <th>Rank</th>
+      <th>Player</th>
+      <th>Team</th>
+      <th class="col-stat">${activeCat.label}</th>
+    </tr></thead><tbody>`;
+
+    for (let i = 0; i < top20.length; i++) {
+      const p = top20[i];
+      const rank = i + 1;
+      const rowClass = rank === 1 ? ' class="rank-1"' : '';
+      const teamAbbr = getTeamName(p.team);
+      const teamColor = getTeamColor(p.team);
+      const statVal = activeCat.format(p[currentCat]);
+
+      tableHtml += `<tr${rowClass}>
+        <td class="col-rank">${rank}</td>
+        <td class="col-player"><a href="#" onclick="event.preventDefault();sessionStorage.setItem('kcsl_goPlayerName','${p.name.replace(/'/g,"\\'")}');window.location='index.html';">${p.name}</a></td>
+        <td class="col-team"><span class="team-dot" style="background:${teamColor}"></span>${teamAbbr}</td>
+        <td class="col-stat">${statVal}</td>
+      </tr>`;
+    }
+
+    tableHtml += '</tbody></table></div>';
+
+    // Qualifier note for rate stats
+    if (activeCat.isRate) {
+      tableHtml += '<div style="font-size:11px;color:var(--muted);margin-top:12px;font-style:italic;">Minimum 10 at-bats to qualify for rate stats.</div>';
+    }
+  }
+  tableHtml += '</div>';
+
+  contentEl.innerHTML = cardsHtml + tabsHtml + tableHtml;
+}
+
+function switchCat(cat) {
+  currentCat = cat;
+  renderUI();
+  // Scroll tabs into view on mobile
+  const activeTab = document.querySelector('.stat-tab.active');
+  if (activeTab) activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+}
+
+// Start
+loadLeaders();
+</script>
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js';
+import { getFirestore, collection, getDocs, query, orderBy } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js';
+
+const app = initializeApp({
+  apiKey: "AIzaSyDXuC-R0aPEX4F7lN5AKq48UC3r5whYzdg",
+  authDomain: "kcsl-292dd.firebaseapp.com",
+  projectId: "kcsl-292dd",
+  storageBucket: "kcsl-292dd.firebasestorage.app",
+  messagingSenderId: "145862305559",
+  appId: "1:145862305559:web:153ec455bad57e17517952"
+});
+const db = getFirestore(app);
+
+async function loadTicker() {
+  try {
+    const snap = await getDocs(query(collection(db, 'games'), orderBy('wk')));
+    const games = snap.docs.map(d => d.data());
+    const teams = {};
+    const tSnap = await getDocs(collection(db, 'teams'));
+    tSnap.docs.forEach(d => { const t = d.data(); teams[t.short] = t; teams[t.id || d.id] = t; });
+
+    const wkMap = {};
+    games.forEach(g => { if(!wkMap[g.wk]) wkMap[g.wk]=[]; wkMap[g.wk].push(g); });
+    const allWks = Object.keys(wkMap).sort((a,b) => a-b);
+    const curWk = allWks.find(w => wkMap[w].some(g => !g.done));
+    if (!curWk) return;
+    const curIdx = allWks.indexOf(curWk);
+    const wksToShow = allWks.slice(curIdx, curIdx+2);
+    const tickerGames = [];
+    wksToShow.forEach(w => tickerGames.push(...wkMap[w]));
+
+    const track = document.getElementById('st-track');
+    track.innerHTML = tickerGames.map(g => {
+      const awayShort = teams[g.away]?.short || g.away;
+      const homeShort = teams[g.home]?.short || g.home;
+      const at = teams[g.away] || teams[awayShort];
+      const ht = teams[g.home] || teams[homeShort];
+      const aRec = at ? '('+at.w+'-'+at.l+')' : '';
+      const hRec = ht ? '('+ht.w+'-'+ht.l+')' : '';
+      const done = g.done && g.away_score != null;
+      const status = done ? 'Final' : (g.date+' · '+(g.time||'TBD'));
+      return '<div class="st-game" onclick="window.location=\'index.html#scores\'">'
+        +'<div class="st-game-inner">'
+        +'<div class="st-datetime">'+status+'</div>'
+        +'<div class="st-row"><span class="st-abbr">'+awayShort+'</span><span class="st-rec">'+aRec+'</span>'
+        +(done?'<span style="font-weight:700;font-size:13px;min-width:20px;text-align:right">'+g.away_score+'</span>':'')+'</div>'
+        +'<div class="st-row"><span class="st-abbr">'+homeShort+'</span><span class="st-rec">'+hRec+'</span>'
+        +(done?'<span style="font-weight:700;font-size:13px;min-width:20px;text-align:right">'+g.home_score+'</span>':'')+'</div>'
+        +'</div></div>';
+    }).join('');
+  } catch(e) {  }
+}
+loadTicker();
+</script>
+</body>
+</html>

@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Photos — KCSL Softball</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#ffffff;--dark:#f5f5f5;--card:#ffffff;--card2:#f8f8f8;--border:rgba(0,0,0,0.1);--gold:#002D72;--gold-dim:rgba(0,45,114,0.08);--white:#1a1a1a;--muted:rgba(0,0,0,0.45);--red:#c8102e;--green:#22c55e;--blue:#002D72}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--white);font-family:'Barlow',sans-serif;overflow-x:hidden}
+
+/* NAV */
+nav{position:fixed;top:48px;left:0;right:0;z-index:300;height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;background:rgba(255,255,255,.97);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border-bottom:1px solid var(--border);transition:background .3s}
+.nav-logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:19px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);text-decoration:none;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.nav-logo img{height:30px;opacity:.85}
+.nav-links{margin:0 auto;display:flex;gap:4px;list-style:none}
+.nav-links a{font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:7px 13px;border-radius:6px;transition:all .2s}
+.nav-links a:hover{color:var(--white)}
+.nav-links a.active{color:#002D72}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:10px;margin-left:0;position:relative;z-index:999}
+.hamburger span{display:block;width:22px;height:2px;background:var(--white);border-radius:2px;transition:all .3s}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.mob-menu{display:none;position:fixed;top:110px;left:0;right:0;z-index:350;background:#ffffff;backdrop-filter:blur(24px);border-bottom:1px solid var(--border);flex-direction:column;padding:20px;overflow-y:auto;max-height:calc(100vh - 110px)}
+.mob-menu.open{display:flex;padding-top:14px}
+.mob-menu a{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:26px;text-transform:uppercase;color:var(--white);text-decoration:none;padding:12px 0;border-bottom:1px solid var(--border)}
+
+/* HERO */
+.hero{padding:148px 48px 28px;background:var(--bg);margin-top:0}
+.hero-logo-parallax{display:none}
+.hero-glow{display:none}
+.hero-vignette{display:none}
+.hero-content{padding:0}
+.hero-eyebrow{display:none}
+.hero-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(34px,5vw,54px);text-transform:uppercase;line-height:.95}
+.hero-title span{color:var(--gold)}
+.hero-desc,.hero-stats-row,.hero-scroll-hint,.scroll-line{display:none}
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+
+/* FILTER */
+.filter-bar{display:flex;align-items:center;gap:6px;padding:16px 48px;background:rgba(255,255,255,.95);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);position:sticky;top:110px;z-index:50;overflow-x:auto;scrollbar-width:none}
+.filter-bar::-webkit-scrollbar{display:none}
+.f-btn{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:.07em;text-transform:uppercase;background:var(--card);border:1px solid var(--border);color:var(--muted);border-radius:100px;padding:7px 18px;cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0}
+.f-btn:hover{border-color:rgba(0,45,114,.4);color:var(--gold)}
+.f-btn.active{background:var(--gold);color:#fff;border-color:var(--gold)}
+
+/* SECTION */
+.section{padding:72px 48px 0;opacity:0;transform:translateY(32px);transition:opacity .7s ease,transform .7s ease}
+.section.visible{opacity:1;transform:translateY(0)}
+.section-header{display:flex;align-items:baseline;gap:14px;margin-bottom:32px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.section-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:32px;text-transform:uppercase;letter-spacing:-.01em}
+.section-title span{color:var(--gold)}
+.section-meta{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(0,0,0,.25)}
+
+/* CHAMP HERO CARD — full bleed */
+.champ-card{position:relative;overflow:hidden;border-radius:16px;margin-bottom:8px;cursor:pointer;aspect-ratio:16/7}
+.champ-card img{width:100%;height:100%;object-fit:cover;transition:transform .7s ease}
+.champ-card:hover img{transform:scale(1.03)}
+.champ-card-glass{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.7) 0%,rgba(0,0,0,.2) 50%,transparent 100%)}
+.champ-card-info{position:absolute;bottom:0;left:0;right:0;padding:36px 40px;display:flex;align-items:flex-end;justify-content:space-between;gap:20px}
+.champ-card-text{}
+.champ-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(0,45,114,.15);border:1px solid rgba(0,45,114,.3);border-radius:100px;padding:4px 14px;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#fff;margin-bottom:10px}
+.champ-name{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(32px,5vw,64px);text-transform:uppercase;line-height:.95;color:#fff}
+.champ-sub{font-size:14px;color:rgba(255,255,255,.6);margin-top:8px}
+.champ-year-badge{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:72px;color:rgba(0,45,114,.15);line-height:1;flex-shrink:0}
+
+/* PHOTO GRID */
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:6px}
+.photo-card{position:relative;overflow:hidden;cursor:pointer;border-radius:10px;aspect-ratio:4/3;background:var(--card2);transition:transform .3s ease}
+.photo-card:hover{transform:scale(1.015)}
+.photo-card img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+.photo-card:hover img{transform:scale(1.06)}
+.photo-card-glass{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.7) 0%,transparent 55%);opacity:0;transition:opacity .3s}
+.photo-card:hover .photo-card-glass{opacity:1}
+.photo-card-info{position:absolute;bottom:0;left:0;right:0;padding:16px 18px;transform:translateY(6px);opacity:0;transition:all .3s}
+.photo-card:hover .photo-card-info{transform:translateY(0);opacity:1}
+.photo-card-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;text-transform:uppercase;color:#fff}
+.photo-card-sub{font-size:11px;color:rgba(255,255,255,.6);margin-top:2px}
+
+/* LOGO SHOWCASE */
+.logo-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;border-radius:16px;overflow:hidden}
+.logo-card{position:relative;overflow:hidden;cursor:pointer;padding:80px 60px;display:flex;align-items:center;justify-content:center;transition:background .3s}
+.logo-card-dark{background:#1a1a2e}
+.logo-card-light{background:#b8c4ce}
+.logo-card img{max-width:100%;max-height:320px;object-fit:contain;transition:transform .5s ease;filter:drop-shadow(0 24px 64px rgba(0,0,0,.5))}
+.logo-card:hover img{transform:scale(1.04) translateY(-4px)}
+.logo-card-label{position:absolute;bottom:20px;left:0;right:0;text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px;letter-spacing:.12em;text-transform:uppercase;opacity:.4}
+.logo-card-dark .logo-card-label{color:rgba(255,255,255,.7)}
+.logo-card-light .logo-card-label{color:#000}
+
+/* UPLOAD CARD */
+.upload-card{background:var(--card);border:1.5px dashed rgba(0,45,114,.2);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:52px 24px;text-align:center;cursor:pointer;transition:all .25s;aspect-ratio:4/3}
+.upload-card:hover{border-color:rgba(0,45,114,.45);background:rgba(0,45,114,.03);transform:scale(1.01)}
+.upload-icon{font-size:32px;opacity:.35;transition:opacity .25s}
+.upload-card:hover .upload-icon{opacity:.6}
+.upload-label{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;text-transform:uppercase;color:var(--muted)}
+.upload-sub{font-size:11px;color:rgba(0,0,0,.25);margin-top:2px}
+
+/* LIGHTBOX */
+.lightbox{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.92);display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;opacity:0;transition:opacity .3s}
+.lightbox.open{display:flex;opacity:1}
+.lb-img{max-width:92vw;max-height:86vh;object-fit:contain;border-radius:6px;box-shadow:0 40px 120px rgba(0,0,0,.8)}
+.lb-close{position:fixed;top:20px;right:24px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:#fff;transition:all .2s;backdrop-filter:blur(10px)}
+.lb-close:hover{background:rgba(255,255,255,.3);transform:scale(1.1)}
+.lb-caption{margin-top:16px;font-size:13px;color:rgba(255,255,255,.7);text-align:center;max-width:600px;line-height:1.6}
+
+/* FOOTER */
+footer{margin-top:80px;padding:40px 48px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;background:#f5f5f5}
+.ft-logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}
+.ft-links a{font-size:12px;color:var(--muted);text-decoration:none;padding:2px 14px;border-right:1px solid var(--border);transition:color .15s}
+.ft-links a:last-child{border-right:none}
+.ft-links a:hover{color:var(--white)}
+.ft-copy{font-size:12px;color:var(--muted)}
+
+@media(max-width:768px){
+  .hero-content{padding:0 24px 60px}
+  .hero-stats-row{gap:20px}
+  .hst-val{font-size:28px}
+  .section{padding:48px 20px 0}
+  .filter-bar{padding:12px 20px}
+  .logo-grid{grid-template-columns:1fr}
+  .photo-grid{grid-template-columns:repeat(2,1fr)}
+  .champ-card{aspect-ratio:4/3}
+  .champ-year-badge{display:none}
+  footer{padding:32px 20px;flex-direction:column}
+  nav{padding:0 18px}
+  .nav-links{display:none}
+  #hbg{display:flex!important}
+}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:rgba(0,45,114,.3);border-radius:2px}
+body.dark{--bg:#0d0d11;--dark:#141418;--card:#1a1a1f;--card2:#22222a;--border:rgba(255,255,255,.08);--gold:#5b9aff;--gold-dim:rgba(91,154,255,.1);--white:#ededed;--muted:rgba(237,237,237,.5);--red:#f87171;--green:#4ade80;--blue:#5b9aff}body.dark nav{background:rgba(13,13,17,.95)!important;border-color:rgba(255,255,255,.08)!important}body.dark .nav-logo{color:#5b9aff!important}body.dark .nav-links a{color:rgba(237,237,237,.55)!important}body.dark .nav-links a:hover{color:#ededed!important}body.dark .nav-links a.active{color:#5b9aff!important}body.dark .mob-menu{background:#0d0d11!important}body.dark .mob-menu a{color:#ededed!important}body.dark .hamburger span{background:#ededed!important}body.dark h1,body.dark h2,body.dark h3{color:#ededed!important}body.dark .ft{background:#0d0d11!important}body.dark .ft *{color:rgba(237,237,237,.4)!important}body.dark #score-ticker{background:#1a1a2e!important}
+body.dark .section-meta{color:rgba(237,237,237,.35)!important}
+body.dark .upload-sub{color:rgba(237,237,237,.35)!important}
+body.dark footer{background:#0d0d11!important;color:rgba(237,237,237,.4)!important;border-top-color:rgba(255,255,255,.08)!important}
+body.dark [style*="color:rgba(0,0,0"]{color:rgba(237,237,237,.6)!important}
+body.dark [style*="background:#f5f5f5"]{background:#141418!important}
+body.dark [style*="background:#ffffff"]{background:#1a1a1f!important}
+body.dark [style*="background:rgba(0,0,0"]{background:rgba(255,255,255,.04)!important}
+body.dark [style*="border:1px solid rgba(0,0,0"]{border-color:rgba(255,255,255,.08)!important}
+#st-track::-webkit-scrollbar{display:none}
+.st-game{display:flex;align-items:center;padding:0 18px;border-right:1px solid rgba(255,255,255,.1);cursor:pointer;flex-shrink:0;transition:background .15s}
+.st-game:hover{background:rgba(255,255,255,.08)}
+.st-game-inner{display:flex;flex-direction:column;justify-content:center;gap:2px}
+.st-datetime{font-size:9px;font-weight:500;color:rgba(255,255,255,.5);letter-spacing:.04em}
+.st-row{display:flex;align-items:center;gap:6px}
+.st-abbr{font-weight:700;font-size:12px;min-width:36px;color:#fff}
+.st-rec{font-size:9px;color:rgba(255,255,255,.5);min-width:28px}
+.nav-dd-wrap{position:relative;list-style:none}
+.nav-dd-wrap>span{font-size:11.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:rgba(0,0,0,.5);padding:7px 13px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:color .15s,background .15s;white-space:nowrap}
+.nav-dd-wrap>span:hover,.nav-dd-wrap:hover>span{color:#1a1a1a;background:rgba(0,0,0,.06)}
+.nav-dd-wrap.active>span{color:#002D72}
+.nav-dd-arrow{width:9px;height:6px;stroke:currentColor;fill:none;flex-shrink:0}
+.nav-dropdown{display:none;position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.12),0 2px 8px rgba(0,0,0,.06);padding:8px;min-width:180px;z-index:500}
+.nav-dropdown::before{content:'';position:absolute;top:-10px;left:0;right:0;height:10px}
+.nav-dd-wrap:hover .nav-dropdown{display:block}
+.nav-dd-item{display:block;padding:9px 14px;border-radius:8px;font-size:13px;font-weight:600;color:#1a1a1a;text-decoration:none;transition:background .12s;white-space:nowrap}
+.nav-dd-item:hover{background:rgba(0,45,114,.06);color:#002D72}
+.nav-dd-item.active-item{color:#002D72;font-weight:700}</style>
+</head>
+<body>
+<script>if(localStorage.getItem('kcsl-dark')==='1')document.body.classList.add('dark');</script>
+
+<div id="score-ticker" style="position:fixed;top:0;left:0;right:0;z-index:200;background:#002D72;border-bottom:1px solid rgba(0,0,0,.15);height:48px;display:flex;align-items:stretch;overflow:hidden;color:#fff;font-family:'Barlow Condensed',sans-serif">
+  <div style="display:flex;align-items:center;padding:0 14px;background:rgba(0,0,0,.15);border-right:1px solid rgba(255,255,255,.15);font-weight:600;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.9);white-space:nowrap;flex-shrink:0">⬡ KCSL</div>
+  <div id="st-track" style="flex:1;display:flex;align-items:stretch;overflow-x:auto;scrollbar-width:none"></div>
+</div>
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <img src="kcsl-logo.svg" alt="KCSL" style="height:30px;opacity:.85">
+    <span>KCSL</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="index.html#scores">Scores</a></li>
+    <li><a href="index.html#scores">Schedule</a></li>
+    <li><a href="index.html#standings">Standings</a></li>
+    <li><a href="index.html#stats">Stats</a></li>
+    <li><a href="leaders.html">Leaders</a></li>
+    <li><a href="index.html#players">Teams</a></li>
+    <li class="nav-dd-wrap active">
+      <span>More<svg class="nav-dd-arrow" viewBox="0 0 9 6" fill="none"><path d="M1 1l3.5 4L8 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <div class="nav-dropdown">
+        <a class="nav-dd-item" href="playoffs.html">🏆 Brackets</a>
+        <a class="nav-dd-item" href="rules.html">📋 Field Guide</a>
+        <a class="nav-dd-item active-item" href="photos.html">📷 Gallery</a>
+        <a class="nav-dd-item" href="registration.html">📝 Register</a>
+        <a class="nav-dd-item" href="admin.html" style="color:rgba(0,45,114,.6);font-size:12px">⚙ Admin</a>
+      </div>
+    </li>
+  </ul>
+</nav>
+<button class="hamburger" id="hbg" style="position:fixed;top:58px;right:14px;z-index:600;display:none;background:rgba(0,0,0,.55);border-radius:7px;padding:8px 10px"><span style="display:block;width:22px;height:2px;background:#fff;border-radius:2px;transition:all .3s"></span><span style="display:block;width:22px;height:2px;background:#fff;border-radius:2px;transition:all .3s"></span><span style="display:block;width:22px;height:2px;background:#fff;border-radius:2px;transition:all .3s"></span></button>
+<div class="mob-menu" id="mobMenu">
+  <a href="index.html">Home</a>
+  <a href="index.html#scores">Scores</a>
+  <a href="index.html#scores">Schedule</a>
+  <a href="index.html#standings">Standings</a>
+  <a href="index.html#stats">Stats</a>
+  <a href="leaders.html">Leaders</a>
+  <a href="index.html#players">Teams</a>
+  <span onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='flex'?'none':'flex'" style="display:flex;align-items:center;justify-content:space-between;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:26px;text-transform:uppercase;color:#1a1a1a;padding:12px 0;border-bottom:1px solid rgba(0,0,0,.06);cursor:pointer">More <span style="opacity:.5">›</span></span>
+  <div style="display:none;flex-direction:column;padding-left:20px;border-bottom:1px solid rgba(0,0,0,.06)">
+    <a href="playoffs.html" style="font-size:20px;padding:10px 0;border-bottom:none;color:#1a1a1a;text-decoration:none;font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase">🏆 Brackets</a>
+    <a href="rules.html" style="font-size:20px;padding:10px 0;border-bottom:none;color:#1a1a1a;text-decoration:none;font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase">📋 Field Guide</a>
+    <a href="photos.html" style="font-size:20px;padding:10px 0;border-bottom:none;color:#1a1a1a;text-decoration:none;font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase">📷 Gallery</a>
+    <a href="registration.html" style="font-size:20px;padding:10px 0;border-bottom:none;color:#1a1a1a;text-decoration:none;font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase">📝 Register</a>
+    <a href="admin.html" style="font-size:20px;padding:10px 0;border-bottom:none;color:rgba(0,45,114,.6);text-decoration:none;font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase">⚙ Admin</a>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-logo-parallax"></div>
+  <div class="hero-vignette"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">📸 League Gallery</div>
+    <h1 class="hero-title">KCSL <span>Photos</span></h1>
+  </div>
+</div>
+
+<!-- FILTER -->
+<div class="filter-bar">
+  <button class="f-btn active" onclick="filterSections('all',this)">All</button>
+  <button class="f-btn" onclick="filterSections('champs',this)">Champions</button>
+  <button class="f-btn" onclick="filterSections('logos',this)">League Identity</button>
+  <button class="f-btn" onclick="filterSections('fields',this)">Fields</button>
+</div>
+
+<!-- CHAMPIONS -->
+<div class="section" data-cat="champs" id="sec-champs">
+  <div class="section-header">
+    <div class="section-title">Championship <span>Photos</span></div>
+    <div class="section-meta">Gold &amp; Silver Cup · 2019 – 2025</div>
+  </div>
+
+  <!-- KI Silver Cup 2025 — hero card -->
+  <div class="champ-card" onclick="openLb('kcsl-champions-placeholder.png','Keneseth Israel — 2025 KCSL Silver Cup Champions')">
+    <img src="kcsl-champions-placeholder.png" alt="KI Silver Cup 2025">
+    <div class="champ-card-glass"></div>
+    <div class="champ-card-info">
+      <div class="champ-card-text">
+        <div class="champ-tag">🥈 Silver Cup Champions</div>
+        <div class="champ-name">Keneseth<br>Israel</div>
+        <div class="champ-sub">2025 KCSL Silver Cup · KI Softball Club</div>
+      </div>
+      <div class="champ-year-badge">2025</div>
+    </div>
+  </div>
+
+  <!-- Beth Am 2019 -->
+  <div class="champ-card" style="margin-top:6px" onclick="openLb('kcsl-champions-placeholder.png','Beth Am — 2019 KCSL Gold Cup Champions')">
+    <img src="kcsl-champions-placeholder.png" alt="Beth Am 2019">
+    <div class="champ-card-glass"></div>
+    <div class="champ-card-info">
+      <div class="champ-card-text">
+        <div class="champ-tag">🏆 Gold Cup Champions</div>
+        <div class="champ-name">Beth Am</div>
+        <div class="champ-sub">2019 KCSL Gold Cup · League Champions</div>
+      </div>
+      <div class="champ-year-badge">2019</div>
+    </div>
+  </div>
+
+  <div class="photo-grid" style="margin-top:6px">
+    <div class="upload-card">
+      <div class="upload-icon">📷</div>
+      <div class="upload-label">Add Champion Photo</div>
+      <div class="upload-sub">Drop or share an image</div>
+    </div>
+    <div class="upload-card">
+      <div class="upload-icon">🏆</div>
+      <div class="upload-label">Add Trophy Shot</div>
+      <div class="upload-sub">Drop or share an image</div>
+    </div>
+  </div>
+</div>
+
+<!-- LEAGUE IDENTITY -->
+<div class="section" data-cat="logos" id="sec-logos">
+  <div class="section-header">
+    <div class="section-title">League <span>Identity</span></div>
+    <div class="section-meta">Official KCSL Branding · 2025</div>
+  </div>
+  <div class="logo-grid">
+    <div class="logo-card logo-card-dark" onclick="openLb('kcsl-logo.svg','KCSL Official Logo — Dark Edition')">
+      <img src="kcsl-logo.svg" alt="KCSL Logo Dark">
+      <div class="logo-card-label">Official Logo — Dark Edition</div>
+    </div>
+    <div class="logo-card logo-card-light" onclick="openLb('kcsl-logo.svg','KCSL Official Logo — Glass Trophy Edition')">
+      <img src="kcsl-logo.svg" alt="KCSL Logo Glass">
+      <div class="logo-card-label" style="color:rgba(0,0,0,.4)">Glass Trophy Edition</div>
+    </div>
+  </div>
+</div>
+
+<!-- FIELDS -->
+<div class="section" data-cat="fields" id="sec-fields">
+  <div class="section-header">
+    <div class="section-title">Field <span>Photos</span></div>
+    <div class="section-meta">8 Venues Across Montgomery &amp; Bucks County</div>
+  </div>
+  <div class="photo-grid">
+    <div class="upload-card"><div class="upload-icon">⚾</div><div class="upload-label">Mondauk Park</div><div class="upload-sub">Ambler, PA</div></div>
+    <div class="upload-card"><div class="upload-icon">⚾</div><div class="upload-label">Schaefer Park</div><div class="upload-sub">Southampton, PA</div></div>
+    <div class="upload-card"><div class="upload-icon">⚾</div><div class="upload-label">Carpenter Park</div><div class="upload-sub">Horsham, PA</div></div>
+    <div class="upload-card"><div class="upload-icon">⚾</div><div class="upload-label">Lukens Field</div><div class="upload-sub">Horsham, PA</div></div>
+    <div class="upload-card"><div class="upload-icon">⚾</div><div class="upload-label">Plymouth Field</div><div class="upload-sub">Plymouth Meeting, PA</div></div>
+    <div class="upload-card"><div class="upload-icon">⚾</div><div class="upload-label">Ogontz Field</div><div class="upload-sub">Elkins Park, PA</div></div>
+    <div class="upload-card"><div class="upload-icon">⚾</div><div class="upload-label">Sunnybrook</div><div class="upload-sub">Lansdale, PA</div></div>
+    <div class="upload-card"><div class="upload-icon">➕</div><div class="upload-label">Add Game Photos</div><div class="upload-sub">Any field</div></div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLb()">
+  <div class="lb-close" onclick="closeLb()">✕</div>
+  <img class="lb-img" id="lbImg" src="" alt="" onclick="event.stopPropagation()">
+  <div class="lb-caption" id="lbCap"></div>
+</div>
+
+<footer>
+  <div class="ft-logo">⬡ KCSL</div>
+  <div class="ft-links"><a href="index.html">Home</a><a href="index.html#scores">Scores</a><a href="index.html#scores">Schedule</a><a href="index.html#standings">Standings</a><a href="index.html#stats">Stats</a><a href="leaders.html">Leaders</a><a href="index.html#players">Teams</a><a href="playoffs.html">Brackets</a><a href="rules.html">Field Guide</a><a href="photos.html">Gallery</a></div>
+  <div class="ft-copy">© 2026 KCSL · Kings County Softball League</div>
+</footer>
+
+<script>
+// Hamburger
+const hbg=document.getElementById('hbg'),mob=document.getElementById('mobMenu');
+let _mobScrollY=0;
+hbg.addEventListener('click',()=>{
+  hbg.classList.toggle('open');mob.classList.toggle('open');
+  if(mob.classList.contains('open')){
+    _mobScrollY=window.scrollY||0;
+    document.body.style.overflow='hidden';
+    document.body.style.position='fixed';
+    document.body.style.top='-'+_mobScrollY+'px';
+    document.body.style.width='100%';
+  } else {
+    document.body.style.overflow='';document.body.style.position='';
+    document.body.style.top='';document.body.style.width='';
+    window.scrollTo(0,_mobScrollY);
+  }
+});
+
+// Parallax logo on scroll (if element exists)
+window.addEventListener('scroll',()=>{
+  const el=document.getElementById('logoParallax');
+  if(el) el.style.transform=`translateY(${window.scrollY*0.35}px)`;
+},{passive:true});
+
+// Scroll reveal
+const revealObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');revealObs.unobserve(e.target)}});
+},{threshold:0.06});
+document.querySelectorAll('.section').forEach(el=>revealObs.observe(el));
+
+// Filter
+function filterSections(cat,btn){
+  document.querySelectorAll('.f-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.section[data-cat]').forEach(el=>{
+    const show=cat==='all'||el.dataset.cat===cat;
+    el.style.display=show?'':'none';
+    if(show&&!el.classList.contains('visible')){
+      setTimeout(()=>el.classList.add('visible'),50);
+    }
+  });
+}
+
+// Lightbox
+function openLb(src,cap){
+  const lb=document.getElementById('lightbox');
+  document.getElementById('lbImg').src=src;
+  document.getElementById('lbCap').textContent=cap||'';
+  lb.style.display='flex';
+  requestAnimationFrame(()=>lb.style.opacity='1');
+}
+function closeLb(){
+  const lb=document.getElementById('lightbox');
+  lb.style.opacity='0';
+  setTimeout(()=>{lb.style.display='none';document.getElementById('lbImg').src=''},300);
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLb()});
+</script>
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js';
+import { getFirestore, collection, getDocs, query, orderBy } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js';
+
+const app = initializeApp({
+  apiKey: "AIzaSyDXuC-R0aPEX4F7lN5AKq48UC3r5whYzdg",
+  authDomain: "kcsl-292dd.firebaseapp.com",
+  projectId: "kcsl-292dd",
+  storageBucket: "kcsl-292dd.firebasestorage.app",
+  messagingSenderId: "145862305559",
+  appId: "1:145862305559:web:153ec455bad57e17517952"
+});
+const db = getFirestore(app);
+
+async function loadTicker() {
+  try {
+    const snap = await getDocs(query(collection(db, 'games'), orderBy('wk')));
+    const games = snap.docs.map(d => d.data());
+    const teams = {};
+    const tSnap = await getDocs(collection(db, 'teams'));
+    tSnap.docs.forEach(d => { const t = d.data(); teams[t.short] = t; teams[t.id || d.id] = t; });
+
+    const wkMap = {};
+    games.forEach(g => { if(!wkMap[g.wk]) wkMap[g.wk]=[]; wkMap[g.wk].push(g); });
+    const allWks = Object.keys(wkMap).sort((a,b) => a-b);
+    const curWk = allWks.find(w => wkMap[w].some(g => !g.done));
+    if (!curWk) return;
+    const curIdx = allWks.indexOf(curWk);
+    const wksToShow = allWks.slice(curIdx, curIdx+2);
+    const tickerGames = [];
+    wksToShow.forEach(w => tickerGames.push(...wkMap[w]));
+
+    const track = document.getElementById('st-track');
+    track.innerHTML = tickerGames.map(g => {
+      const awayShort = teams[g.away]?.short || g.away;
+      const homeShort = teams[g.home]?.short || g.home;
+      const at = teams[g.away] || teams[awayShort];
+      const ht = teams[g.home] || teams[homeShort];
+      const aRec = at ? '('+at.w+'-'+at.l+')' : '';
+      const hRec = ht ? '('+ht.w+'-'+ht.l+')' : '';
+      const done = g.done && g.away_score != null;
+      const status = done ? 'Final' : (g.date+' · '+(g.time||'TBD'));
+      return '<div class="st-game" onclick="window.location=\'index.html#scores\'">'
+        +'<div class="st-game-inner">'
+        +'<div class="st-datetime">'+status+'</div>'
+        +'<div class="st-row"><span class="st-abbr">'+awayShort+'</span><span class="st-rec">'+aRec+'</span>'
+        +(done?'<span style="font-weight:700;font-size:13px;min-width:20px;text-align:right">'+g.away_score+'</span>':'')+'</div>'
+        +'<div class="st-row"><span class="st-abbr">'+homeShort+'</span><span class="st-rec">'+hRec+'</span>'
+        +(done?'<span style="font-weight:700;font-size:13px;min-width:20px;text-align:right">'+g.home_score+'</span>':'')+'</div>'
+        +'</div></div>';
+    }).join('');
+  } catch(e) {  }
+}
+loadTicker();
+</script>
+</body>
+</html>

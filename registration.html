@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Player Signup — KCSL Softball</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#f5f6f8;--card:#fff;--border:rgba(0,0,0,.1);--navy:#002D72;--navy-light:rgba(0,45,114,.07);--text:#1a1a1a;--muted:#6b7280;--muted2:#9ca3af;--green:#16a34a;--green-bg:rgba(22,163,74,.08);--red:#dc2626}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6}
+
+/* NAV */
+nav{position:fixed;top:48px;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:62px;background:rgba(255,255,255,.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:19px;letter-spacing:.1em;text-transform:uppercase;color:var(--navy);text-decoration:none;display:flex;align-items:center;gap:10px}
+.nav-logo img{height:30px;width:auto;opacity:.8;vertical-align:middle}
+.nav-links{display:flex;gap:4px;list-style:none;margin:0 auto}
+.nav-links a{font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:7px 13px;border-radius:6px;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-dd-wrap{position:relative;list-style:none}
+.nav-dd-wrap>span{font-size:11.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);padding:7px 13px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:color .15s}
+.nav-dd-wrap:hover>span,.nav-dd-wrap>span:hover{color:var(--text)}
+.nav-dd-arrow{width:9px;height:6px;stroke:currentColor;fill:none;flex-shrink:0}
+.nav-dropdown{display:none;position:absolute;top:calc(100% + 8px);right:0;background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.12);padding:8px;min-width:190px;z-index:500}
+.nav-dd-wrap:hover .nav-dropdown{display:block}
+.nav-dd-item{display:block;padding:9px 14px;border-radius:8px;font-size:13px;font-weight:600;color:#1a1a1a;text-decoration:none;transition:background .12s;white-space:nowrap}
+.nav-dd-item:hover{background:var(--navy-light);color:var(--navy)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:10px}
+.hamburger span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;transition:all .3s}
+.mob-menu{display:none;position:fixed;top:110px;left:0;right:0;z-index:350;background:#fff;border-bottom:1px solid var(--border);flex-direction:column;padding:20px;max-height:calc(100vh - 110px);overflow-y:auto}
+.mob-menu.open{display:flex}
+.mob-menu a,.mob-menu>span{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:24px;text-transform:uppercase;color:var(--text);text-decoration:none;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer}
+
+/* PAGE */
+.page-wrap{padding-top:110px;min-height:100vh}
+.page-hero{padding:56px 48px 40px;background:linear-gradient(135deg,#001d4a 0%,#002D72 60%,#003fa0 100%);color:#fff}
+.page-hero-inner{max-width:640px;margin:0 auto}
+.page-eyebrow{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:10px}
+.page-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(40px,7vw,68px);text-transform:uppercase;line-height:.95;letter-spacing:-.01em;margin-bottom:14px}
+.page-sub{font-size:15px;color:rgba(255,255,255,.7);line-height:1.6}
+
+/* FORM */
+.content-wrap{max-width:640px;margin:0 auto;padding:48px 24px 80px}
+.form-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:36px;margin-bottom:20px;box-shadow:0 2px 12px rgba(0,0,0,.04)}
+.form-card-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;text-transform:uppercase;color:var(--navy);margin-bottom:18px;border-left:3px solid var(--navy);padding-left:10px}
+.form-group{margin-bottom:18px}
+.form-label{display:block;font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.form-label .opt{font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted2)}
+.form-input{width:100%;padding:11px 14px;font-size:14px;font-family:'Inter',sans-serif;border:1.5px solid var(--border);border-radius:8px;outline:none;transition:border-color .15s,box-shadow .15s;background:#fff;color:var(--text)}
+.form-input:focus{border-color:var(--navy);box-shadow:0 0 0 3px var(--navy-light)}
+.form-input::placeholder{color:var(--muted2)}
+select.form-input{cursor:pointer;appearance:auto}
+.form-hint{font-size:11px;color:var(--muted2);margin-top:4px}
+
+/* CHECKBOXES */
+.check-group{display:flex;flex-direction:column;gap:10px}
+.check-row{display:flex;align-items:flex-start;gap:10px;cursor:pointer}
+.check-row input[type=checkbox]{width:16px;height:16px;margin-top:2px;accent-color:var(--navy);cursor:pointer;flex-shrink:0}
+.check-row-label{font-size:14px;color:var(--text);line-height:1.4}
+.check-row-sub{font-size:12px;color:var(--muted);line-height:1.3;margin-top:1px}
+
+/* SUBMIT */
+.btn-submit{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;letter-spacing:.08em;text-transform:uppercase;background:var(--navy);color:#fff;border:none;border-radius:10px;padding:14px 40px;cursor:pointer;transition:background .15s;width:100%}
+.btn-submit:hover{background:#001d4a}
+.btn-submit:disabled{background:var(--muted2);cursor:not-allowed}
+
+/* SUCCESS */
+.success-box{display:none;background:var(--green-bg);border:1.5px solid rgba(22,163,74,.25);border-radius:14px;padding:32px;text-align:center}
+.success-box.show{display:block}
+.success-icon{font-size:48px;margin-bottom:12px}
+.success-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;text-transform:uppercase;color:var(--green);margin-bottom:8px}
+.success-text{font-size:14px;color:rgba(0,0,0,.6);line-height:1.6}
+
+/* ERROR */
+.error-box{display:none;background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.2);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--red);margin-bottom:16px}
+.error-box.show{display:block}
+
+@media(max-width:768px){
+  nav{padding:0 20px}
+  .nav-links{display:none}
+  #hbg{display:flex!important}
+  .page-hero{padding:36px 20px 28px}
+  .content-wrap{padding:28px 16px 60px}
+  .form-card{padding:24px 20px}
+}
+</style>
+</head>
+<body>
+
+<!-- SCORE TICKER -->
+<div id="score-ticker" style="position:fixed;top:0;left:0;right:0;z-index:200;background:#002D72;border-bottom:1px solid rgba(0,0,0,.15);height:48px;display:flex;align-items:stretch;overflow:hidden;color:#fff;font-family:'Barlow Condensed',sans-serif">
+  <div style="display:flex;align-items:center;padding:0 14px;background:rgba(0,0,0,.15);border-right:1px solid rgba(255,255,255,.15);font-weight:600;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.9);white-space:nowrap;flex-shrink:0">⬡ KCSL</div>
+  <div id="st-track" style="flex:1;display:flex;align-items:stretch;overflow-x:auto;scrollbar-width:none"></div>
+</div>
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <img src="kcsl-logo.svg" alt="KCSL" onerror="this.style.display='none'">KCSL
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="index.html#scores">Scores</a></li>
+    <li><a href="index.html#standings">Standings</a></li>
+    <li><a href="index.html#stats">Stats</a></li>
+    <li><a href="leaders.html">Leaders</a></li>
+    <li><a href="index.html#players">Teams</a></li>
+    <li class="nav-dd-wrap">
+      <span>Captain<svg class="nav-dd-arrow" viewBox="0 0 9 6" fill="none"><path d="M1 1l3.5 4L8 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <div class="nav-dropdown">
+        <a class="nav-dd-item" href="captain.html">⚾ Captain Dashboard</a>
+      </div>
+    </li>
+    <li class="nav-dd-wrap">
+      <span>More<svg class="nav-dd-arrow" viewBox="0 0 9 6" fill="none"><path d="M1 1l3.5 4L8 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <div class="nav-dropdown">
+        <a class="nav-dd-item" href="playoffs.html">🏆 Brackets</a>
+        <a class="nav-dd-item" href="rules.html">📋 Field Guide</a>
+        <a class="nav-dd-item" href="photos.html">📷 Gallery</a>
+        <a class="nav-dd-item" style="color:rgba(0,45,114,.7);font-size:12px" href="admin.html">⚙ Admin</a>
+      </div>
+    </li>
+  </ul>
+</nav>
+<button class="hamburger" id="hbg" style="position:fixed;top:58px;right:14px;z-index:600;display:none;background:rgba(0,0,0,.55);border-radius:7px;padding:8px 10px"><span style="display:block;width:22px;height:2px;background:#fff;border-radius:2px;transition:all .3s"></span><span style="display:block;width:22px;height:2px;background:#fff;border-radius:2px;transition:all .3s"></span><span style="display:block;width:22px;height:2px;background:#fff;border-radius:2px;transition:all .3s"></span></button>
+<div class="mob-menu" id="mobMenu">
+  <a href="index.html">Home</a>
+  <a href="index.html#scores">Scores</a>
+  <a href="index.html#standings">Standings</a>
+  <a href="index.html#stats">Stats</a>
+  <a href="leaders.html">Leaders</a>
+  <a href="index.html#players">Teams</a>
+  <a href="captain.html">⚾ Captain Dashboard</a>
+  <a href="playoffs.html">🏆 Brackets</a>
+  <a href="rules.html">📋 Field Guide</a>
+  <a href="photos.html">📷 Gallery</a>
+  <a href="admin.html" style="color:rgba(0,45,114,.6)">⚙ Admin</a>
+</div>
+<script>
+(function(){
+  var hbg=document.getElementById('hbg');
+  var mob=document.getElementById('mobMenu');
+  var _mobScrollY=0;
+  if(hbg) hbg.addEventListener('click',function(){
+    hbg.classList.toggle('open');mob.classList.toggle('open');
+    if(mob.classList.contains('open')){
+      _mobScrollY=window.scrollY||0;
+      document.body.style.overflow='hidden';
+      document.body.style.position='fixed';
+      document.body.style.top='-'+_mobScrollY+'px';
+      document.body.style.width='100%';
+    } else {
+      document.body.style.overflow='';document.body.style.position='';
+      document.body.style.top='';document.body.style.width='';
+      window.scrollTo(0,_mobScrollY);
+    }
+  });
+  if(mob) mob.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){
+    hbg.classList.remove('open');mob.classList.remove('open');
+    document.body.style.overflow='';document.body.style.position='';
+    document.body.style.top='';document.body.style.width='';
+    window.scrollTo(0,_mobScrollY);
+  });});
+})();
+</script>
+
+<!-- PAGE -->
+<div class="page-wrap">
+  <div class="page-hero">
+    <div class="page-hero-inner">
+      <div class="page-eyebrow" id="reg-eyebrow">Kings County Softball League · 2026</div>
+      <div class="page-title" id="reg-title">Stay<br>Connected</div>
+      <div class="page-sub" id="reg-sub">Sign up to get game reminders, score updates, and league news delivered straight to you.</div>
+    </div>
+  </div>
+
+  <div class="content-wrap">
+
+    <div id="success-box" class="success-box">
+      <div class="success-icon">⚾</div>
+      <div class="success-title">You're In!</div>
+      <div class="success-text" id="success-text">You're all set to receive updates for your team.</div>
+    </div>
+
+    <div id="form-wrap">
+      <div class="form-card">
+        <div class="form-card-title">Your Info</div>
+        <div id="error-box" class="error-box"></div>
+
+        <div class="form-group">
+          <label class="form-label">Your Name</label>
+          <input type="text" id="f-name" class="form-input" placeholder="First and last name" autocomplete="name">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Team</label>
+          <select id="f-team" class="form-input">
+            <option value="">Loading teams...</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" id="f-email" class="form-input" placeholder="you@example.com" autocomplete="email">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Preferred Position <span class="opt">(optional)</span></label>
+          <select id="f-pos" class="form-input">
+            <option value="">— Select position —</option>
+            <option value="P">P — Pitcher</option>
+            <option value="C">C — Catcher</option>
+            <option value="1B">1B — First Base</option>
+            <option value="2B">2B — Second Base</option>
+            <option value="3B">3B — Third Base</option>
+            <option value="SS">SS — Shortstop</option>
+            <option value="LF">LF — Left Field</option>
+            <option value="CF">CF — Center Field</option>
+            <option value="RF">RF — Right Field</option>
+            <option value="DH">DH — Designated Hitter</option>
+            <option value="UTIL">UTIL — Utility</option>
+            <option value="SUB">SUB — Substitute</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Phone <span class="opt">(optional — for text alerts)</span></label>
+          <input type="tel" id="f-phone" class="form-input" placeholder="(215) 555-0100" autocomplete="tel">
+          <div class="form-hint">US number only. Standard message rates apply.</div>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="form-card-title">What do you want to hear about?</div>
+        <div class="check-group">
+          <label class="check-row">
+            <input type="checkbox" id="n-reminder" checked>
+            <div>
+              <div class="check-row-label">Game day reminders</div>
+              <div class="check-row-sub">Notification a few hours before your game with time, field, and opponent</div>
+            </div>
+          </label>
+          <label class="check-row">
+            <input type="checkbox" id="n-scores" checked>
+            <div>
+              <div class="check-row-label">Score updates</div>
+              <div class="check-row-sub">Final score posted after your game</div>
+            </div>
+          </label>
+          <label class="check-row">
+            <input type="checkbox" id="n-standings">
+            <div>
+              <div class="check-row-label">Weekly standings update</div>
+              <div class="check-row-sub">Standings after each week's games</div>
+            </div>
+          </label>
+          <label class="check-row">
+            <input type="checkbox" id="n-news">
+            <div>
+              <div class="check-row-label">League announcements</div>
+              <div class="check-row-sub">Rainouts, schedule changes, playoffs info, league news</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <button class="btn-submit" id="submit-btn" onclick="submitSignup()">Sign Me Up</button>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js';
+import { getFirestore, collection, getDocs, addDoc, query, orderBy, Timestamp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js';
+
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDXuC-R0aPEX4F7lN5AKq48UC3r5whYzdg",
+  authDomain: "kcsl-292dd.firebaseapp.com",
+  projectId: "kcsl-292dd",
+  storageBucket: "kcsl-292dd.firebasestorage.app",
+  messagingSenderId: "145862305559",
+  appId: "1:145862305559:web:153ec455bad57e17517952"
+};
+const app = initializeApp(FIREBASE_CONFIG);
+const db = getFirestore(app);
+
+// Load teams into dropdown
+async function loadTeams() {
+  const sel = document.getElementById('f-team');
+  try {
+    const snap = await getDocs(query(collection(db, 'teams'), orderBy('name')));
+    const teams = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(t => t.active !== false);
+    sel.innerHTML = '<option value="">— Select your team —</option>' +
+      teams.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+  } catch(e) {
+    sel.innerHTML = '<option value="">Could not load teams</option>';
+  }
+}
+loadTeams();
+
+window.submitSignup = async function() {
+  const name   = document.getElementById('f-name').value.trim();
+  const teamId = document.getElementById('f-team').value;
+  const email  = document.getElementById('f-email').value.trim();
+  const phone  = document.getElementById('f-phone').value.trim();
+  const pos    = document.getElementById('f-pos').value;
+  const errEl  = document.getElementById('error-box');
+  errEl.className = 'error-box';
+
+  if (!name)   { errEl.textContent = 'Please enter your name.';          errEl.className = 'error-box show'; return; }
+  if (!teamId) { errEl.textContent = 'Please select your team.';         errEl.className = 'error-box show'; return; }
+  if (!email && !phone) { errEl.textContent = 'Please enter an email or phone number so we can reach you.'; errEl.className = 'error-box show'; return; }
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { errEl.textContent = 'Please enter a valid email address.'; errEl.className = 'error-box show'; return; }
+
+  const teamName = document.getElementById('f-team').options[document.getElementById('f-team').selectedIndex].text;
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Signing up...';
+
+  try {
+    await addDoc(collection(db, 'player_signups'), {
+      name, team_id: teamId, team_name: teamName,
+      email: email || null,
+      phone: phone || null,
+      preferred_position: pos || null,
+      notifications: {
+        game_reminders: document.getElementById('n-reminder').checked,
+        scores:         document.getElementById('n-scores').checked,
+        standings:      document.getElementById('n-standings').checked,
+        news:           document.getElementById('n-news').checked,
+      },
+      signed_up_at: Timestamp.now(),
+    });
+
+    // Add to MailerLite if email provided
+    if (email) {
+      try {
+        await fetch('https://connect.mailerlite.com/api/subscribers', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI0IiwianRpIjoiMzgzYzc0NGFlYzJkYWFjOTA3NDgzY2YzOGFhNzQ1ZDIxNzlkMWIzZDY0YmIwNmM1ZjM1ZGU1YmNlYjc5ODY4OTI3NjEwNmE2YWMxMzYxMTIiLCJpYXQiOjE3NzU2MTA5NzUuMTM2MDAxLCJuYmYiOjE3NzU2MTA5NzUuMTM2MDAzLCJleHAiOjQ5MzEyODQ1NzUuMTI5MTQ3LCJzdWIiOiIyMjcyMTc5Iiwic2NvcGVzIjpbXX0.ai_zNxrFdGYWYrZOI8k6nEPPGzukERNWtMpXvDmv9fARDTR9rw66mSPZ0TJYUCmDQB-wJinj4f57UvsZa8rhwLSyQKsoIDo_nxewyL416-2XLLf36BwBbp0cJptLGnM9_yLIU_dtj8OJixL9rPBEn4QZJKXMDwGXSTQcfNDU1w6RsZ6U-sYEnCLOUMSdiNRGvOiMUwmGwIKxCn_nDAttf3spTENteSNtL6tSz04AnIrJ15T4UPcDgSeGq68okIpGFw6tWOJ4E3UXOlpp8fUBDLRkIB-Dlhy9S9WUiV1CwooG0FnZquhhXbLsdyKZDwuvY12RlIS2yQm1JBfplGeP6rwQd4llSvKhZbuPyIpwCVMH6gnK8gmno4Y36A1yaRfzoVpNl_JKxSkTfoPS_vodxtQHsXkOfVL7ttqDl1f2LZLtMEvm1-h3N7Kr2rX2lMQ7x-cdUjOaMmjVxqOKr-vKQvsTtZjVedX4VGJIlWPpadwR_AEXQ3Q5aoyT4-yprMFFouJRBzvlkuHjbSPAdkUi7OOn1gy3qaMHRneX_YgTd_YgKe3TVLEaarzfhfLIamHhv63OZihq2jcs-EucpZWwqSwWFKgeekl6tqvCde5PfAwwnGhhmKbEFJcKWdrR2LGlxQduPLTFZ7vcHFnL5YaV5iFEuDuOLWadLTblWlCgmsQ'
+          },
+          body: JSON.stringify({
+            email,
+            fields: { name, last_name: teamName, phone: phone || '' },
+            groups: ['184141516725290868']
+          })
+        });
+      } catch(mlErr) { /* silent — Firestore save already succeeded */ }
+    }
+
+    document.getElementById('form-wrap').style.display = 'none';
+    const s = document.getElementById('success-box');
+    s.className = 'success-box show';
+    document.getElementById('success-text').textContent =
+      `You're signed up for ${teamName} updates. We'll send alerts to ${email || phone}.`;
+  } catch(e) {
+    errEl.textContent = 'Something went wrong. Please try again.';
+    errEl.className = 'error-box show';
+    btn.disabled = false;
+    btn.textContent = 'Sign Me Up';
+  }
+};
+
+// Simple ticker — load games
+try {
+  const snap = await getDocs(query(collection(db, 'games'), orderBy('wk')));
+  const track = document.getElementById('st-track');
+  const games = snap.docs.map(d => d.data()).slice(0, 20);
+  if (games.length) {
+    track.innerHTML = games.map(g => `
+      <div class="st-game" style="display:flex;align-items:center;padding:0 16px;border-right:1px solid rgba(255,255,255,.1);flex-shrink:0">
+        <div style="display:flex;flex-direction:column;gap:1px">
+          <div style="font-size:9px;color:rgba(255,255,255,.5);letter-spacing:.04em">${g.date||''} · ${g.time||''}</div>
+          <div style="font-size:11px;font-weight:700;color:#fff">${(g.away||'').toUpperCase()} <span style="color:rgba(255,255,255,.4);font-weight:400">vs</span> ${(g.home||'').toUpperCase()}</div>
+        </div>
+      </div>`).join('');
+  }
+} catch(e) {}
+
+// Load admin-edited hero text from Firebase
+try {
+  const contentSnap = await getDocs(collection(db, 'site_content'));
+  contentSnap.forEach(d => {
+    const data = d.data();
+    const el = document.getElementById(data.section_id);
+    if (el && data.html) el.innerHTML = data.html;
+  });
+} catch(e) {}
+</script>
+</body>
+</html>

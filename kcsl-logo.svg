@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="shield" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#E63946"/>
+      <stop offset="50%" stop-color="#F8F9FA"/>
+      <stop offset="100%" stop-color="#1D4ED8"/>
+    </linearGradient>
+  </defs>
+  <!-- Shield outline -->
+  <path d="M100 10 L180 30 L180 100 Q180 160 100 190 Q20 160 20 100 L20 30 Z"
+        fill="url(#shield)" stroke="#0A0E1A" stroke-width="4"/>
+  <!-- Inner white panel for text -->
+  <path d="M100 25 L165 40 L165 100 Q165 150 100 175 Q35 150 35 100 L35 40 Z"
+        fill="#F8F9FA" stroke="#0A0E1A" stroke-width="1.5"/>
+  <!-- KCSL text -->
+  <text x="100" y="85" text-anchor="middle"
+        font-family="Barlow Condensed, Impact, sans-serif"
+        font-weight="900" font-size="44" fill="#E63946"
+        letter-spacing="2">KCSL</text>
+  <!-- Softball icon -->
+  <circle cx="100" cy="120" r="14" fill="none" stroke="#0A0E1A" stroke-width="2"/>
+  <path d="M88 115 Q100 122 112 115 M88 125 Q100 118 112 125"
+        fill="none" stroke="#E63946" stroke-width="1.8"/>
+  <!-- Subtitle -->
+  <text x="100" y="155" text-anchor="middle"
+        font-family="Barlow, sans-serif" font-weight="700"
+        font-size="11" fill="#1D4ED8" letter-spacing="1.5">KINGS COUNTY</text>
+</svg>
