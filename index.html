@@ -3370,22 +3370,50 @@ function buildTeamsBigCards(){
   const grid = document.getElementById('teams-bigcard-grid');
   if(!grid) return;
   if(!TEAMS.length){ grid.innerHTML=''; return; }
-  grid.className = 'teams-list';
-  grid.innerHTML = TEAMS.filter(t=>t.active!==false).sort((a,b)=>a.name.localeCompare(b.name)).map(t => {
-    return `<div class="teams-list-item">
-      <div class="teams-list-logo" style="background:transparent;color:#fff;border-color:transparent">${teamLogoEl(t.id,t.short)}</div>
-      <div class="teams-list-info">
-        <div class="teams-list-name" onclick="goPage('team','${t.id}')">${t.name}</div>
-        <div class="teams-list-links">
-          <span onclick="goPage('team','${t.id}');setTimeout(()=>renderTeamTab('stats'),80)">Stats</span>
-          <span class="sep">|</span>
-          <span onclick="goPage('team','${t.id}');setTimeout(()=>renderTeamTab('schedule'),80)">Schedule</span>
-          <span class="sep">|</span>
-          <span onclick="goPage('team','${t.id}');setTimeout(()=>renderTeamTab('roster'),80)">Roster</span>
-          ${t.id==='tbir'?'<span class="sep">|</span><span onclick="goPage(\'team\',\'tbir\');setTimeout(()=>renderTeamTab(\'career\'),80)">Career Stats</span>':''}
-        </div>
+  grid.className = '';
+
+  // KCSL: group teams by division (B, C, CC, D, DD)
+  const DIV_ORDER = [
+    { code:'B',  label:'B Division'  },
+    { code:'C',  label:'C Division'  },
+    { code:'CC', label:'CC Division' },
+    { code:'D',  label:'D Division'  },
+    { code:'DD', label:'DD Division' },
+  ];
+  const byDiv = {};
+  TEAMS.filter(t=>t.active!==false).forEach(t => {
+    const code = t.div || 'OTHER';
+    (byDiv[code] = byDiv[code] || []).push(t);
+  });
+
+  const teamItem = t => `<div class="teams-list-item">
+    <div class="teams-list-logo" style="background:transparent;color:#fff;border-color:transparent">${teamLogoEl(t.id,t.short)}</div>
+    <div class="teams-list-info">
+      <div class="teams-list-name" onclick="goPage('team','${t.id}')">${t.name}</div>
+      <div class="teams-list-links">
+        <span onclick="goPage('team','${t.id}');setTimeout(()=>renderTeamTab('stats'),80)">Stats</span>
+        <span class="sep">|</span>
+        <span onclick="goPage('team','${t.id}');setTimeout(()=>renderTeamTab('schedule'),80)">Schedule</span>
+        <span class="sep">|</span>
+        <span onclick="goPage('team','${t.id}');setTimeout(()=>renderTeamTab('roster'),80)">Roster</span>
       </div>
-    </div>`;
+    </div>
+  </div>`;
+
+  grid.innerHTML = DIV_ORDER.map(d => {
+    const list = (byDiv[d.code] || []).sort((a,b)=>a.name.localeCompare(b.name));
+    if (!list.length) return '';
+    return `<section class="teams-div-section" style="margin-bottom:48px">
+      <div class="teams-div-header" style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--gold)">
+        <h2 style="font-family:'Barlow Condensed',Impact,sans-serif;font-weight:900;font-size:30px;text-transform:uppercase;letter-spacing:.04em;color:#1a1a1a;margin:0">
+          <span style="color:var(--gold)">${d.code}</span> Division
+        </h2>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:.1em;color:rgba(0,0,0,.5)">${list.length} Teams</span>
+      </div>
+      <div class="teams-list">
+        ${list.map(teamItem).join('')}
+      </div>
+    </section>`;
   }).join('');
 }
 
