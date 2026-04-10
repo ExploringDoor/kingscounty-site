@@ -693,24 +693,35 @@ body.dark .stats-table tbody tr.rank-1{background:transparent!important}
 
 
 
-/* ── TEAMS LIST (MLB STYLE) ── */
-.teams-list{display:grid;grid-template-columns:1fr 1fr;gap:0;max-width:1000px;margin:0 auto}
-.teams-list-item{display:flex;align-items:center;gap:16px;padding:20px 24px;border-bottom:1px solid rgba(0,0,0,.08)}
-.teams-list-logo{width:72px;height:72px;border-radius:0;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;flex-shrink:0;border:none;background:transparent;overflow:hidden}
+/* ── TEAMS LIST (BIG CARDS, 3 COLUMNS) ── */
+.teams-list{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1280px;margin:0 auto}
+.teams-list-item{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding:28px 20px;border:1px solid rgba(0,0,0,.08);border-radius:12px;background:#fff;transition:transform .15s,box-shadow .15s}
+.teams-list-item:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(0,0,0,.08);border-color:var(--gold)}
+.teams-list-logo{width:216px;height:216px;border-radius:0;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:32px;flex-shrink:0;border:none;background:transparent;overflow:hidden}
 .teams-list-logo img{width:100%;height:100%;object-fit:contain;display:block}
-.teams-list-info{display:flex;flex-direction:column;gap:4px}
-.teams-list-name{font-family:'Inter',sans-serif;font-weight:700;font-size:17px;color:#1a1a1a;cursor:pointer}
-.teams-list-name:hover{color:#002D72}
-.teams-list-links{display:flex;gap:4px;font-size:13px}
-.teams-list-links a,.teams-list-links span{color:#002D72;cursor:pointer;text-decoration:none;font-weight:500}
+.teams-list-info{display:flex;flex-direction:column;gap:6px;align-items:center}
+.teams-list-name{font-family:'Barlow Condensed',Impact,sans-serif;font-weight:900;font-size:24px;text-transform:uppercase;letter-spacing:.02em;color:#1a1a1a;cursor:pointer;line-height:1.1}
+.teams-list-name:hover{color:var(--gold)}
+.teams-list-links{display:flex;gap:6px;font-size:13px;justify-content:center}
+.teams-list-links a,.teams-list-links span{color:var(--gold);cursor:pointer;text-decoration:none;font-weight:600}
 .teams-list-links a:hover,.teams-list-links span:hover{text-decoration:underline}
 .teams-list-links .sep{color:rgba(0,0,0,.2);cursor:default}
 .teams-list-links .sep:hover{text-decoration:none}
-@media(max-width:700px){
-  .teams-list-item{flex-direction:column;align-items:center;text-align:center;padding:14px 8px;gap:8px;border-right:1px solid rgba(0,0,0,.06)}
-  .teams-list-logo{width:52px;height:52px}
-  .teams-list-info{align-items:center}
-  .teams-list-links{justify-content:center;flex-wrap:wrap}
+
+/* Division filter pills on teams page */
+.teams-div-nav{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.teams-div-pill{font-family:'Barlow Condensed',Impact,sans-serif;font-weight:800;font-size:15px;letter-spacing:.06em;background:#fff;border:2px solid var(--gold);color:var(--gold);border-radius:8px;padding:8px 18px;cursor:pointer;transition:all .15s;text-transform:uppercase;white-space:nowrap}
+.teams-div-pill:hover{background:var(--gold);color:#fff}
+
+@media(max-width:980px){
+  .teams-list{grid-template-columns:repeat(2,1fr);gap:18px}
+  .teams-list-logo{width:180px;height:180px}
+}
+@media(max-width:640px){
+  .teams-list{grid-template-columns:1fr;gap:14px;max-width:420px}
+  .teams-list-item{padding:24px 18px}
+  .teams-list-logo{width:180px;height:180px}
+  .teams-div-pill{font-size:13px;padding:6px 14px}
 }
 
 /* ── DUST INTRO ── */
@@ -2092,7 +2103,16 @@ thead th.sorted-col .sarrow{opacity:1}
 <!-- ═══ PLAYERS PAGE ═══ -->
 <div class="page" id="pg-players">
   <div class="page-header-pad" style="padding:130px 48px 28px;background:var(--bg)">
-    <h1 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(34px,5vw,54px);text-transform:uppercase;line-height:.95">2026 <span style="color:var(--gold)">Teams</span></h1>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;max-width:1280px;margin:0 auto">
+      <h1 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(34px,5vw,54px);text-transform:uppercase;line-height:.95;margin:0">2026 <span style="color:var(--gold)">Teams</span></h1>
+      <div class="teams-div-nav">
+        <button class="teams-div-pill" onclick="jumpToDiv('B')">B</button>
+        <button class="teams-div-pill" onclick="jumpToDiv('C')">C</button>
+        <button class="teams-div-pill" onclick="jumpToDiv('CC')">CC</button>
+        <button class="teams-div-pill" onclick="jumpToDiv('D')">D</button>
+        <button class="teams-div-pill" onclick="jumpToDiv('DD')">DD</button>
+      </div>
+    </div>
   </div>
   <div style="padding:24px 48px 64px;max-width:1400px;margin:0 auto">
     <div class="teams-bigcard-grid" id="teams-bigcard-grid"></div>
@@ -3403,12 +3423,12 @@ function buildTeamsBigCards(){
   grid.innerHTML = DIV_ORDER.map(d => {
     const list = (byDiv[d.code] || []).sort((a,b)=>a.name.localeCompare(b.name));
     if (!list.length) return '';
-    return `<section class="teams-div-section" style="margin-bottom:48px">
-      <div class="teams-div-header" style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--gold)">
-        <h2 style="font-family:'Barlow Condensed',Impact,sans-serif;font-weight:900;font-size:30px;text-transform:uppercase;letter-spacing:.04em;color:#1a1a1a;margin:0">
+    return `<section class="teams-div-section" id="div-${d.code}" style="margin-bottom:56px;scroll-margin-top:180px">
+      <div class="teams-div-header" style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:24px;padding-bottom:12px;border-bottom:3px solid var(--gold)">
+        <h2 style="font-family:'Barlow Condensed',Impact,sans-serif;font-weight:900;font-size:36px;text-transform:uppercase;letter-spacing:.04em;color:#1a1a1a;margin:0">
           <span style="color:var(--gold)">${d.code}</span> Division
         </h2>
-        <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:.1em;color:rgba(0,0,0,.5)">${list.length} Teams</span>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;text-transform:uppercase;letter-spacing:.1em;color:rgba(0,0,0,.5)">${list.length} Teams</span>
       </div>
       <div class="teams-list">
         ${list.map(teamItem).join('')}
@@ -3416,6 +3436,13 @@ function buildTeamsBigCards(){
     </section>`;
   }).join('');
 }
+
+// Jump to a division section from the teams page filter pills
+function jumpToDiv(code){
+  const el = document.getElementById('div-' + code);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+window.jumpToDiv = jumpToDiv;
 
 // ════════════════════════════ TEAM PAGE ══════════════════════════════════
 function teamGoBack(){
