@@ -2486,6 +2486,13 @@ let HISTORY = [];
 let TEAM_CALENDARS_DB = {};
 
 async function loadAllData() {
+  // KCSL: Firebase project not yet created. Use hardcoded fallback data.
+  // When Firebase is ready, set USE_FIREBASE=true and the original path below will run.
+  const USE_FIREBASE = false;
+  if (!USE_FIREBASE) {
+    loadFallbackData();
+    return true;
+  }
   try {
     // Load all collections in parallel from Firebase
     const [teams, histTeams, players, games, recaps, history, calendars, boxScores] = await Promise.all([
@@ -3303,6 +3310,12 @@ function buildSchedule(){
 
 // ════════════════════════════ LEADERBOARD ════════════════════════════════
 function buildLeaderboard(){
+  const ldrGrid = document.getElementById('ldr-grid');
+  if (!ldrGrid) return;
+  if (!PLAYERS.length) {
+    ldrGrid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);font-size:14px">Individual player stats will appear here once games are scored.</div>';
+    return;
+  }
   // OBP = (H+BB)/(AB+BB) approx
   PLAYERS.forEach(p=>{ p.obp = p.ab+p.bb>0 ? (p.h+p.bb)/(p.ab+p.bb) : 0; });
   // ERA proxy: lower rbi against = better; use inverse of rbi as ERA seed
