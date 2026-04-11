@@ -10,7 +10,7 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --navy:#002D72;--navy-light:rgba(0,45,114,.08);--navy-mid:rgba(0,45,114,.15);
+  --navy:#1D4ED8;--navy-light:rgba(0,45,114,.08);--navy-mid:rgba(0,45,114,.15);
   --bg:#f5f6f8;--card:#ffffff;--border:rgba(0,0,0,.1);--border2:rgba(0,0,0,.06);
   --text:#1a1a1a;--muted:#6b7280;--muted2:#9ca3af;
   --green:#16a34a;--green-bg:rgba(22,163,74,.1);
@@ -164,7 +164,7 @@ select.form-input{cursor:pointer}
 .loading{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;padding:20px}
 .spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--navy);border-radius:50%;animation:spin .6s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-@keyframes alertGlow{0%,100%{box-shadow:0 0 8px #FFD700,0 0 16px rgba(255,215,0,.4)}50%{box-shadow:0 0 20px #FFD700,0 0 40px rgba(255,215,0,.6)}}
+@keyframes alertGlow{0%,100%{box-shadow:0 0 8px #FFFFFF,0 0 16px rgba(255,215,0,.4)}50%{box-shadow:0 0 20px #FFFFFF,0 0 40px rgba(255,215,0,.6)}}
 @keyframes alertBlink{0%,100%{opacity:1}50%{opacity:.2}}
 
 /* Scrollbar */
@@ -546,7 +546,7 @@ select.form-input{cursor:pointer}
             <button onclick="alertSetBg('#d1e7dd')" style="font-size:11px;padding:4px 10px;background:#d1e7dd;border:1px solid rgba(0,0,0,.1);border-radius:4px;cursor:pointer">Green</button>
             <button onclick="alertSetBg('#f8d7da')" style="font-size:11px;padding:4px 10px;background:#f8d7da;border:1px solid rgba(0,0,0,.1);border-radius:4px;cursor:pointer">Red</button>
             <button onclick="alertSetBg('#cfe2ff')" style="font-size:11px;padding:4px 10px;background:#cfe2ff;border:1px solid rgba(0,0,0,.1);border-radius:4px;cursor:pointer">Blue</button>
-            <button onclick="alertSetBg('#001a3e')" style="font-size:11px;padding:4px 10px;background:#001a3e;color:#FFD700;border:1px solid rgba(0,0,0,.1);border-radius:4px;cursor:pointer">Navy</button>
+            <button onclick="alertSetBg('#E63946')" style="font-size:11px;padding:4px 10px;background:#E63946;color:#FFFFFF;border:1px solid rgba(0,0,0,.1);border-radius:4px;cursor:pointer">Navy</button>
           </div>
           <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center">
             <label style="font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px">
@@ -1007,13 +1007,13 @@ window.enterCaptainMode = async function() {
       <button onclick="enterCaptainModeWithTeam('${t.id}','${(t.name||t.id).replace(/'/g,"\\\'")}')"
         style="width:100%;padding:14px 18px;background:#f4f6ff;border:2px solid #c7d4f5;border-radius:10px;
                font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;text-transform:uppercase;
-               color:#002D72;cursor:pointer;text-align:left;transition:all .15s;letter-spacing:.04em"
-        onmouseover="this.style.background='#002D72';this.style.color='#FFD700'"
-        onmouseout="this.style.background='#f4f6ff';this.style.color='#002D72'">
+               color:#1D4ED8;cursor:pointer;text-align:left;transition:all .15s;letter-spacing:.04em"
+        onmouseover="this.style.background='#1D4ED8';this.style.color='#FFFFFF'"
+        onmouseout="this.style.background='#f4f6ff';this.style.color='#1D4ED8'">
         ⚾ ${t.name||t.id}
       </button>`).join('');
   } catch(e) {
-    document.getElementById('captain-team-list').innerHTML = `<div style="color:red;font-size:13px;padding:12px">Failed to load teams: ${e.message}<br><br><a href="#" onclick="location.reload()" style="color:#002D72">← Try again</a></div>`;
+    document.getElementById('captain-team-list').innerHTML = `<div style="color:red;font-size:13px;padding:12px">Failed to load teams: ${e.message}<br><br><a href="#" onclick="location.reload()" style="color:#1D4ED8">← Try again</a></div>`;
   }
 };
 
@@ -1041,7 +1041,7 @@ window.enterCaptainModeWithTeam = async function(teamId, teamName) {
   if (brand && !document.getElementById('captain-banner')) {
     const banner = document.createElement('div');
     banner.id = 'captain-banner';
-    banner.style.cssText = 'background:#001a3e;color:#FFD700;font-size:11px;font-weight:700;text-transform:uppercase;padding:8px 14px;letter-spacing:.06em;border-bottom:1px solid #FFD700';
+    banner.style.cssText = 'background:#E63946;color:#FFFFFF;font-size:11px;font-weight:700;text-transform:uppercase;padding:8px 14px;letter-spacing:.06em;border-bottom:1px solid #FFFFFF';
     banner.innerHTML = `⚾ ${teamName}<br><span style="color:rgba(255,255,255,.5);font-size:10px;font-weight:400">Captain Mode</span>`;
     brand.after(banner);
   }
@@ -1381,7 +1381,7 @@ window.openPdfUpload = async function(gameId) {
         <a href="#" onclick="closePdfUpload();return false" style="font-size:13px;color:var(--muted);text-decoration:none">← Back to Scores</a>
       </div>
       <!-- Game header -->
-      <div style="background:#001a3e;border-radius:12px;padding:16px 24px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between">
+      <div style="background:#E63946;border-radius:12px;padding:16px 24px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between">
         <div>
           <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;color:#fff;text-transform:uppercase;letter-spacing:.05em">${awayName} vs ${homeName}</div>
           <div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:2px">${g.date||''} &bull; ${g.field||''}</div>
@@ -1393,14 +1393,14 @@ window.openPdfUpload = async function(gameId) {
       <div id="pdf-upload-zone" style="border:2px dashed #7c3aed;border-radius:14px;padding:48px 24px;text-align:center;background:rgba(124,58,237,.04);cursor:pointer;transition:all .2s;position:relative" ondragover="event.preventDefault();this.style.background='rgba(124,58,237,.1)'" ondragleave="this.style.background='rgba(124,58,237,.04)'" ondrop="event.preventDefault();this.style.background='rgba(124,58,237,.04)';handleCaptainUpload(event.dataTransfer.files[0])">
         <input type="file" accept=".pdf,image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%" onchange="handleCaptainUpload(this.files[0])">
         <div style="font-size:48px;margin-bottom:12px">📋</div>
-        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;color:#001a3e;margin-bottom:6px">Drop Game Sheet Here</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;color:#E63946;margin-bottom:6px">Drop Game Sheet Here</div>
         <div style="font-size:13px;color:var(--muted)">PDF or photo (JPG/PNG) — tap to browse on mobile</div>
       </div>
 
       <!-- Processing state (hidden) -->
       <div id="pdf-processing" style="display:none;text-align:center;padding:48px 24px">
         <div style="font-size:48px;margin-bottom:16px">⚙️</div>
-        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;color:#001a3e;margin-bottom:8px" id="pdf-proc-title">Reading file...</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;color:#E63946;margin-bottom:8px" id="pdf-proc-title">Reading file...</div>
         <div style="font-size:13px;color:var(--muted)" id="pdf-proc-msg">Extracting text from PDF</div>
         <div style="width:60px;height:4px;background:#e5e7eb;border-radius:2px;margin:16px auto 0">
           <div id="pdf-proc-bar" style="height:100%;background:#7c3aed;border-radius:2px;width:10%;transition:width .4s"></div>
@@ -1640,13 +1640,13 @@ function renderBoxScore(awayName, homeName, g) {
     // ── ORDER MODE: big card grid ──────────────────────────────────
     if (orderMode) {
       return `
-      <div class="bs-panel" data-side="${side}" style="border-radius:12px;overflow:hidden;border:2px solid #001a3e">
-        <div style="background:#001a3e;color:#fff;padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
+      <div class="bs-panel" data-side="${side}" style="border-radius:12px;overflow:hidden;border:2px solid #E63946">
+        <div style="background:#E63946;color:#fff;padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
           <div>
             <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;text-transform:uppercase;letter-spacing:.04em">${teamName}</div>
             <div style="font-size:12px;color:rgba(255,255,255,.55);margin-top:2px">Tap players in batting order (1 → 2 → 3…)</div>
           </div>
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:#FFD700">${assignedCount}<span style="font-size:16px;font-weight:400;color:rgba(255,255,255,.4)">/${active.length}</span></div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:#FFFFFF">${assignedCount}<span style="font-size:16px;font-weight:400;color:rgba(255,255,255,.4)">/${active.length}</span></div>
         </div>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;padding:14px">
           ${lineup.map((p, i) => {
@@ -1655,14 +1655,14 @@ function renderBoxScore(awayName, homeName, g) {
             const isAssigned = assigned !== undefined;
             return `
             <div onclick="bsTapOrder('${side}',${i})" style="
-              background:${isAssigned ? '#001a3e' : '#f4f6f9'};
+              background:${isAssigned ? '#E63946' : '#f4f6f9'};
               color:${isAssigned ? '#fff' : '#1a1a1a'};
-              border:2px solid ${isAssigned ? '#001a3e' : 'rgba(0,0,0,.1)'};
+              border:2px solid ${isAssigned ? '#E63946' : 'rgba(0,0,0,.1)'};
               border-radius:10px;padding:14px 8px 12px;text-align:center;cursor:pointer;
               user-select:none;-webkit-tap-highlight-color:transparent;
               transition:transform .1s,box-shadow .1s;active:transform:scale(.95);
               display:flex;flex-direction:column;align-items:center;gap:4px;min-height:90px;justify-content:center">
-              <div style="font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:900;line-height:1;color:${isAssigned ? '#FFD700' : 'rgba(0,0,0,.12)'}">
+              <div style="font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:900;line-height:1;color:${isAssigned ? '#FFFFFF' : 'rgba(0,0,0,.12)'}">
                 ${isAssigned ? assigned : '—'}
               </div>
               <div style="font-size:13px;font-weight:700;line-height:1.2;word-break:break-word">${p.name.split(' ').slice(-1)[0]}</div>
@@ -1680,7 +1680,7 @@ function renderBoxScore(awayName, homeName, g) {
         </div>` : ''}
         <div style="padding:12px 14px 14px;display:flex;gap:8px;border-top:1px solid rgba(0,0,0,.08)">
           <button class="btn btn-outline btn-sm" onclick="bsResetOrder('${side}')" style="padding:8px 14px;font-size:13px;color:#c62828;border-color:#e57373">↺ Reset</button>
-          <button onclick="bsFinalizeOrder('${side}')" style="flex:1;padding:12px;font-size:16px;font-weight:700;background:${assignedCount===active.length?'#1b5e20':'#001a3e'};color:${assignedCount===active.length?'#a5d6a7':'#FFD700'};border:none;border-radius:8px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;letter-spacing:.04em">
+          <button onclick="bsFinalizeOrder('${side}')" style="flex:1;padding:12px;font-size:16px;font-weight:700;background:${assignedCount===active.length?'#1b5e20':'#E63946'};color:${assignedCount===active.length?'#a5d6a7':'#FFFFFF'};border:none;border-radius:8px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;letter-spacing:.04em">
             ${assignedCount === active.length ? '✓ DONE — SET LINEUP' : `SET ORDER (${assignedCount}/${active.length} tapped)`}
           </button>
         </div>
@@ -1694,7 +1694,7 @@ function renderBoxScore(awayName, homeName, g) {
           <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;text-transform:uppercase">${teamName}
             <span style="font-weight:400;font-size:14px;color:rgba(0,0,0,.4)">(${totals.r} R · ${totalH} H)</span>
           </div>
-          <button class="btn btn-outline btn-sm" onclick="bsToggleOrderMode('${side}')" style="font-size:12px;padding:6px 14px;border-color:#001a3e;color:#001a3e">↕ Edit Order</button>
+          <button class="btn btn-outline btn-sm" onclick="bsToggleOrderMode('${side}')" style="font-size:12px;padding:6px 14px;border-color:#E63946;color:#E63946">↕ Edit Order</button>
         </div>
         <div style="overflow-x:auto">
           <div style="min-width:880px">
@@ -1722,7 +1722,7 @@ function renderBoxScore(awayName, homeName, g) {
                   style="display:flex;align-items:center;border-bottom:1px solid rgba(0,0,0,.06);padding:6px 0;${p.dnp?'opacity:.35;':''}">
                 <div style="width:30px;text-align:center;font-family:'Oswald',sans-serif;font-size:13px;font-weight:700;color:rgba(0,0,0,.25)">${orderNum}</div>
                 <div style="width:${isMobile?'0px':'20px'};${!isMobile?'cursor:grab;':''}text-align:center;color:rgba(0,0,0,.2);font-size:14px;user-select:none">${!isMobile?'≡':''}</div>
-                <div style="flex:1;padding:0 6px;font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name}${p.num?' <span style="color:rgba(0,0,0,.3);font-size:10px">#'+p.num+'</span>':''}${p.guest?' <span style="color:#002D72;font-size:9px;font-weight:700">GUEST</span>':''}</div>
+                <div style="flex:1;padding:0 6px;font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name}${p.num?' <span style="color:rgba(0,0,0,.3);font-size:10px">#'+p.num+'</span>':''}${p.guest?' <span style="color:#1D4ED8;font-size:9px;font-weight:700">GUEST</span>':''}</div>
                 <div style="width:50px"><select style="width:46px;padding:3px;border:1px solid rgba(0,0,0,.1);border-radius:3px;font-size:11px;background:#fff" onchange="bsUpdatePos('${side}',${i},this.value)">
                   ${positions.map(pos => `<option value="${pos}"${p.pos===pos?' selected':''}>${pos||'—'}</option>`).join('')}
                 </select></div>
@@ -1743,7 +1743,7 @@ function renderBoxScore(awayName, homeName, g) {
               <div style="flex:1;padding-left:6px;font-size:12px;font-weight:800;letter-spacing:.06em">TOTALS</div>
               <div style="width:50px"></div>
               <div id="bv-total-${side}-ab" style="width:52px;text-align:center;font-family:'Oswald',sans-serif;font-size:15px">${totals.ab}</div>
-              <div id="bv-total-${side}-r" style="width:52px;text-align:center;font-family:'Oswald',sans-serif;font-size:15px;color:#002D72;font-weight:700">${totals.r}</div>
+              <div id="bv-total-${side}-r" style="width:52px;text-align:center;font-family:'Oswald',sans-serif;font-size:15px;color:#1D4ED8;font-weight:700">${totals.r}</div>
               <div id="bv-total-${side}-s" style="width:52px;text-align:center;font-family:'Oswald',sans-serif;font-size:15px">${totals.s}</div>
               <div id="bv-total-${side}-d" style="width:52px;text-align:center;font-family:'Oswald',sans-serif;font-size:15px">${totals.d}</div>
               <div id="bv-total-${side}-t" style="width:52px;text-align:center;font-family:'Oswald',sans-serif;font-size:15px">${totals.t}</div>
@@ -1757,7 +1757,7 @@ function renderBoxScore(awayName, homeName, g) {
         </div>
         <button class="btn btn-outline btn-sm" style="margin:10px 0 0 0" onclick="bsAddGuest('${side}')">+ Guest Player</button>
 
-        <div style="margin-top:20px;padding-top:16px;border-top:2px solid #002D72">
+        <div style="margin-top:20px;padding-top:16px;border-top:2px solid #1D4ED8">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
             <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:.08em;color:rgba(0,0,0,.5)">Pitching</div>
             <button class="btn btn-outline btn-sm" onclick="bsAddPitcher('${side}')">+ Add Pitcher</button>
@@ -1818,14 +1818,21 @@ function renderBoxScore(awayName, homeName, g) {
       </div>`;
   }
 
-  const awayR = bsAwayLineup.filter(p=>!p.dnp).reduce((s,p)=>s+(parseInt(p.r)||0),0);
-  const homeR = bsHomeLineup.filter(p=>!p.dnp).reduce((s,p)=>s+(parseInt(p.r)||0),0);
+  // R (runs) is driven by the inning boxes when they have any value.
+  // Otherwise fall back to summing player runs from the lineup stats.
+  // This makes the linescore usable even before rosters are entered.
+  const awayInningRunsTotal = bsInnings.away.reduce((s,v)=>s+(parseInt(v)||0),0);
+  const homeInningRunsTotal = bsInnings.home.reduce((s,v)=>s+(parseInt(v)||0),0);
+  const awayPlayerRunsTotal = bsAwayLineup.filter(p=>!p.dnp).reduce((s,p)=>s+(parseInt(p.r)||0),0);
+  const homePlayerRunsTotal = bsHomeLineup.filter(p=>!p.dnp).reduce((s,p)=>s+(parseInt(p.r)||0),0);
+  const awayR = awayInningRunsTotal > 0 ? awayInningRunsTotal : awayPlayerRunsTotal;
+  const homeR = homeInningRunsTotal > 0 ? homeInningRunsTotal : homePlayerRunsTotal;
 
   view.innerHTML = `
     <div style="padding:20px 0">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
         <div style="display:flex;align-items:center;gap:12px">
-          <a href="#" onclick="closeBoxScore();return false" style="color:#002D72;font-size:13px;font-weight:600;text-decoration:none">← Back to Scores</a>
+          <a href="#" onclick="closeBoxScore();return false" style="color:#1D4ED8;font-size:13px;font-weight:600;text-decoration:none">← Back to Scores</a>
           ${bsGameData?.done ? `<button class="btn btn-outline btn-sm" style="color:#e65100;border-color:#e65100;font-size:12px" onclick="bsReopenGame()">↺ Reset Game</button>` : ''}
         </div>
         <button class="btn ${bsScoreOnlyMode?'btn-primary':'btn-outline'} btn-sm" onclick="bsToggleScoreOnly()" style="font-size:12px">
@@ -1833,34 +1840,30 @@ function renderBoxScore(awayName, homeName, g) {
         </button>
       </div>
       <!-- Dark navy game banner -->
-      <div style="background:#001a3e;border-radius:12px;padding:16px 24px;margin-bottom:18px;text-align:center;color:#fff">
+      <div style="background:#E63946;border-radius:12px;padding:16px 24px;margin-bottom:18px;text-align:center;color:#fff">
         <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.45);margin-bottom:10px">${g.date||''} · ${g.time||''} · ${g.field||''}</div>
         <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:32px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:16px">
           <span>${awayName}</span>
-          <span style="font-size:48px;color:#FFD700;min-width:56px;text-align:center" id="bs-away-total">${awayR}</span>
+          <span style="font-size:48px;color:#FFFFFF;min-width:56px;text-align:center" id="bs-away-total">${awayR}</span>
           <span style="color:rgba(255,255,255,.2);font-size:22px;font-weight:300">—</span>
-          <span style="font-size:48px;color:#FFD700;min-width:56px;text-align:center" id="bs-home-total">${homeR}</span>
+          <span style="font-size:48px;color:#FFFFFF;min-width:56px;text-align:center" id="bs-home-total">${homeR}</span>
           <span>${homeName}</span>
         </div>
         ${bsScoreOnlyMode ? `
         <div style="display:flex;gap:20px;justify-content:center;margin-top:12px">
           <div style="text-align:center">
             <div style="font-size:10px;color:rgba(255,255,255,.45);font-weight:700;text-transform:uppercase;margin-bottom:4px">${awayName} Score</div>
-            <input type="number" min="0" style="width:80px;padding:8px;text-align:center;font-size:22px;font-family:'Barlow Condensed',sans-serif;font-weight:900;border:2px solid rgba(255,255,255,.2);border-radius:6px;background:rgba(255,255,255,.08);color:#FFD700" value="${awayR}" id="score-only-away" oninput="bsSetScoreOnly('away',this.value)">
+            <input type="number" min="0" style="width:80px;padding:8px;text-align:center;font-size:22px;font-family:'Barlow Condensed',sans-serif;font-weight:900;border:2px solid rgba(255,255,255,.2);border-radius:6px;background:rgba(255,255,255,.08);color:#FFFFFF" value="${awayR}" id="score-only-away" oninput="bsSetScoreOnly('away',this.value)">
           </div>
           <div style="text-align:center">
             <div style="font-size:10px;color:rgba(255,255,255,.45);font-weight:700;text-transform:uppercase;margin-bottom:4px">${homeName} Score</div>
-            <input type="number" min="0" style="width:80px;padding:8px;text-align:center;font-size:22px;font-family:'Barlow Condensed',sans-serif;font-weight:900;border:2px solid rgba(255,255,255,.2);border-radius:6px;background:rgba(255,255,255,.08);color:#FFD700" value="${homeR}" id="score-only-home" oninput="bsSetScoreOnly('home',this.value)">
+            <input type="number" min="0" style="width:80px;padding:8px;text-align:center;font-size:22px;font-family:'Barlow Condensed',sans-serif;font-weight:900;border:2px solid rgba(255,255,255,.2);border-radius:6px;background:rgba(255,255,255,.08);color:#FFFFFF" value="${homeR}" id="score-only-home" oninput="bsSetScoreOnly('home',this.value)">
           </div>
         </div>` : ''}
       </div>
       ${(() => {
-        const awayInningR = bsInnings.away.reduce((s,v)=>s+(parseInt(v)||0),0);
-        const homeInningR = bsInnings.home.reduce((s,v)=>s+(parseInt(v)||0),0);
         const awayH = bsAwayLineup.filter(p=>!p.dnp).reduce((s,p)=>s+((parseInt(p.s)||0)+(parseInt(p.d)||0)+(parseInt(p.t)||0)+(parseInt(p.hr)||0)),0);
         const homeH = bsHomeLineup.filter(p=>!p.dnp).reduce((s,p)=>s+((parseInt(p.s)||0)+(parseInt(p.d)||0)+(parseInt(p.t)||0)+(parseInt(p.hr)||0)),0);
-        const awayMismatch = awayInningR !== awayR;
-        const homeMismatch = homeInningR !== homeR;
         const thStyle = 'padding:6px 4px;font-size:11px;font-weight:700;color:rgba(0,0,0,.4);text-align:center;min-width:36px';
         const tdStyle = 'padding:4px 2px;text-align:center';
         const inputStyle = 'width:36px;padding:4px 2px;text-align:center;border:1px solid rgba(0,0,0,.12);border-radius:3px;font-size:13px;font-family:Oswald,sans-serif;background:#fff';
@@ -1878,14 +1881,14 @@ function renderBoxScore(awayName, homeName, g) {
               <tr style="border-bottom:1px solid rgba(0,0,0,.08)">
                 <td style="text-align:left;padding:6px 12px;font-weight:700;font-size:13px;text-transform:uppercase;white-space:nowrap">${awayName}</td>
                 ${bsInnings.away.map((v,i) => '<td style="'+tdStyle+'"><input type="number" min="0" style="'+inputStyle+'" value="'+v+'" oninput="bsUpdateInning(\'away\','+i+',this.value)"></td>').join('')}
-                <td style="${totalStyle};border-left:2px solid rgba(0,0,0,.15)" id="bs-linescore-away-r">${awayR}${awayMismatch?'<div style=\"font-size:9px;color:#f57c00;font-weight:400\" title=\"Inning boxes sum to '+awayInningR+'\">inns: '+awayInningR+'</div>':''}</td>
+                <td style="${totalStyle};border-left:2px solid rgba(0,0,0,.15)" id="bs-linescore-away-r">${awayR}</td>
                 <td style="${totalStyle}" id="bs-linescore-away-h">${awayH}</td>
                 <td style="${tdStyle}"><input type="number" min="0" style="${inputStyle}" value="${bsAwayErrors}" oninput="bsUpdateErrors('away',this.value)"></td>
               </tr>
               <tr>
                 <td style="text-align:left;padding:6px 12px;font-weight:700;font-size:13px;text-transform:uppercase;white-space:nowrap">${homeName}</td>
                 ${bsInnings.home.map((v,i) => '<td style="'+tdStyle+'"><input type="number" min="0" style="'+inputStyle+'" value="'+v+'" oninput="bsUpdateInning(\'home\','+i+',this.value)"></td>').join('')}
-                <td style="${totalStyle};border-left:2px solid rgba(0,0,0,.15)" id="bs-linescore-home-r">${homeR}${homeMismatch?'<div style=\"font-size:9px;color:#f57c00;font-weight:400\" title=\"Inning boxes sum to '+homeInningR+'\">inns: '+homeInningR+'</div>':''}</td>
+                <td style="${totalStyle};border-left:2px solid rgba(0,0,0,.15)" id="bs-linescore-home-r">${homeR}</td>
                 <td style="${totalStyle}" id="bs-linescore-home-h">${homeH}</td>
                 <td style="${tdStyle}"><input type="number" min="0" style="${inputStyle}" value="${bsHomeErrors}" oninput="bsUpdateErrors('home',this.value)"></td>
               </tr>
@@ -1895,9 +1898,9 @@ function renderBoxScore(awayName, homeName, g) {
         </div>`;
       })()}
       ${bsScoreOnlyMode ? '' : `
-      <div style="display:flex;gap:0;margin-bottom:16px;border:2px solid #001a3e;border-radius:10px;overflow:hidden">
-        <button id="bs-tab-away" onclick="bsSwitchBsTab('away')" style="flex:1;padding:12px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;text-transform:uppercase;background:#001a3e;color:#FFD700;border:none;cursor:pointer;letter-spacing:.04em">${awayName}</button>
-        <button id="bs-tab-home" onclick="bsSwitchBsTab('home')" style="flex:1;padding:12px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;text-transform:uppercase;background:#f4f6f9;color:#001a3e;border:none;cursor:pointer;letter-spacing:.04em">${homeName}</button>
+      <div style="display:flex;gap:0;margin-bottom:16px;border:2px solid #E63946;border-radius:10px;overflow:hidden">
+        <button id="bs-tab-away" onclick="bsSwitchBsTab('away')" style="flex:1;padding:12px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;text-transform:uppercase;background:#E63946;color:#FFFFFF;border:none;cursor:pointer;letter-spacing:.04em">${awayName}</button>
+        <button id="bs-tab-home" onclick="bsSwitchBsTab('home')" style="flex:1;padding:12px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;text-transform:uppercase;background:#f4f6f9;color:#E63946;border:none;cursor:pointer;letter-spacing:.04em">${homeName}</button>
       </div>
       <div id="bs-panel-away-wrap">
         ${renderPanel(bsAwayLineup, awayName, 'away')}
@@ -1927,8 +1930,8 @@ window.bsSwitchBsTab = function(tab) {
   document.getElementById('bs-panel-home-wrap').style.display = tab === 'home' ? 'block' : 'none';
   const awayBtn = document.getElementById('bs-tab-away');
   const homeBtn = document.getElementById('bs-tab-home');
-  if (awayBtn) { awayBtn.style.background = tab==='away'?'#001a3e':'#f4f6f9'; awayBtn.style.color = tab==='away'?'#FFD700':'#001a3e'; }
-  if (homeBtn) { homeBtn.style.background = tab==='home'?'#001a3e':'#f4f6f9'; homeBtn.style.color = tab==='home'?'#FFD700':'#001a3e'; }
+  if (awayBtn) { awayBtn.style.background = tab==='away'?'#E63946':'#f4f6f9'; awayBtn.style.color = tab==='away'?'#FFFFFF':'#E63946'; }
+  if (homeBtn) { homeBtn.style.background = tab==='home'?'#E63946':'#f4f6f9'; homeBtn.style.color = tab==='home'?'#FFFFFF':'#E63946'; }
 };
 
 let bsDragIdx = null, bsDragSide = null;
@@ -1941,7 +1944,7 @@ window.bsDragStart = function(e) {
 window.bsDragOver = function(e) {
   e.preventDefault();
   if (e.currentTarget.dataset.side !== bsDragSide) return;
-  e.currentTarget.style.borderTop = '2px solid #002D72';
+  e.currentTarget.style.borderTop = '2px solid #1D4ED8';
 };
 window.bsDragLeave = function(e) { e.currentTarget.style.borderTop = ''; };
 window.bsDrop = function(e) {
@@ -2802,9 +2805,9 @@ window.alertUpdatePreview = function() {
   const r = parseInt(bg.slice(1,3),16), g = parseInt(bg.slice(3,5),16), b = parseInt(bg.slice(5,7),16);
   preview.style.color = (0.299*r + 0.587*g + 0.114*b)/255 < 0.5 ? '#fff' : '#111';
   if (border === 'none') { preview.style.border = '1px solid rgba(0,0,0,.1)'; preview.style.boxShadow = 'none'; preview.style.animation = ''; }
-  else if (border === 'solid') { preview.style.border = '2px solid #002D72'; preview.style.boxShadow = 'none'; preview.style.animation = ''; }
-  else if (border === 'dashed') { preview.style.border = '2px dashed #002D72'; preview.style.boxShadow = 'none'; preview.style.animation = ''; }
-  else if (border === 'glow') { preview.style.border = '2px solid #FFD700'; preview.style.boxShadow = '0 0 12px #FFD700,0 0 24px rgba(255,215,0,.4)'; preview.style.animation = 'alertGlow 1.5s ease-in-out infinite'; }
+  else if (border === 'solid') { preview.style.border = '2px solid #1D4ED8'; preview.style.boxShadow = 'none'; preview.style.animation = ''; }
+  else if (border === 'dashed') { preview.style.border = '2px dashed #1D4ED8'; preview.style.boxShadow = 'none'; preview.style.animation = ''; }
+  else if (border === 'glow') { preview.style.border = '2px solid #FFFFFF'; preview.style.boxShadow = '0 0 12px #FFFFFF,0 0 24px rgba(255,215,0,.4)'; preview.style.animation = 'alertGlow 1.5s ease-in-out infinite'; }
   if (blink) preview.style.animation = (preview.style.animation ? preview.style.animation + ',' : '') + 'alertBlink 1s step-start infinite';
 };
 
@@ -3329,7 +3332,7 @@ window.renderFinancials = function() {
     const totalExp  = PAYMENTS.filter(p=>p.type==='expense').reduce((s,p)=>s+(p.amount||0),0);
     const outstanding = totalDues - totalPaid;
     summary.innerHTML = [
-      ['Total Dues', `$${totalDues.toLocaleString()}`, '#002D72'],
+      ['Total Dues', `$${totalDues.toLocaleString()}`, '#1D4ED8'],
       ['Collected', `$${totalPaid.toLocaleString()}`, '#16a34a'],
       ['Outstanding', `$${Math.max(0,outstanding).toLocaleString()}`, outstanding>0?'#dc2626':'#16a34a'],
       ['Expenses', `$${totalExp.toLocaleString()}`, '#d97706'],
@@ -3518,7 +3521,7 @@ window.sendEmailBlast = async function() {
           from_name: 'KCSL Softball',
           from: 'toddharris1222@gmail.com',
           content: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:24px">
-            <div style="background:#002D72;color:#fff;padding:16px 24px;border-radius:8px 8px 0 0;font-family:Arial,sans-serif">
+            <div style="background:#1D4ED8;color:#fff;padding:16px 24px;border-radius:8px 8px 0 0;font-family:Arial,sans-serif">
               <strong style="font-size:20px;letter-spacing:.05em">⚾ KCSL SOFTBALL</strong>
             </div>
             <div style="background:#fff;border:1px solid #e5e7eb;border-top:none;padding:24px;border-radius:0 0 8px 8px;line-height:1.6;color:#1a1a1a">
@@ -3723,7 +3726,7 @@ window.previewBlast = function() {
   const win = window.open('', '_blank', 'width=680,height=600');
   win.document.write(`<!DOCTYPE html><html><head><title>Preview: ${subject}</title></head><body style="margin:0;padding:20px;background:#f5f5f5;font-family:Arial,sans-serif">
     <div style="max-width:600px;margin:0 auto">
-      <div style="background:#002D72;color:#fff;padding:16px 24px;border-radius:8px 8px 0 0"><strong style="font-size:20px">⚾ KCSL SOFTBALL</strong></div>
+      <div style="background:#1D4ED8;color:#fff;padding:16px 24px;border-radius:8px 8px 0 0"><strong style="font-size:20px">⚾ KCSL SOFTBALL</strong></div>
       <div style="background:#fff;border:1px solid #e5e7eb;border-top:none;padding:24px;border-radius:0 0 8px 8px;line-height:1.6;color:#1a1a1a">${body.replace(/\n/g,'<br>')}</div>
       <div style="text-align:center;padding:16px;font-size:11px;color:#9ca3af">KCSL — Kings County Softball League</div>
     </div>
