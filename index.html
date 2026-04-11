@@ -817,7 +817,7 @@ body.ticker-hidden #score-ticker{display:none}
 .hs-row.leader .hs-rank{color:var(--blue,#1D4ED8)}
 .hs-logo{width:38px;height:38px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
 .hs-logo img{width:100%;height:100%;object-fit:contain}
-.hs-team{font-family:'Barlow Condensed',Impact,sans-serif;font-weight:900;font-size:17px;text-transform:uppercase;letter-spacing:.03em;color:#0A0E1A;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hs-team{font-family:'Barlow Condensed',Impact,sans-serif;font-weight:900;font-size:15px;text-transform:uppercase;letter-spacing:.02em;color:#0A0E1A;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .hs-rec{font-family:'Barlow Condensed',Impact,sans-serif;font-weight:900;font-size:17px;color:#0A0E1A;flex-shrink:0}
 .hs-empty{padding:30px 20px;text-align:center;font-size:13px;color:rgba(0,0,0,.4)}
 
@@ -3346,7 +3346,7 @@ function buildHomeSidebar(){
       <div class="hs-logo">${LOGO_TEAMS.has(t.id)
         ? `<img src="logos/${t.id}.png" alt="${t.name}" loading="lazy">`
         : `<span style="width:12px;height:12px;border-radius:50%;background:${t.color||'#999'};display:block"></span>`}</div>
-      <div class="hs-team">${t.short || t.name}</div>
+      <div class="hs-team">${t.name}</div>
       <div class="hs-rec">${t.w||0}-${t.l||0}</div>
     </div>`).join('');
 }

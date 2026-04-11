@@ -208,16 +208,21 @@ select.form-input{cursor:pointer}
 
 <!-- TEAM PICKER -->
 <div id="team-picker" style="padding-top:48px;min-height:100vh;background:var(--bg)">
-  <div style="max-width:860px;margin:0 auto;padding:40px 24px 80px">
+  <div style="max-width:1280px;margin:0 auto;padding:40px 24px 80px">
     <div style="text-align:center;margin-bottom:36px">
       <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:36px;text-transform:uppercase;color:var(--brand);letter-spacing:-.01em">Captain Dashboard</div>
       <div style="font-size:14px;color:var(--muted);margin-top:6px">Select your team to get started</div>
     </div>
-    <div id="team-picker-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px">
+    <div id="team-picker-grid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:18px">
       <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted)"><div class="spinner" style="margin:0 auto 12px"></div>Loading teams...</div>
     </div>
   </div>
 </div>
+<style>
+@media(max-width:900px){ #team-picker-grid{grid-template-columns:repeat(4,1fr)!important} }
+@media(max-width:640px){ #team-picker-grid{grid-template-columns:repeat(3,1fr)!important} }
+@media(max-width:420px){ #team-picker-grid{grid-template-columns:repeat(2,1fr)!important} }
+</style>
 
 <!-- CAPTAIN APP -->
 <div id="app" class="app">
@@ -244,8 +249,6 @@ select.form-input{cursor:pointer}
     <div class="tab-item" data-tab="scores" onclick="showTab('scores')">Submit Score</div>
     <div class="tab-item" data-tab="payments" onclick="showTab('payments')">Payments</div>
     <div class="tab-item" data-tab="attendance" onclick="showTab('attendance')">Attendance</div>
-    <div class="tab-item" data-tab="teamchat" onclick="showTab('teamchat')">Team Chat <span class="tab-badge" id="badge-teamchat" hidden></span></div>
-    <div class="tab-item" data-tab="captchat" onclick="showTab('captchat')">Captains Chat <span class="tab-badge" id="badge-captchat" hidden></span></div>
     <div class="tab-item" data-tab="announcements" onclick="showTab('announcements')">Announcements</div>
   </div>
 
@@ -323,34 +326,6 @@ select.form-input{cursor:pointer}
       </div>
     </div>
 
-    <!-- TEAM CHAT -->
-    <div class="section" id="sec-teamchat">
-      <div class="section-title">Team Chat</div>
-      <div class="section-sub">Send messages to your team. Players with an email on file will be notified.</div>
-      <div class="chat-wrap">
-        <div class="chat-messages" id="teamchat-messages"><div class="empty">No messages yet.</div></div>
-        <div class="chat-input-row">
-          <input class="chat-input" id="teamchat-input" placeholder="Message your team..." maxlength="500"
-            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();window.sendTeamMsg()}">
-          <button class="btn btn-primary btn-sm" onclick="window.sendTeamMsg()">Send</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- CAPTAINS CHAT -->
-    <div class="section" id="sec-captchat">
-      <div class="section-title">Captains Chat</div>
-      <div class="section-sub">Private group chat — only team captains can read and post here</div>
-      <div class="chat-wrap">
-        <div class="chat-messages" id="captchat-messages"><div class="empty">No messages yet.</div></div>
-        <div class="chat-input-row">
-          <input class="chat-input" id="captchat-input" placeholder="Message all captains..." maxlength="500"
-            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();window.sendCaptMsg()}">
-          <button class="btn btn-primary btn-sm" onclick="window.sendCaptMsg()">Send</button>
-        </div>
-      </div>
-    </div>
-
     <!-- ANNOUNCEMENTS -->
     <div class="section" id="sec-announcements">
       <div class="section-title">Announcements</div>
@@ -423,8 +398,7 @@ let MY_PLAYERS = [];
 let MY_SUBMISSIONS = [];
 let ALL_CAPTAINS = [];
 let PAYMENT_DATA = {};   // keyed by player_id
-let _unsubTeamChat = null;
-let _unsubCaptChat = null;
+// (chat features removed — Team Chat and Captains Chat tabs were deleted)
 
 // ═══════════════════════════════════════════════════════════════════
 // UTILITIES
@@ -476,14 +450,14 @@ async function initTeamPicker() {
     ALL_TEAMS = teams;
     const grid = document.getElementById('team-picker-grid');
     grid.innerHTML = teams.map(t => `
-      <div onclick="selectTeam('${t.id}')" style="background:#fff;border:2px solid ${t.color||'#002D72'}22;border-radius:14px;padding:20px 16px;text-align:center;cursor:pointer;transition:all .15s;user-select:none"
-        onmouseover="this.style.borderColor='${t.color||'#002D72'}';this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(0,0,0,.1)'"
-        onmouseout="this.style.borderColor='${t.color||'#002D72'}22';this.style.transform='';this.style.boxShadow=''">
-        <div style="width:52px;height:52px;margin:0 auto 10px;display:flex;align-items:center;justify-content:center">
-          <img src="logos/${t.id}.png" style="max-width:52px;max-height:52px;object-fit:contain" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-          <div style="display:none;width:52px;height:52px;border-radius:50%;background:${t.color||'#002D72'};color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;align-items:center;justify-content:center">${(t.short||t.name||'?').slice(0,3)}</div>
+      <div onclick="selectTeam('${t.id}')" style="background:#fff;border:2px solid ${t.color||'#E63946'}22;border-radius:14px;padding:18px 14px;text-align:center;cursor:pointer;transition:all .15s;user-select:none"
+        onmouseover="this.style.borderColor='${t.color||'#E63946'}';this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(0,0,0,.1)'"
+        onmouseout="this.style.borderColor='${t.color||'#E63946'}22';this.style.transform='';this.style.boxShadow=''">
+        <div style="width:104px;height:104px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center">
+          <img src="logos/${t.id}.png" style="max-width:104px;max-height:104px;object-fit:contain" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div style="display:none;width:104px;height:104px;border-radius:50%;background:${t.color||'#E63946'};color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:30px;align-items:center;justify-content:center">${(t.short||t.name||'?').slice(0,3)}</div>
         </div>
-        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;text-transform:uppercase;color:${t.color||'#002D72'};line-height:1.2">${t.name}</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;text-transform:uppercase;color:${t.color||'#E63946'};line-height:1.2">${t.name}</div>
       </div>`).join('');
   } catch(e) {
     document.getElementById('team-picker-grid').innerHTML = `<div style="grid-column:1/-1;text-align:center;color:var(--red);padding:40px">Failed to load teams: ${e.message}</div>`;
@@ -501,9 +475,6 @@ window.selectTeam = async function(teamId) {
 };
 
 window.changeTeam = function() {
-  // Unsubscribe from chat listeners
-  if (_unsubTeamChat) { _unsubTeamChat(); _unsubTeamChat = null; }
-  if (_unsubCaptChat) { _unsubCaptChat(); _unsubCaptChat = null; }
   captainData = null; currentUser = null;
   document.getElementById('app').style.display = 'none';
   document.getElementById('team-picker').style.display = 'block';
@@ -522,23 +493,6 @@ window.showTab = function(name) {
   document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
   document.getElementById('sec-' + name)?.classList.add('active');
   document.querySelector(`.tab-item[data-tab="${name}"]`)?.classList.add('active');
-  // Clear unread badge and mark as read
-  if (name === 'teamchat') {
-    localStorage.setItem('lastRead_teamchat_' + (currentUser?.email||''), Date.now());
-    const b = document.getElementById('badge-teamchat'); if (b) b.hidden = true;
-    setTimeout(() => {
-      const msgs = document.getElementById('teamchat-messages');
-      if (msgs) msgs.scrollTop = msgs.scrollHeight;
-    }, 50);
-  }
-  if (name === 'captchat') {
-    localStorage.setItem('lastRead_captchat_' + (currentUser?.email||''), Date.now());
-    const b = document.getElementById('badge-captchat'); if (b) b.hidden = true;
-    setTimeout(() => {
-      const msgs = document.getElementById('captchat-messages');
-      if (msgs) msgs.scrollTop = msgs.scrollHeight;
-    }, 50);
-  }
   if (name === 'attendance') renderAttendance();
   if (name === 'payments') renderPayments();
 };
@@ -608,7 +562,6 @@ async function loadAllData() {
     renderPendingGames();
     renderSubmissions();
     renderAnnouncements();
-    setupChatListeners();
   } catch(e) {
     console.error('Data load failed:', e);
     toast('Failed to load data: ' + e.message, 'error');
@@ -809,7 +762,8 @@ function renderSchedule() {
     const opponent = isHome ? g.away : g.home;
     const homeAway = isHome ? 'vs' : '@';
     const done = g.done;
-    const canEdit = !done; // only allow editing future/pending games
+    // Captains get a read-only view of the schedule. Only the admin can
+    // reschedule, change fields, or edit game metadata.
     return `<div class="game-card" style="flex-direction:column;align-items:stretch;gap:8px" id="gc-${g.id}">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
         <div>
@@ -825,10 +779,8 @@ function renderSchedule() {
             ? `<div class="score-display">${g.away_score ?? '-'} &ndash; ${g.home_score ?? '-'}</div><span class="badge badge-done">Final</span>`
             : `<span class="badge badge-pending">Upcoming</span>`
           }
-          ${canEdit ? `<button class="btn btn-outline btn-sm" onclick="toggleEditGame('${g.id}')">✏️ Edit</button>` : ''}
         </div>
       </div>
-      ${canEdit ? `<div id="sched-edit-${g.id}" style="display:none"></div>` : ''}
     </div>`;
   }).join('');
 }
@@ -1505,152 +1457,7 @@ function fmtChatTime(ts) {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' ' + time;
 }
 
-function renderChatMessages(msgs, containerId, myEmail) {
-  const el = document.getElementById(containerId);
-  if (!el) return;
-  if (!msgs.length) { el.innerHTML = '<div class="empty">No messages yet. Say hello!</div>'; return; }
-  el.innerHTML = msgs.map(m => {
-    const mine = m.author_email === myEmail;
-    return `<div class="chat-msg ${mine ? 'mine' : 'theirs'}">
-      ${!mine ? `<div class="chat-meta">${esc(m.team_name || m.author_email)}</div>` : ''}
-      <div class="chat-bubble">${esc(m.text)}</div>
-      <div class="chat-meta">${fmtChatTime(m.timestamp)}</div>
-    </div>`;
-  }).join('');
-  el.scrollTop = el.scrollHeight;
-}
-
-function updateBadge(badgeId, lastReadKey) {
-  // Badge is set by the onSnapshot handler when new messages arrive
-}
-
-function setupChatListeners() {
-  // ── Team Chat ──
-  if (_unsubTeamChat) _unsubTeamChat();
-  const teamQ = query(
-    collection(db, 'team_messages'),
-    where('team_id', '==', captainData.team_id),
-    orderBy('timestamp', 'asc'),
-    limit(100)
-  );
-  _unsubTeamChat = onSnapshot(teamQ, snap => {
-    const msgs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    const activeTab = document.querySelector('.tab-item.active')?.dataset?.tab;
-    renderChatMessages(msgs, 'teamchat-messages', currentUser.email);
-    // Show badge if not currently viewing this tab
-    if (activeTab !== 'teamchat' && msgs.length > 0) {
-      const lastRead = parseInt(localStorage.getItem('lastRead_teamchat_' + currentUser.email) || '0');
-      const lastMsg = msgs[msgs.length - 1];
-      const lastMsgTime = lastMsg.timestamp?.toDate ? lastMsg.timestamp.toDate().getTime() : 0;
-      if (lastMsgTime > lastRead) {
-        const unread = msgs.filter(m => {
-          const mt = m.timestamp?.toDate ? m.timestamp.toDate().getTime() : 0;
-          return mt > lastRead && m.author_email !== currentUser.email;
-        }).length;
-        const b = document.getElementById('badge-teamchat');
-        if (b && unread > 0) { b.textContent = unread > 9 ? '9+' : unread; b.hidden = false; }
-      }
-    }
-  });
-
-  // ── Captains Chat ──
-  if (_unsubCaptChat) _unsubCaptChat();
-  const captQ = query(
-    collection(db, 'captain_chat'),
-    orderBy('timestamp', 'asc'),
-    limit(100)
-  );
-  _unsubCaptChat = onSnapshot(captQ, snap => {
-    const msgs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    const activeTab = document.querySelector('.tab-item.active')?.dataset?.tab;
-    renderChatMessages(msgs, 'captchat-messages', currentUser.email);
-    if (activeTab !== 'captchat' && msgs.length > 0) {
-      const lastRead = parseInt(localStorage.getItem('lastRead_captchat_' + currentUser.email) || '0');
-      const unread = msgs.filter(m => {
-        const mt = m.timestamp?.toDate ? m.timestamp.toDate().getTime() : 0;
-        return mt > lastRead && m.author_email !== currentUser.email;
-      }).length;
-      const b = document.getElementById('badge-captchat');
-      if (b && unread > 0) { b.textContent = unread > 9 ? '9+' : unread; b.hidden = false; }
-    }
-  });
-}
-
-window.sendTeamMsg = async function() {
-  const input = document.getElementById('teamchat-input');
-  const text = input.value.trim();
-  if (!text) return;
-  input.value = '';
-  input.disabled = true;
-  try {
-    await addDoc(collection(db, 'team_messages'), {
-      text,
-      author_email: currentUser.email,
-      team_id: captainData.team_id,
-      team_name: MY_TEAM?.name || captainData.team_name,
-      team_color: MY_TEAM?.color || '#002D72',
-      timestamp: serverTimestamp(),
-    });
-    // Email players who have an email on file
-    if (EMAILJS_ENABLED) {
-      const recipients = MY_PLAYERS.filter(p => p.email);
-      for (const p of recipients) {
-        try {
-          await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEAM_TEMPLATE, {
-            to_email: p.email,
-            to_name: p.name,
-            team_name: MY_TEAM?.name || captainData.team_name,
-            captain_email: currentUser.email,
-            message: text,
-            portal_url: window.location.href,
-          });
-        } catch(e) { console.warn('Email failed for', p.email, e); }
-      }
-    }
-    localStorage.setItem('lastRead_teamchat_' + currentUser.email, Date.now());
-    const b = document.getElementById('badge-teamchat'); if (b) b.hidden = true;
-  } catch(e) { toast('Failed to send: ' + e.message, 'error'); }
-  input.disabled = false;
-  input.focus();
-};
-
-window.sendCaptMsg = async function() {
-  const input = document.getElementById('captchat-input');
-  const text = input.value.trim();
-  if (!text) return;
-  input.value = '';
-  input.disabled = true;
-  try {
-    await addDoc(collection(db, 'captain_chat'), {
-      text,
-      author_email: currentUser.email,
-      team_id: captainData.team_id,
-      team_name: MY_TEAM?.name || captainData.team_name,
-      team_color: MY_TEAM?.color || '#002D72',
-      timestamp: serverTimestamp(),
-    });
-    // Email all other captains
-    if (EMAILJS_ENABLED) {
-      const others = ALL_CAPTAINS.filter(c => c.email && c.email !== currentUser.email);
-      for (const c of others) {
-        try {
-          await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_CAPT_TEMPLATE, {
-            to_email: c.email,
-            to_name: c.team_name || c.email,
-            from_team: MY_TEAM?.name || captainData.team_name,
-            from_email: currentUser.email,
-            message: text,
-            portal_url: window.location.href,
-          });
-        } catch(e) { console.warn('Email failed for', c.email, e); }
-      }
-    }
-    localStorage.setItem('lastRead_captchat_' + currentUser.email, Date.now());
-    const b = document.getElementById('badge-captchat'); if (b) b.hidden = true;
-  } catch(e) { toast('Failed to send: ' + e.message, 'error'); }
-  input.disabled = false;
-  input.focus();
-};
+// Chat features removed (Team Chat and Captains Chat tabs were deleted).
 
 </script>
 </body>

@@ -215,115 +215,14 @@ body.dark [style*="border:1px solid rgba(0,0,0"]{border-color:rgba(255,255,255,.
   </div>
 </div>
 
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-logo-parallax"></div>
-  <div class="hero-vignette"></div>
-  <div class="hero-content">
-    <div class="hero-eyebrow">📸 League Gallery</div>
-    <h1 class="hero-title">KCSL <span>Photos</span></h1>
-  </div>
-</div>
-
-<!-- FILTER -->
-<div class="filter-bar">
-  <button class="f-btn active" onclick="filterSections('all',this)">All</button>
-  <button class="f-btn" onclick="filterSections('champs',this)">Champions</button>
-  <button class="f-btn" onclick="filterSections('logos',this)">League Identity</button>
-  <button class="f-btn" onclick="filterSections('fields',this)">Fields</button>
-</div>
-
-<!-- CHAMPIONS -->
-<div class="section" data-cat="champs" id="sec-champs">
-  <div class="section-header">
-    <div class="section-title">Championship <span>Photos</span></div>
-    <div class="section-meta">Gold &amp; Silver Cup · 2019 – 2025</div>
-  </div>
-
-  <!-- KI Silver Cup 2025 — hero card -->
-  <div class="champ-card" onclick="openLb('kcsl-champions-placeholder.png','Keneseth Israel — 2025 KCSL Silver Cup Champions')">
-    <img src="kcsl-champions-placeholder.png" alt="KI Silver Cup 2025">
-    <div class="champ-card-glass"></div>
-    <div class="champ-card-info">
-      <div class="champ-card-text">
-        <div class="champ-tag">🥈 Silver Cup Champions</div>
-        <div class="champ-name">Keneseth<br>Israel</div>
-        <div class="champ-sub">2025 KCSL Silver Cup · KI Softball Club</div>
-      </div>
-      <div class="champ-year-badge">2025</div>
-    </div>
-  </div>
-
-  <!-- Beth Am 2019 -->
-  <div class="champ-card" style="margin-top:6px" onclick="openLb('kcsl-champions-placeholder.png','Beth Am — 2019 KCSL Gold Cup Champions')">
-    <img src="kcsl-champions-placeholder.png" alt="Beth Am 2019">
-    <div class="champ-card-glass"></div>
-    <div class="champ-card-info">
-      <div class="champ-card-text">
-        <div class="champ-tag">🏆 Gold Cup Champions</div>
-        <div class="champ-name">Beth Am</div>
-        <div class="champ-sub">2019 KCSL Gold Cup · League Champions</div>
-      </div>
-      <div class="champ-year-badge">2019</div>
-    </div>
-  </div>
-
-  <div class="photo-grid" style="margin-top:6px">
-    <div class="upload-card">
-      <div class="upload-icon">📷</div>
-      <div class="upload-label">Add Champion Photo</div>
-      <div class="upload-sub">Drop or share an image</div>
-    </div>
-    <div class="upload-card">
-      <div class="upload-icon">🏆</div>
-      <div class="upload-label">Add Trophy Shot</div>
-      <div class="upload-sub">Drop or share an image</div>
-    </div>
-  </div>
-</div>
-
-<!-- LEAGUE IDENTITY -->
-<div class="section" data-cat="logos" id="sec-logos">
-  <div class="section-header">
-    <div class="section-title">League <span>Identity</span></div>
-    <div class="section-meta">Official KCSL Branding · 2025</div>
-  </div>
-  <div class="logo-grid">
-    <div class="logo-card logo-card-dark" onclick="openLb('kcsl-logo.svg','KCSL Official Logo — Dark Edition')">
-      <img src="kcsl-logo.svg" alt="KCSL Logo Dark">
-      <div class="logo-card-label">Official Logo — Dark Edition</div>
-    </div>
-    <div class="logo-card logo-card-light" onclick="openLb('kcsl-logo.svg','KCSL Official Logo — Glass Trophy Edition')">
-      <img src="kcsl-logo.svg" alt="KCSL Logo Glass">
-      <div class="logo-card-label" style="color:rgba(0,0,0,.4)">Glass Trophy Edition</div>
-    </div>
-  </div>
-</div>
-
-<!-- FIELDS -->
-<div class="section" data-cat="fields" id="sec-fields">
-  <div class="section-header">
-    <div class="section-title">Field <span>Photos</span></div>
-    <div class="section-meta">8 Venues Across Montgomery &amp; Bucks County</div>
-  </div>
-  <div class="photo-grid">
-    <div class="upload-card"><div class="upload-icon">⚾</div><div class="upload-label">Mondauk Park</div><div class="upload-sub">Ambler, PA</div></div>
-    <div class="upload-card"><div class="upload-icon">⚾</div><div class="upload-label">Schaefer Park</div><div class="upload-sub">Southampton, PA</div></div>
-    <div class="upload-card"><div class="upload-icon">⚾</div><div class="upload-label">Carpenter Park</div><div class="upload-sub">Horsham, PA</div></div>
-    <div class="upload-card"><div class="upload-icon">⚾</div><div class="upload-label">Lukens Field</div><div class="upload-sub">Horsham, PA</div></div>
-    <div class="upload-card"><div class="upload-icon">⚾</div><div class="upload-label">Plymouth Field</div><div class="upload-sub">Plymouth Meeting, PA</div></div>
-    <div class="upload-card"><div class="upload-icon">⚾</div><div class="upload-label">Ogontz Field</div><div class="upload-sub">Elkins Park, PA</div></div>
-    <div class="upload-card"><div class="upload-icon">⚾</div><div class="upload-label">Sunnybrook</div><div class="upload-sub">Lansdale, PA</div></div>
-    <div class="upload-card"><div class="upload-icon">➕</div><div class="upload-label">Add Game Photos</div><div class="upload-sub">Any field</div></div>
-  </div>
-</div>
-
-<!-- LIGHTBOX -->
-<div class="lightbox" id="lightbox" onclick="closeLb()">
-  <div class="lb-close" onclick="closeLb()">✕</div>
-  <img class="lb-img" id="lbImg" src="" alt="" onclick="event.stopPropagation()">
-  <div class="lb-caption" id="lbCap"></div>
-</div>
+<!-- COMING SOON -->
+<main style="max-width:760px;margin:0 auto;padding:160px 24px 100px;text-align:center;min-height:70vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px">
+  <div style="font-size:72px;line-height:1">📷</div>
+  <h1 style="font-family:'Barlow Condensed',Impact,sans-serif;font-weight:900;font-size:clamp(40px,6vw,72px);text-transform:uppercase;letter-spacing:.02em;color:#0A0E1A;margin:0">Photo <span style="color:#E63946">Gallery</span></h1>
+  <p style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:22px;text-transform:uppercase;letter-spacing:.08em;color:rgba(0,0,0,.5);margin:0">Pics Coming Soon</p>
+  <p style="max-width:480px;font-size:16px;line-height:1.6;color:rgba(0,0,0,.65);margin:12px 0 0">Opening weekend hasn't happened yet! Game photos, team pics, and championship moments will show up here as the 2026 KCSL season unfolds.</p>
+  <a href="index.html" style="display:inline-block;margin-top:16px;background:#E63946;color:#fff;padding:14px 28px;border-radius:8px;font-family:'Barlow Condensed',Impact,sans-serif;font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:.08em;text-decoration:none">← Back to Home</a>
+</main>
 
 <footer>
   <div class="ft-logo">⬡ KCSL</div>
