@@ -173,7 +173,22 @@ body.dark [style*="border-bottom:1px solid rgba(0,0,0"]{border-bottom-color:rgba
 .nav-dd-wrap>a,.nav-dd-wrap>span{display:flex!important;align-items:center;gap:4px}
 .nav-dd-arrow{width:9px;height:6px;flex-shrink:0;opacity:.5;transition:transform .2s}
 .nav-dd-wrap:hover .nav-dd-arrow{transform:rotate(180deg)}
-.nav-dropdown{display:none;position:absolute;top:calc(100% + 4px);left:0;background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.12);padding:10px;z-index:500;min-width:180px;animation:ddIn .15s ease}
+.nav-dropdown{display:none;position:absolute;top:calc(100% + 4px);left:0;background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.12);padding:10px;z-index:500;min-width:220px;animation:ddIn .15s ease}
+/* Division row in Teams dropdown — hover to reveal nested team submenu */
+.nav-div-row{position:relative;display:flex;align-items:center;justify-content:space-between;padding:10px 14px;font-size:13px;font-weight:700;color:#0A0E1A;cursor:pointer;border-radius:8px;transition:background .12s}
+.nav-div-row:hover{background:rgba(230,57,70,.08)}
+.nav-div-label{font-family:'Inter',-apple-system,sans-serif;letter-spacing:.01em}
+.nav-div-arrow{color:rgba(0,0,0,.35);font-size:18px;line-height:1;font-weight:400}
+.nav-div-submenu{display:none;position:absolute;top:0;left:calc(100% + 6px);background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.12);padding:8px;min-width:220px;max-height:420px;overflow-y:auto;animation:ddIn .15s ease;z-index:510}
+.nav-div-row:hover .nav-div-submenu{display:block}
+.nav-div-submenu .nav-team-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;cursor:pointer;transition:background .12s}
+.nav-div-submenu .nav-team-item:hover{background:rgba(230,57,70,.08)}
+.nav-div-submenu .nav-team-dot{width:28px;height:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.nav-div-submenu .nav-team-dot img{width:100%;height:100%;object-fit:contain}
+.nav-div-submenu .nav-team-name{font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:600;color:#0A0E1A}
+@media(max-width:1100px){
+  .nav-div-submenu{position:static;box-shadow:none;border:none;padding:6px 0 6px 24px;margin-top:4px}
+}
 .nav-dropdown::before{content:'';position:absolute;top:-14px;left:0;right:0;height:14px}
 @keyframes ddIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
 .nav-dropdown-right{left:auto;right:0}
@@ -754,9 +769,13 @@ body.dark .stats-table tbody tr.rank-1{background:transparent!important}
   position:fixed;top:0;left:0;right:0;z-index:200;
   background:#E63946;border-bottom:1px solid rgba(0,0,0,.15);
   height:48px;display:flex;align-items:stretch;overflow:visible;
-  transition:transform .3s ease,opacity .3s ease;color:#ffffff;
+  transition:transform .3s ease,opacity .3s ease,box-shadow .3s ease;color:#ffffff;
 }
 #score-ticker.hidden{transform:translateY(-100%);opacity:0;pointer-events:none;transition:transform .3s ease,opacity .3s ease}
+/* Hover state: glow blue so it stands out big time */
+#score-ticker:hover{
+  box-shadow:0 0 24px 3px rgba(58,134,255,.85), 0 0 48px 6px rgba(58,134,255,.4);
+}
 .st-label{
   display:flex;align-items:center;padding:0 14px;
   background:rgba(0,0,0,.15);border-right:1px solid rgba(255,255,255,.15);
@@ -764,7 +783,15 @@ body.dark .stats-table tbody tr.rank-1{background:transparent!important}
   letter-spacing:.15em;text-transform:uppercase;color:#ffffff;
   white-space:nowrap;flex-shrink:0;gap:6px;
 }
-.st-scroll{flex:1;overflow:hidden;position:relative;cursor:pointer}
+/* .st-scroll is now a horizontally scrollable container (mouse wheel / swipe).
+   Scrollbar hidden for a cleaner look but drag-scrolling still works. */
+.st-scroll{
+  flex:1;overflow-x:auto;overflow-y:hidden;position:relative;cursor:grab;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.st-scroll::-webkit-scrollbar{display:none}
+.st-scroll:active{cursor:grabbing}
 .st-track{
   display:flex;align-items:stretch;height:100%;
   width:max-content;
@@ -920,8 +947,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;height:62px;display:flex;ali
 
 /* ── SCHEDULE PREVIEW CARDS ── */
 .preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;padding:24px 0}
-.preview-card{background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:8px;padding:12px 14px;transition:box-shadow .15s,transform .15s}
-.preview-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.12);transform:translateY(-2px)}
+.preview-card{background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:10px;padding:14px 16px;cursor:pointer;transition:box-shadow .2s,transform .2s,border-color .2s}
+.preview-card:hover{box-shadow:0 12px 40px rgba(230,57,70,.28), 0 0 0 2px rgba(230,57,70,.2);transform:translateY(-4px) scale(1.02);border-color:var(--gold)}
+.preview-datetime{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:.05em;color:rgba(0,0,0,.55);margin-bottom:2px;line-height:1.2}
+.preview-field{font-family:'Inter',-apple-system,sans-serif;font-weight:700;font-size:16px;color:var(--gold);margin-bottom:8px;padding-bottom:8px;border-bottom:2px solid rgba(230,57,70,.15);letter-spacing:-.005em;line-height:1.2}
 .preview-time{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:rgba(0,0,0,.45);margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid rgba(0,0,0,.08)}
 .preview-teams{display:flex;flex-direction:column;gap:3px;margin-bottom:6px}
 .preview-team-row{display:flex;align-items:center;gap:8px}
@@ -1242,8 +1271,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;height:62px;display:flex;ali
 
 /* ── SCHEDULE PREVIEW CARDS ── */
 .preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;padding:24px 0}
-.preview-card{background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:8px;padding:12px 14px;transition:box-shadow .15s,transform .15s}
-.preview-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.12);transform:translateY(-2px)}
+.preview-card{background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:10px;padding:14px 16px;cursor:pointer;transition:box-shadow .2s,transform .2s,border-color .2s}
+.preview-card:hover{box-shadow:0 12px 40px rgba(230,57,70,.28), 0 0 0 2px rgba(230,57,70,.2);transform:translateY(-4px) scale(1.02);border-color:var(--gold)}
+.preview-datetime{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:.05em;color:rgba(0,0,0,.55);margin-bottom:2px;line-height:1.2}
+.preview-field{font-family:'Inter',-apple-system,sans-serif;font-weight:700;font-size:16px;color:var(--gold);margin-bottom:8px;padding-bottom:8px;border-bottom:2px solid rgba(230,57,70,.15);letter-spacing:-.005em;line-height:1.2}
 .preview-time{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:rgba(0,0,0,.45);margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid rgba(0,0,0,.08)}
 .preview-teams{display:flex;flex-direction:column;gap:3px;margin-bottom:6px}
 .preview-team-row{display:flex;align-items:center;gap:8px}
@@ -1984,14 +2015,13 @@ thead th.sorted-col .sarrow{opacity:1}
     <li><a href="javascript:void(0)" onclick="goPage('scores');setTimeout(()=>setView('scores'),80)">Scores</a></li>
     <li><a href="javascript:void(0)" onclick="goPage('scores');setTimeout(()=>setView('schedule'),100)">Schedule</a></li>
     <li><a href="javascript:void(0)" onclick="goPage('standings')">Standings</a></li>
-    <li><a href="javascript:void(0)" onclick="goPage('stats')">Stats</a></li>
-    <li><a href="leaders.html">Leaders</a></li>
     <li class="nav-dd-wrap" id="nl-players">
       <span onclick="goPage('players')">Teams<svg class="nav-dd-arrow" viewBox="0 0 9 6" fill="none"><path d="M1 1l3.5 4L8 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <!-- First-level menu: divisions. Each division opens a nested dropdown with its teams. -->
       <div class="nav-dropdown" id="nav-teams-dd">
-        <div class="nav-dd-head">All Teams</div>
-        <div class="nav-teams-grid" id="nav-teams-list">
-          <div style="padding:12px;color:#999;font-size:12px;grid-column:1/-1;text-align:center">Loading…</div>
+        <div class="nav-dd-head">By Division</div>
+        <div id="nav-div-list">
+          <!-- populated by populateTeamsDropdown() -->
         </div>
         <div style="border-top:1px solid rgba(0,0,0,.07);margin-top:8px;padding-top:8px">
           <div class="nav-dd-item" onclick="goPage('players')">View All Teams →</div>
@@ -2001,6 +2031,7 @@ thead th.sorted-col .sarrow{opacity:1}
     <li class="nav-dd-wrap">
       <span>More<svg class="nav-dd-arrow" viewBox="0 0 9 6" fill="none"><path d="M1 1l3.5 4L8 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       <div class="nav-dropdown nav-dropdown-right">
+        <a class="nav-dd-item" href="javascript:void(0)" onclick="goPage('stats')">📊 Stats</a>
         <a class="nav-dd-item" href="playoffs.html">🏆 Brackets</a>
         <a class="nav-dd-item" href="rules.html">📋 Field Guide</a>
         <a class="nav-dd-item" href="photos.html">📷 Gallery</a>
@@ -2011,7 +2042,6 @@ thead th.sorted-col .sarrow{opacity:1}
     </li>
   </ul>
   <div class="nav-right">
-    <button class="nav-signup-btn" onclick="window.location='notifications.html'">🔔 Alerts</button>
     <button id="darkToggle" onclick="toggleDarkMode()" style="background:none;border:1px solid rgba(0,0,0,.15);border-radius:6px;padding:6px 10px;cursor:pointer;font-size:14px;transition:all .2s" title="Toggle dark mode">🌙</button>
   </div>
 </nav>
@@ -2021,12 +2051,11 @@ thead th.sorted-col .sarrow{opacity:1}
   <span onclick="goPage('scores');closeMob()">Scores</span>
   <span onclick="goPage('scores');setTimeout(()=>setView('schedule'),100);closeMob()">Schedule</span>
   <span onclick="goPage('standings');closeMob()">Standings</span>
-  <span onclick="goPage('stats');closeMob()">Stats</span>
-  <span onclick="goPage('leaders');closeMob()">Leaders</span>
   <span onclick="goPage('players');closeMob()">Teams</span>
   <a href="captain.html" style="display:block;font-size:24px;padding:12px 0;border-bottom:1px solid var(--border);font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;color:var(--navy);text-decoration:none">⚾ Captain Dashboard</a>
   <span onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='flex'?'none':'flex'" style="display:flex;align-items:center;justify-content:space-between">More <span style="font-size:18px;opacity:.5">›</span></span>
   <div style="display:none;flex-direction:column;padding-left:20px;border-bottom:1px solid var(--border)">
+    <span onclick="goPage('stats');closeMob()" style="font-size:20px;padding:10px 0;border-bottom:none">📊 Stats</span>
     <a href="playoffs.html" style="font-size:20px;padding:10px 0;border-bottom:none">🏆 Brackets</a>
     <a href="rules.html" style="font-size:20px;padding:10px 0;border-bottom:none">📋 Field Guide</a>
     <a href="photos.html" style="font-size:20px;padding:10px 0;border-bottom:none">📷 Gallery</a>
@@ -2086,16 +2115,6 @@ thead th.sorted-col .sarrow{opacity:1}
   <div class="divider"></div>
 
   <div class="divider"></div>
-
-  <!-- ALERTS CTA -->
-  <section class="sec" id="signup-anchor">
-    <div style="text-align:center;padding:40px 18px">
-      <div class="sec-eyebrow">Stay connected</div>
-      <div class="sec-title" style="margin-bottom:12px">Game Day Alerts</div>
-      <p style="color:rgba(0,0,0,.5);font-size:15px;margin-bottom:20px;max-width:400px;margin-left:auto;margin-right:auto">Get score notifications, rainout alerts, schedule changes, and playoff updates.</p>
-      <a href="https://kcsl.vercel.app/registration.html" style="display:inline-block;background:#002D72;color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;letter-spacing:.08em;text-transform:uppercase;padding:14px 32px;border-radius:8px;text-decoration:none">🔔 Set Up Alerts</a>
-    </div>
-  </section>
 
   <footer class="ft">
     <div class="ft-logo">⬡ KCSL</div>
@@ -3385,26 +3404,28 @@ function buildSchedule(){
   const upGames=weekGames.filter(g=>!g.done);
   const gamesToShow=upGames.length?upGames:weekGames;
 
-  // Render as preview cards (reuse scheduleBlock which now outputs preview-card for upcoming)
+  // Render as preview cards. The whole card is clickable → openGameday().
   const cards=gamesToShow.slice(0,6).map(g=>{
     const atm=getTeamByShort(g.away), htm=getTeamByShort(g.home);
     const ac=atm?.color||'#9ca3af', hc=htm?.color||'#9ca3af';
     const aRec=(atm&&atm.w!=null)?`(${atm.w}-${atm.l})`:'';
     const hRec=(htm&&htm.w!=null)?`(${htm.w}-${htm.l})`:'';
-    return `<div class="preview-card">
-      <div class="preview-time">${g.time||'TBD'}${g.field?` · ${g.field}`:''}</div>
+    const dateTimeLine = [g.date || '', g.day || '', g.time || 'TBD'].filter(Boolean).join(' · ');
+    const escField = (g.field||'').replace(/"/g,'&quot;').replace(/'/g,"\\'");
+    return `<div class="preview-card" onclick="openGameday('${g.away}','${g.home}','${escField}','${g.time||'TBD'}')">
+      <div class="preview-datetime">${dateTimeLine}</div>
+      ${g.field ? `<div class="preview-field">${g.field}</div>` : ''}
       <div class="preview-teams">
         <div class="preview-team-row">
           <div class="preview-logo">${teamLogoEl(atm?.id,atm?.short||g.away)}</div>
-          <div style="display:flex;align-items:center;min-width:0"><span class="preview-name" onclick="goPage('team','${atm?.id||g.away}')">${atm?.name||g.away}</span><span class="preview-name-mob" onclick="goPage('team','${atm?.id||g.away}')" style="line-height:1.1">${getMobileAbbr(g.away)}</span><span class="preview-rec">${aRec}</span></div>
+          <div style="display:flex;align-items:center;min-width:0"><span class="preview-name" onclick="event.stopPropagation();goPage('team','${atm?.id||g.away}')">${atm?.name||g.away}</span><span class="preview-name-mob" onclick="event.stopPropagation();goPage('team','${atm?.id||g.away}')" style="line-height:1.1">${getMobileAbbr(g.away)}</span><span class="preview-rec">${aRec}</span></div>
         </div>
         <div class="preview-team-row">
           <div class="preview-logo">${teamLogoEl(htm?.id,htm?.short||g.home)}</div>
-          <div style="display:flex;align-items:center;min-width:0"><span class="preview-name" onclick="goPage('team','${htm?.id||g.home}')">${htm?.name||g.home}</span><span class="preview-name-mob" onclick="goPage('team','${htm?.id||g.home}')" style="line-height:1.1">${getMobileAbbr(g.home)}</span><span class="preview-rec">${hRec}</span></div>
+          <div style="display:flex;align-items:center;min-width:0"><span class="preview-name" onclick="event.stopPropagation();goPage('team','${htm?.id||g.home}')">${htm?.name||g.home}</span><span class="preview-name-mob" onclick="event.stopPropagation();goPage('team','${htm?.id||g.home}')" style="line-height:1.1">${getMobileAbbr(g.home)}</span><span class="preview-rec">${hRec}</span></div>
         </div>
       </div>
-      <span class="preview-link" onclick="openGameday('${g.away}','${g.home}','${g.field||''}','${g.time||'TBD'}')">Preview</span>
-      ${g.done?`<span class="preview-link" style="margin-top:4px" onclick="event.stopPropagation();shareGame('${g.away}','${g.home}',${g.as},${g.hs},'${g.field||''}','${g.date||''}')">Share</span>`:''}
+      ${g.done?`<span class="preview-link" style="margin-top:4px" onclick="event.stopPropagation();shareGame('${g.away}','${g.home}',${g.as},${g.hs},'${escField}','${g.date||''}')">Share</span>`:''}
     </div>`;
   }).join('');
 
@@ -3564,24 +3585,15 @@ function loadTeam(teamId){
     btn.onclick=()=>{document.querySelectorAll('.ttab').forEach(x=>x.classList.remove('on'));btn.classList.add('on');renderTeamTab('career');};
     ttabs.appendChild(btn);
   }
-  // Calendar button in hero
+  // Calendar placeholder in hero. The real "subscribe to this team's
+  // calendar" feature isn't wired up yet — show a disabled
+  // "Calendar Coming Soon" chip so captains/fans know it's coming.
   const calBtn = document.getElementById('team-cal-btn');
   if(calBtn){
-    const calUrl = TEAM_CALENDARS_DB[t.id] || null;
-    if(calUrl){
-      // Convert https:// to webcal:// so iPhone/Android prompts to subscribe (not download)
-      const webcalUrl = calUrl.replace('https://', 'webcal://');
-      calBtn.innerHTML=`<a href="${webcalUrl}" style="display:inline-flex;align-items:center;gap:10px;background:${t.color};color:#ffffff;border:none;border-radius:10px;padding:14px 22px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;white-space:nowrap;box-shadow:0 4px 20px ${t.color}44;transition:all .2s;text-decoration:none" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        Add Team Schedule to My Calendar
-      </a>`;
-    } else {
-      // No calendar yet — show a dimmed placeholder
-      calBtn.innerHTML=`<button disabled style="display:inline-flex;align-items:center;gap:10px;background:rgba(0,0,0,.06);color:rgba(0,0,0,.35);border:1px solid rgba(0,0,0,.1);border-radius:10px;padding:14px 22px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;cursor:not-allowed">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        Calendar Coming Soon
-      </button>`;
-    }
+    calBtn.innerHTML=`<button disabled style="display:inline-flex;align-items:center;gap:10px;background:rgba(0,0,0,.06);color:rgba(0,0,0,.4);border:1px solid rgba(0,0,0,.1);border-radius:10px;padding:12px 20px;font-family:'Inter',-apple-system,sans-serif;font-weight:600;font-size:14px;letter-spacing:.01em;white-space:nowrap;cursor:not-allowed">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Calendar Coming Soon
+    </button>`;
   }
   document.querySelectorAll('.ttab').forEach(tab=>{tab.classList.remove('on');if(tab.dataset.tab==='roster')tab.classList.add('on')});
   renderTeamTab('roster');
@@ -4086,15 +4098,40 @@ function closeMob(){
 }
 
 // ════════════════════════════ TEAMS DROPDOWN ══════════════════════════════
+// Two-level dropdown: hovering "Teams" shows B / C / CC / D / DD as rows;
+// hovering a division reveals a nested dropdown with the teams in it.
 function populateTeamsDropdown(){
-  const list = document.getElementById('nav-teams-list');
+  const list = document.getElementById('nav-div-list');
   if (!list || !TEAMS.length) return;
-  const sorted = [...TEAMS].filter(t=>t.active!==false).sort((a,b)=>(a.name||'').localeCompare(b.name||''));
-  list.innerHTML = sorted.map(t=>`
-    <div class="nav-team-item" onclick="goPage('team','${t.id}');(function(){const w=document.getElementById('nl-players');w.style.pointerEvents='none';setTimeout(()=>{w.style.pointerEvents='';},400);})()">
-      <div class="nav-team-dot">${teamLogoEl(t.id,t.short)}</div>
-      <span class="nav-team-name">${t.name}</span>
-    </div>`).join('');
+  const DIV_ORDER = [
+    { code:'B',  label:'B Division'  },
+    { code:'C',  label:'C Division'  },
+    { code:'CC', label:'CC Division' },
+    { code:'D',  label:'D Division'  },
+    { code:'DD', label:'DD Division' },
+  ];
+  const byDiv = {};
+  TEAMS.filter(t=>t.active!==false).forEach(t => {
+    const c = t.div || 'OTHER';
+    (byDiv[c] = byDiv[c] || []).push(t);
+  });
+  Object.values(byDiv).forEach(arr => arr.sort((a,b)=>(a.name||'').localeCompare(b.name||'')));
+
+  list.innerHTML = DIV_ORDER.map(d => {
+    const teams = byDiv[d.code] || [];
+    if (!teams.length) return '';
+    return `<div class="nav-div-row" onclick="goPage('standings')">
+      <div class="nav-div-label"><span style="color:var(--gold);font-weight:900">${d.code}</span>&nbsp;Division <span style="color:rgba(0,0,0,.35);font-weight:400;font-size:11px;margin-left:4px">${teams.length}</span></div>
+      <span class="nav-div-arrow">›</span>
+      <div class="nav-div-submenu">
+        ${teams.map(t => `
+          <div class="nav-team-item" onclick="event.stopPropagation();goPage('team','${t.id}');(function(){const w=document.getElementById('nl-players');w.style.pointerEvents='none';setTimeout(()=>{w.style.pointerEvents='';},400);})()">
+            <div class="nav-team-dot">${teamLogoEl(t.id,t.short)}</div>
+            <span class="nav-team-name">${prettyTeamName(t.name)}</span>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
 }
 
 // ════════════════════════════ SCROLL FADE ════════════════════════════════
@@ -4377,6 +4414,36 @@ function buildTicker2(){
 })();
 
 buildTicker2();
+
+// ── Ticker drag-to-scroll ─────────────────────────────────────────────
+// Click + drag horizontally on the ticker strip to scrub through the games.
+// Wheel scrolling also works natively thanks to overflow-x:auto.
+(function(){
+  const scroll = document.querySelector('.st-scroll');
+  if (!scroll) return;
+  let isDown = false, startX = 0, startScroll = 0;
+  scroll.addEventListener('mousedown', e => {
+    isDown = true;
+    startX = e.pageX - scroll.offsetLeft;
+    startScroll = scroll.scrollLeft;
+    scroll.style.cursor = 'grabbing';
+  });
+  const stop = () => { isDown = false; scroll.style.cursor = 'grab'; };
+  scroll.addEventListener('mouseleave', stop);
+  scroll.addEventListener('mouseup', stop);
+  scroll.addEventListener('mousemove', e => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - scroll.offsetLeft;
+    scroll.scrollLeft = startScroll - (x - startX) * 1.4;
+  });
+  // Convert vertical wheel into horizontal scroll for easier browsing
+  scroll.addEventListener('wheel', e => {
+    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return; // user already scrolling horizontally
+    e.preventDefault();
+    scroll.scrollLeft += e.deltaY;
+  }, { passive: false });
+})();
 
 // ═══ SCORES JS ═══
 
