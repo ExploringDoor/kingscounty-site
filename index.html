@@ -762,6 +762,22 @@ body.dark .stats-table tbody tr.rank-1{background:transparent!important}
   .teams-div-header h2{font-size:24px}
 }
 
+/* Big prominent field name in the game preview modal */
+.pop-field-big{
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  margin-top:18px;padding:16px 20px;
+  background:linear-gradient(135deg,rgba(230,57,70,.08),rgba(29,78,216,.05));
+  border:2px solid rgba(230,57,70,.25);border-radius:12px;
+}
+.pop-field-pin{font-size:28px;line-height:1;filter:grayscale(0)}
+.pop-field-name{
+  font-family:'Barlow Condensed',Impact,sans-serif;font-weight:900;
+  font-size:clamp(28px,4vw,42px);text-transform:uppercase;letter-spacing:.02em;
+  color:#0A0E1A;line-height:1;
+}
+body.dark .pop-field-big{background:linear-gradient(135deg,rgba(255,77,94,.12),rgba(96,165,250,.08));border-color:rgba(255,77,94,.3)}
+body.dark .pop-field-name{color:#F8F9FA}
+
 /* (dust intro CSS removed — intro was deleted) */
 
 /* ── ESPN-STYLE SCORE TICKER ─────────────────────────────────────────── */
@@ -769,13 +785,9 @@ body.dark .stats-table tbody tr.rank-1{background:transparent!important}
   position:fixed;top:0;left:0;right:0;z-index:200;
   background:#E63946;border-bottom:1px solid rgba(0,0,0,.15);
   height:48px;display:flex;align-items:stretch;overflow:visible;
-  transition:transform .3s ease,opacity .3s ease,box-shadow .3s ease;color:#ffffff;
+  transition:transform .3s ease,opacity .3s ease;color:#ffffff;
 }
 #score-ticker.hidden{transform:translateY(-100%);opacity:0;pointer-events:none;transition:transform .3s ease,opacity .3s ease}
-/* Hover state: glow blue so it stands out big time */
-#score-ticker:hover{
-  box-shadow:0 0 24px 3px rgba(58,134,255,.85), 0 0 48px 6px rgba(58,134,255,.4);
-}
 .st-label{
   display:flex;align-items:center;padding:0 14px;
   background:rgba(0,0,0,.15);border-right:1px solid rgba(255,255,255,.15);
@@ -799,9 +811,25 @@ body.dark .stats-table tbody tr.rank-1{background:transparent!important}
 .st-game{
   display:flex;align-items:center;gap:0;height:100%;
   border-right:1px solid rgba(255,255,255,.15);padding:0 16px;
-  cursor:pointer;transition:background .15s;flex-shrink:0;
+  cursor:pointer;flex-shrink:0;position:relative;
+  transition:background .2s,box-shadow .2s,transform .2s;
 }
-.st-game:hover{background:rgba(255,255,255,.1)}
+/* Hover state: the individual game shines electric blue so it pops
+   off the red ticker. Inset shadow for glow inside the cell + outer
+   shadow to bleed out over the adjacent cells. */
+.st-game:hover{
+  background:linear-gradient(180deg,rgba(58,134,255,.95),rgba(29,78,216,.95));
+  box-shadow:
+    inset 0 0 0 2px rgba(147,197,253,.9),
+    0 0 24px 4px rgba(58,134,255,.85),
+    0 0 48px 8px rgba(58,134,255,.45);
+  transform:scale(1.04);
+  z-index:3;
+}
+.st-game:hover .st-abbr,
+.st-game:hover .st-datetime,
+.st-game:hover .st-rec,
+.st-game:hover .st-final{color:#fff!important;text-shadow:0 0 12px rgba(255,255,255,.5)}
 .st-game-inner{display:flex;flex-direction:column;justify-content:center;gap:3px}
 .st-datetime{font-family:'Inter',sans-serif;font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.8);line-height:1;margin-bottom:2px}
 .st-row{display:flex;align-items:center;gap:5px;line-height:1}
@@ -867,8 +895,8 @@ body.ticker-hidden #score-ticker{display:none}
 :root{
   --bg:#ffffff;--card:#ffffff;--card2:#f8f8f8;--card3:#f0f0f0;
   --border:rgba(0,0,0,0.1);--border2:rgba(0,0,0,0.15);
-  --gold:#002D72;--white:#1a1a1a;--muted:rgba(0,0,0,0.5);--muted2:rgba(0,0,0,0.35);
-  --blue:#002D72;--green:#22c55e;--red:#c8102e;
+  --gold:#E63946;--white:#1a1a1a;--muted:rgba(0,0,0,0.5);--muted2:rgba(0,0,0,0.35);
+  --blue:#1D4ED8;--green:#22c55e;--red:#c8102e;
 }
 body{background:var(--bg);color:var(--white);font-family:'Inter',sans-serif;min-height:100vh}
 
@@ -961,8 +989,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;height:62px;display:flex;ali
 .preview-rec{font-size:11px;color:rgba(0,0,0,.4);font-weight:500;display:block;margin-top:1px}
 .preview-field{font-size:12px;color:rgba(0,0,0,.5);font-weight:500;margin-bottom:2px}
 .preview-date{font-size:11px;color:rgba(0,0,0,.35);margin-bottom:6px}
-.preview-link{display:inline-block;font-size:12px;font-weight:600;color:#002D72;cursor:pointer;text-decoration:none;padding-top:4px}
-.preview-link:hover{text-decoration:underline}
+.preview-link{display:inline-block;margin-top:10px;padding:8px 16px;font-family:'Barlow Condensed',Impact,sans-serif;font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);background:rgba(230,57,70,.08);border:2px solid var(--gold);border-radius:6px;text-decoration:none;transition:all .15s;text-align:center}
+.preview-card:hover .preview-link{background:var(--gold);color:#fff}
 
 /* ── SCORES PAGE: team name colors come from inline style, not winner/loser class ── */
 #pg-scores .gb-name.winner,
@@ -1191,8 +1219,8 @@ footer{padding:32px 40px;border-top:1px solid var(--border);display:flex;align-i
 :root{
   --bg:#ffffff;--card:#ffffff;--card2:#f8f8f8;--card3:#f0f0f0;
   --border:rgba(0,0,0,0.1);--border2:rgba(0,0,0,0.15);
-  --gold:#002D72;--white:#1a1a1a;--muted:rgba(0,0,0,0.5);--muted2:rgba(0,0,0,0.35);
-  --blue:#002D72;--green:#22c55e;--red:#c8102e;
+  --gold:#E63946;--white:#1a1a1a;--muted:rgba(0,0,0,0.5);--muted2:rgba(0,0,0,0.35);
+  --blue:#1D4ED8;--green:#22c55e;--red:#c8102e;
 }
 body{background:var(--bg);color:var(--white);font-family:'Inter',sans-serif;min-height:100vh}
 
@@ -1285,8 +1313,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;height:62px;display:flex;ali
 .preview-rec{font-size:11px;color:rgba(0,0,0,.4);font-weight:500;display:block;margin-top:1px}
 .preview-field{font-size:12px;color:rgba(0,0,0,.5);font-weight:500;margin-bottom:2px}
 .preview-date{font-size:11px;color:rgba(0,0,0,.35);margin-bottom:6px}
-.preview-link{display:inline-block;font-size:12px;font-weight:600;color:#002D72;cursor:pointer;text-decoration:none;padding-top:4px}
-.preview-link:hover{text-decoration:underline}
+.preview-link{display:inline-block;margin-top:10px;padding:8px 16px;font-family:'Barlow Condensed',Impact,sans-serif;font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);background:rgba(230,57,70,.08);border:2px solid var(--gold);border-radius:6px;text-decoration:none;transition:all .15s;text-align:center}
+.preview-card:hover .preview-link{background:var(--gold);color:#fff}
 
 /* ── SCORES PAGE: team name colors come from inline style, not winner/loser class ── */
 #pg-scores .gb-name.winner,
@@ -1510,8 +1538,8 @@ footer{padding:32px 40px;border-top:1px solid var(--border);display:flex;align-i
 :root{
   --bg:#ffffff;--card:#ffffff;--card2:#f8f8f8;--card3:#f0f0f0;
   --border:rgba(0,0,0,0.1);--border2:rgba(0,0,0,0.15);
-  --gold:#002D72;--white:#1a1a1a;--muted:rgba(0,0,0,0.5);--muted2:rgba(0,0,0,0.35);
-  --blue:#002D72;
+  --gold:#E63946;--white:#1a1a1a;--muted:rgba(0,0,0,0.5);--muted2:rgba(0,0,0,0.35);
+  --blue:#1D4ED8;
 }
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--white);font-family:'Barlow',sans-serif;overflow-x:hidden;min-height:100vh}
@@ -1623,7 +1651,7 @@ footer{padding:32px 40px;border-top:1px solid var(--border);display:flex;align-i
 
 /* ══ STANDINGS ══ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#ffffff;--dark:#f5f5f5;--card:#ffffff;--card2:#f8f8f8;--border:rgba(0,0,0,0.1);--gold:#002D72;--gold-dim:rgba(0,45,114,0.08);--white:#1a1a1a;--muted:rgba(0,0,0,0.5);--red:#c8102e;--green:#22c55e;--blue:#002D72}
+:root{--bg:#ffffff;--dark:#f5f5f5;--card:#ffffff;--card2:#f8f8f8;--border:rgba(0,0,0,0.1);--gold:#E63946;--gold-dim:rgba(230,57,70,0.08);--white:#1a1a1a;--muted:rgba(0,0,0,0.5);--red:#c8102e;--green:#22c55e;--blue:#1D4ED8}
 body{background:var(--bg);color:var(--white);font-family:'Barlow',sans-serif;line-height:1.6;overflow-x:hidden}
 
 /* NAV */
@@ -3425,6 +3453,7 @@ function buildSchedule(){
           <div style="display:flex;align-items:center;min-width:0"><span class="preview-name" onclick="event.stopPropagation();goPage('team','${htm?.id||g.home}')">${htm?.name||g.home}</span><span class="preview-name-mob" onclick="event.stopPropagation();goPage('team','${htm?.id||g.home}')" style="line-height:1.1">${getMobileAbbr(g.home)}</span><span class="preview-rec">${hRec}</span></div>
         </div>
       </div>
+      <span class="preview-link">Preview →</span>
       ${g.done?`<span class="preview-link" style="margin-top:4px" onclick="event.stopPropagation();shareGame('${g.away}','${g.home}',${g.as},${g.hs},'${escField}','${g.date||''}')">Share</span>`:''}
     </div>`;
   }).join('');
@@ -5149,7 +5178,10 @@ function openGameday(away,home,field,time){
           ${ht&&LOGO_TEAMS.has(ht.id)?`<img src="logos/${ht.id}.png" style="width:120px;height:120px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(0,0,0,.2))">`:`<div class="pop-abbr" style="color:#1a1a1a">${home}</div>`}
           <div class="pop-role-lbl">${ht?.name||home} · Home ↗</div></div>
       </div>
-      <div class="pop-meta"><span>📍 ${field}</span></div>
+      <div class="pop-field-big">
+        <span class="pop-field-pin">📍</span>
+        <span class="pop-field-name">${field}</span>
+      </div>
     </div>
     <div class="pop-body">
       <div class="pop-sec-title">Rosters</div>
