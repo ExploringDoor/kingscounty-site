@@ -137,7 +137,7 @@ select.form-input{cursor:pointer}
 
 /* ── WELCOME CARD ── */
 .welcome-card{background:linear-gradient(135deg,var(--brand),#B91C3C);color:#fff;border-radius:14px;padding:28px 32px;margin-bottom:24px}
-.welcome-card h2{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:26px;text-transform:uppercase;margin-bottom:6px}
+.welcome-card h2{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;font-weight:700;font-size:24px;letter-spacing:-.01em;margin-bottom:6px}
 .welcome-card p{font-size:14px;opacity:.8}
 
 /* ── RESPONSIVE ── */
@@ -419,14 +419,27 @@ function esc(s) {
   return d.innerHTML;
 }
 
+// KCSL team names are stored ALL CAPS in Firestore (matching the LeagueLineup
+// source). prettyTeamName() converts to title case for display while keeping
+// known acronyms uppercase.
+const KCSL_ACRONYMS = new Set(['BK','KCSL','NY','NYC']);
+function prettyTeamName(name) {
+  if (!name) return '';
+  return String(name).split(/(\s+|-)/).map(part => {
+    if (/^\s+$/.test(part) || part === '-') return part;
+    if (KCSL_ACRONYMS.has(part.toUpperCase())) return part.toUpperCase();
+    return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
+  }).join('');
+}
+
 function getTeamName(id) {
   const t = ALL_TEAMS.find(t => t.id === id);
-  return t ? (t.short || t.name) : (id || '???').toUpperCase();
+  return t ? prettyTeamName(t.name) : (id || '???');
 }
 
 function getTeamFull(id) {
   const t = ALL_TEAMS.find(t => t.id === id);
-  return t ? t.name : (id || '???');
+  return t ? prettyTeamName(t.name) : (id || '???');
 }
 
 async function logActivity(action, details) {
@@ -455,9 +468,9 @@ async function initTeamPicker() {
         onmouseout="this.style.borderColor='${t.color||'#E63946'}22';this.style.transform='';this.style.boxShadow=''">
         <div style="width:104px;height:104px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center">
           <img src="logos/${t.id}.png" style="max-width:104px;max-height:104px;object-fit:contain" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-          <div style="display:none;width:104px;height:104px;border-radius:50%;background:${t.color||'#E63946'};color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:30px;align-items:center;justify-content:center">${(t.short||t.name||'?').slice(0,3)}</div>
+          <div style="display:none;width:104px;height:104px;border-radius:50%;background:${t.color||'#E63946'};color:#fff;font-family:'Inter',-apple-system,sans-serif;font-weight:800;font-size:30px;align-items:center;justify-content:center">${(t.short||t.name||'?').slice(0,3)}</div>
         </div>
-        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;text-transform:uppercase;color:${t.color||'#E63946'};line-height:1.2">${t.name}</div>
+        <div style="font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-weight:700;font-size:14px;letter-spacing:-.01em;color:${t.color||'#E63946'};line-height:1.25">${prettyTeamName(t.name)}</div>
       </div>`).join('');
   } catch(e) {
     document.getElementById('team-picker-grid').innerHTML = `<div style="grid-column:1/-1;text-align:center;color:var(--red);padding:40px">Failed to load teams: ${e.message}</div>`;
@@ -544,8 +557,9 @@ async function loadAllData() {
     // Update header
     const teamColor = MY_TEAM?.color || '#002D72';
     document.getElementById('top-team-dot').style.background = teamColor;
-    document.getElementById('top-team-label').textContent = MY_TEAM?.name || captainData.team_name || 'My Team';
-    document.getElementById('welcome-team').textContent = `Welcome, ${MY_TEAM?.name || captainData.team_name || 'Captain'}`;
+    const myTeamDisplay = prettyTeamName(MY_TEAM?.name || captainData.team_name || 'My Team');
+    document.getElementById('top-team-label').textContent = myTeamDisplay;
+    document.getElementById('welcome-team').textContent = `Welcome, ${myTeamDisplay}`;
 
     // Store captains list (for captain chat email targets)
     ALL_CAPTAINS = captains;
