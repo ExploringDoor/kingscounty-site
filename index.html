@@ -817,7 +817,7 @@ body.ticker-hidden #score-ticker{display:none}
 .hs-row.leader .hs-rank{color:var(--blue,#1D4ED8)}
 .hs-logo{width:38px;height:38px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
 .hs-logo img{width:100%;height:100%;object-fit:contain}
-.hs-team{font-family:'Barlow Condensed',Impact,sans-serif;font-weight:900;font-size:15px;text-transform:uppercase;letter-spacing:.02em;color:#0A0E1A;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.hs-team{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-weight:600;font-size:15px;letter-spacing:-.01em;color:#0A0E1A;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .hs-rec{font-family:'Barlow Condensed',Impact,sans-serif;font-weight:900;font-size:17px;color:#0A0E1A;flex-shrink:0}
 .hs-empty{padding:30px 20px;text-align:center;font-size:13px;color:rgba(0,0,0,.4)}
 
@@ -3317,6 +3317,19 @@ function buildStandings(){
 // Active division for the home-page standings sidebar. Defaults to 'B'.
 let HOME_STAND_DIV = 'B';
 
+// KCSL team names are stored in ALL CAPS in Firestore (matching the LeagueLineup
+// source data). For display in readable sans-serif contexts, convert to title
+// case but keep known acronyms uppercase.
+const KCSL_ACRONYMS = new Set(['BK','KCSL','NY','NYC']);
+function prettyTeamName(name) {
+  if (!name) return '';
+  return String(name).split(/(\s+|-)/).map(part => {
+    if (/^\s+$/.test(part) || part === '-') return part;
+    if (KCSL_ACRONYMS.has(part.toUpperCase())) return part.toUpperCase();
+    return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
+  }).join('');
+}
+
 function setHomeStandDiv(code){
   HOME_STAND_DIV = code;
   document.querySelectorAll('#hs-tabs .hs-tab').forEach(btn => {
@@ -3346,7 +3359,7 @@ function buildHomeSidebar(){
       <div class="hs-logo">${LOGO_TEAMS.has(t.id)
         ? `<img src="logos/${t.id}.png" alt="${t.name}" loading="lazy">`
         : `<span style="width:12px;height:12px;border-radius:50%;background:${t.color||'#999'};display:block"></span>`}</div>
-      <div class="hs-team">${t.name}</div>
+      <div class="hs-team">${prettyTeamName(t.name)}</div>
       <div class="hs-rec">${t.w||0}-${t.l||0}</div>
     </div>`).join('');
 }
