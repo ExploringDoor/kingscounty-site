@@ -693,35 +693,32 @@ body.dark .stats-table tbody tr.rank-1{background:transparent!important}
 
 
 
-/* ── TEAMS LIST (BIG CARDS, 3 COLUMNS) ── */
-.teams-list{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1280px;margin:0 auto}
-.teams-list-item{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding:28px 20px;border:1px solid rgba(0,0,0,.08);border-radius:12px;background:#fff;transition:transform .15s,box-shadow .15s}
-.teams-list-item:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(0,0,0,.08);border-color:var(--gold)}
-.teams-list-logo{width:216px;height:216px;border-radius:0;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:32px;flex-shrink:0;border:none;background:transparent;overflow:hidden}
+/* ── TEAMS LIST (COMPACT LOGO GRID) ── */
+.teams-list{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:980px;margin:0 auto}
+.teams-list-item{display:flex;align-items:center;justify-content:center;padding:14px;border:1px solid rgba(0,0,0,.08);border-radius:10px;background:#fff;transition:transform .15s,box-shadow .15s,border-color .15s;cursor:pointer;min-height:86px}
+.teams-list-item:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.08);border-color:var(--gold)}
+.teams-list-logo{width:54px;height:54px;border-radius:0;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:none;background:transparent;overflow:hidden}
 .teams-list-logo img{width:100%;height:100%;object-fit:contain;display:block}
-.teams-list-info{display:flex;flex-direction:column;gap:6px;align-items:center}
-.teams-list-name{font-family:'Barlow Condensed',Impact,sans-serif;font-weight:900;font-size:24px;text-transform:uppercase;letter-spacing:.02em;color:#1a1a1a;cursor:pointer;line-height:1.1}
-.teams-list-name:hover{color:var(--gold)}
-.teams-list-links{display:flex;gap:6px;font-size:13px;justify-content:center}
-.teams-list-links a,.teams-list-links span{color:var(--gold);cursor:pointer;text-decoration:none;font-weight:600}
-.teams-list-links a:hover,.teams-list-links span:hover{text-decoration:underline}
-.teams-list-links .sep{color:rgba(0,0,0,.2);cursor:default}
-.teams-list-links .sep:hover{text-decoration:none}
+.teams-list-info{display:none}
+
+/* Division section headers — big & centered */
+.teams-div-section{margin-bottom:56px;scroll-margin-top:180px}
+.teams-div-header{display:flex;flex-direction:column;align-items:center;text-align:center;margin-bottom:28px;padding-bottom:16px;border-bottom:3px solid var(--gold)}
+.teams-div-header h2{font-family:'Barlow Condensed',Impact,sans-serif;font-weight:900;font-size:clamp(48px,7vw,80px);text-transform:uppercase;letter-spacing:.04em;color:#1a1a1a;margin:0;line-height:.9}
+.teams-div-header h2 .div-code{color:var(--gold)}
+.teams-div-header .count{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:.14em;color:rgba(0,0,0,.5);margin-top:10px}
 
 /* Division filter pills on teams page */
 .teams-div-nav{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .teams-div-pill{font-family:'Barlow Condensed',Impact,sans-serif;font-weight:800;font-size:15px;letter-spacing:.06em;background:#fff;border:2px solid var(--gold);color:var(--gold);border-radius:8px;padding:8px 18px;cursor:pointer;transition:all .15s;text-transform:uppercase;white-space:nowrap}
 .teams-div-pill:hover{background:var(--gold);color:#fff}
 
-@media(max-width:980px){
-  .teams-list{grid-template-columns:repeat(2,1fr);gap:18px}
-  .teams-list-logo{width:180px;height:180px}
-}
-@media(max-width:640px){
-  .teams-list{grid-template-columns:1fr;gap:14px;max-width:420px}
-  .teams-list-item{padding:24px 18px}
-  .teams-list-logo{width:180px;height:180px}
+@media(max-width:720px){
+  .teams-list{grid-template-columns:repeat(2,1fr);gap:12px;max-width:520px}
+  .teams-list-item{min-height:72px;padding:12px}
+  .teams-list-logo{width:48px;height:48px}
   .teams-div-pill{font-size:13px;padding:6px 14px}
+  .teams-div-header h2{font-size:42px}
 }
 
 /* ── DUST INTRO ── */
@@ -3406,29 +3403,17 @@ function buildTeamsBigCards(){
     (byDiv[code] = byDiv[code] || []).push(t);
   });
 
-  const teamItem = t => `<div class="teams-list-item">
-    <div class="teams-list-logo" style="background:transparent;color:#fff;border-color:transparent">${teamLogoEl(t.id,t.short)}</div>
-    <div class="teams-list-info">
-      <div class="teams-list-name" onclick="goPage('team','${t.id}')">${t.name}</div>
-      <div class="teams-list-links">
-        <span onclick="goPage('team','${t.id}');setTimeout(()=>renderTeamTab('stats'),80)">Stats</span>
-        <span class="sep">|</span>
-        <span onclick="goPage('team','${t.id}');setTimeout(()=>renderTeamTab('schedule'),80)">Schedule</span>
-        <span class="sep">|</span>
-        <span onclick="goPage('team','${t.id}');setTimeout(()=>renderTeamTab('roster'),80)">Roster</span>
-      </div>
-    </div>
+  const teamItem = t => `<div class="teams-list-item" onclick="goPage('team','${t.id}')" title="${t.name.replace(/"/g,'&quot;')}">
+    <div class="teams-list-logo">${teamLogoEl(t.id,t.short)}</div>
   </div>`;
 
   grid.innerHTML = DIV_ORDER.map(d => {
     const list = (byDiv[d.code] || []).sort((a,b)=>a.name.localeCompare(b.name));
     if (!list.length) return '';
-    return `<section class="teams-div-section" id="div-${d.code}" style="margin-bottom:56px;scroll-margin-top:180px">
-      <div class="teams-div-header" style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:24px;padding-bottom:12px;border-bottom:3px solid var(--gold)">
-        <h2 style="font-family:'Barlow Condensed',Impact,sans-serif;font-weight:900;font-size:36px;text-transform:uppercase;letter-spacing:.04em;color:#1a1a1a;margin:0">
-          <span style="color:var(--gold)">${d.code}</span> Division
-        </h2>
-        <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;text-transform:uppercase;letter-spacing:.1em;color:rgba(0,0,0,.5)">${list.length} Teams</span>
+    return `<section class="teams-div-section" id="div-${d.code}">
+      <div class="teams-div-header">
+        <h2><span class="div-code">${d.code}</span> Division</h2>
+        <div class="count">${list.length} Teams</div>
       </div>
       <div class="teams-list">
         ${list.map(teamItem).join('')}
