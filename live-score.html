@@ -1324,6 +1324,16 @@ window.startGame = function() {
 };
 
 window.goBack = function() {
+  // If this tab was opened from admin (has ?game=X in the URL), try to
+  // close the tab first and fall back to returning to the pick screen.
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('game')) {
+    // Clear the query string so the pick screen shows on next load
+    try { history.replaceState({}, '', window.location.pathname); } catch(e) {}
+    // Try to close the window — browsers only allow this for tabs they
+    // opened (window.open target). Falls through silently if blocked.
+    window.close();
+  }
   showScreen('screen-pick');
   renderPickScreen();
 };
