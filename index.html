@@ -809,6 +809,28 @@ body.ci-active .nav{opacity:0;pointer-events:none}
 /* nav top controlled by JS scroll handler */
 body.ticker-hidden #score-ticker{display:none}
 
+/* HOME STANDINGS SIDEBAR (with division tabs) */
+.hs-card{background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:14px;overflow:hidden;position:relative;box-shadow:0 2px 12px rgba(0,0,0,.04)}
+.hs-card-topbar{height:4px;background:var(--blue,#1D4ED8);width:calc(100% - 40px);margin:0 auto;border-radius:0 0 4px 4px}
+.hs-head{display:flex;align-items:baseline;justify-content:space-between;padding:18px 22px 8px}
+.hs-title{font-family:'Barlow Condensed',Impact,sans-serif;font-weight:900;font-size:24px;text-transform:uppercase;letter-spacing:.04em;color:#0A0E1A}
+.hs-full{font-size:15px;font-weight:700;color:var(--blue,#1D4ED8);text-decoration:none}
+.hs-full:hover{text-decoration:underline}
+.hs-tabs{display:flex;border-bottom:1px solid rgba(0,0,0,.08);padding:0 6px}
+.hs-tab{flex:1;font-family:'Barlow Condensed',Impact,sans-serif;font-weight:800;font-size:18px;background:none;border:none;padding:12px 0 10px;cursor:pointer;color:rgba(0,0,0,.32);border-bottom:3px solid transparent;margin-bottom:-1px;transition:color .15s,border-color .15s;letter-spacing:.04em}
+.hs-tab:hover{color:#0A0E1A}
+.hs-tab.active{color:var(--blue,#1D4ED8);border-bottom-color:var(--blue,#1D4ED8)}
+.hs-row{display:flex;align-items:center;padding:12px 20px;border-bottom:1px solid rgba(0,0,0,.05);gap:14px;cursor:pointer;transition:background .12s}
+.hs-row:last-child{border-bottom:none}
+.hs-row:hover{background:rgba(29,78,216,.04)}
+.hs-rank{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;color:rgba(0,0,0,.28);width:22px;flex-shrink:0}
+.hs-row.leader .hs-rank{color:var(--blue,#1D4ED8)}
+.hs-logo{width:38px;height:38px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.hs-logo img{width:100%;height:100%;object-fit:contain}
+.hs-team{font-family:'Barlow Condensed',Impact,sans-serif;font-weight:900;font-size:17px;text-transform:uppercase;letter-spacing:.03em;color:#0A0E1A;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hs-rec{font-family:'Barlow Condensed',Impact,sans-serif;font-weight:900;font-size:17px;color:#0A0E1A;flex-shrink:0}
+.hs-empty{padding:30px 20px;text-align:center;font-size:13px;color:rgba(0,0,0,.4)}
+
 /* KCSL HERO HEADER BANNER */
 .kcsl-hero-header{
   width:100%;margin-top:110px;background:#0A0E1A;
@@ -2045,13 +2067,23 @@ thead th.sorted-col .sarrow{opacity:1}
           <div class="sched-wrap" id="sched-wrap" style="margin-top:16px"></div>
           <div style="margin-top:20px"><a href="javascript:void(0)" onclick="goPage('scores');setTimeout(()=>setView('schedule'),100)" style="font-size:14px;font-weight:600;color:#002D72;text-decoration:none">Full Schedule →</a></div>
         </div>
-        <!-- Right: Standings sidebar -->
-        <div style="width:300px;flex-shrink:0">
-          <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px">
-            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;text-transform:uppercase;color:#1a1a1a">Standings</div>
-            <a href="javascript:void(0)" onclick="goPage('standings')" style="font-size:13px;font-weight:600;color:#002D72;text-decoration:none">Full →</a>
+        <!-- Right: Standings sidebar (with division tabs) -->
+        <div style="width:340px;flex-shrink:0">
+          <div class="hs-card">
+            <div class="hs-card-topbar"></div>
+            <div class="hs-head">
+              <div class="hs-title">Standings</div>
+              <a href="javascript:void(0)" onclick="goPage('standings')" class="hs-full">Full →</a>
+            </div>
+            <div class="hs-tabs" id="hs-tabs">
+              <button class="hs-tab active" data-div="B"  onclick="setHomeStandDiv('B')">B</button>
+              <button class="hs-tab"        data-div="C"  onclick="setHomeStandDiv('C')">C</button>
+              <button class="hs-tab"        data-div="CC" onclick="setHomeStandDiv('CC')">CC</button>
+              <button class="hs-tab"        data-div="D"  onclick="setHomeStandDiv('D')">D</button>
+              <button class="hs-tab"        data-div="DD" onclick="setHomeStandDiv('DD')">DD</button>
+            </div>
+            <div id="home-standings-sidebar"></div>
           </div>
-          <div id="home-standings-sidebar" style="background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:8px;overflow:hidden"></div>
         </div>
       </div>
     </div>
@@ -3292,18 +3324,41 @@ function buildStandings(){
   </div>`;
 }
 
+// Active division for the home-page standings sidebar. Defaults to 'B'.
+let HOME_STAND_DIV = 'B';
+
+function setHomeStandDiv(code){
+  HOME_STAND_DIV = code;
+  document.querySelectorAll('#hs-tabs .hs-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.div === code);
+  });
+  buildHomeSidebar();
+}
+window.setHomeStandDiv = setHomeStandDiv;
+
 function buildHomeSidebar(){
-  const el=document.getElementById('home-standings-sidebar');
+  const el = document.getElementById('home-standings-sidebar');
   if(!el) return;
-  if(!TEAMS.length){ el.innerHTML='<div style="padding:20px;text-align:center;color:rgba(0,0,0,.4);font-size:13px">Loading...</div>'; return; }
-  const sorted=[...TEAMS].filter(t=>t.active!==false).sort((a,b)=>b.pct-a.pct||b.w-a.w);
-  const top8=sorted.slice(0,8);
-  el.innerHTML=top8.map((t,i)=>`<div style="display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid rgba(0,0,0,.06);cursor:pointer;gap:12px" onclick="goPage('team','${t.id}')">
-    <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:rgba(0,0,0,.35);width:18px">${i+1}</span>
-    ${LOGO_TEAMS.has(t.id)?`<img src="logos/${t.id}.png" style="width:32px;height:32px;object-fit:contain;flex-shrink:0" loading="lazy">`:`<span style="width:8px;height:8px;border-radius:50%;background:${t.color};flex-shrink:0"></span>`}
-    <span style="font-family:'Inter',sans-serif;font-weight:600;font-size:14px;color:#1a1a1a;flex:1">${t.name}</span>
-    <span style="font-family:'Oswald',sans-serif;font-weight:700;font-size:16px;color:#1a1a1a">${t.w}-${t.l}</span>
-  </div>`).join('');
+  if(!TEAMS.length){
+    el.innerHTML='<div class="hs-empty">Loading…</div>';
+    return;
+  }
+  const divTeams = TEAMS
+    .filter(t => t.active !== false && t.div === HOME_STAND_DIV)
+    .sort((a,b) => (b.pct||0) - (a.pct||0) || (b.w||0) - (a.w||0) || ((b.rs||0)-(b.ra||0)) - ((a.rs||0)-(a.ra||0)));
+  if(!divTeams.length){
+    el.innerHTML='<div class="hs-empty">No teams in this division yet.</div>';
+    return;
+  }
+  el.innerHTML = divTeams.map((t,i) => `
+    <div class="hs-row ${i===0?'leader':''}" onclick="goPage('team','${t.id}')">
+      <div class="hs-rank">${i+1}</div>
+      <div class="hs-logo">${LOGO_TEAMS.has(t.id)
+        ? `<img src="logos/${t.id}.png" alt="${t.name}" loading="lazy">`
+        : `<span style="width:12px;height:12px;border-radius:50%;background:${t.color||'#999'};display:block"></span>`}</div>
+      <div class="hs-team">${t.short || t.name}</div>
+      <div class="hs-rec">${t.w||0}-${t.l||0}</div>
+    </div>`).join('');
 }
 
 // ════════════════════════════ SCHEDULE PREVIEW ═══════════════════════════
