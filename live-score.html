@@ -860,7 +860,7 @@ body{display:flex;flex-direction:column}
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js';
-import { getFirestore, collection, getDocs, doc, setDoc, updateDoc, getDoc }
+import { getFirestore, collection, getDocs, doc, setDoc, updateDoc, getDoc, deleteDoc }
   from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js';
 
 // ═══════════════════════════════════════════════════════════════════
@@ -997,19 +997,32 @@ function restoreState(snap) {
   if (!STATE.playLog) STATE.playLog = [];
 }
 
-function saveToLocalStorage() {
+// Pre-fetched cache of in-progress games from Firestore. Populated by
+// loadData() on page load and kept fresh by saveLiveSnapshot() after each
+// successful write. Lets the game-list render figure out which games have
+// a "Resume" button without making 40 async fetches.
+const LIVE_SNAPSHOTS = new Map();
+
+// Persist the current STATE to Firebase (via the debounced syncToFirebase
+// helper). Also updates the local cache so the "Resume" button shows up
+// correctly on the pick screen without waiting for a re-fetch.
+function saveLiveSnapshot() {
   if (!STATE.gameId) return;
-  try {
-    localStorage.setItem('kcsl_live_' + STATE.gameId, JSON.stringify(cloneState()));
-  } catch(e) {}
+  LIVE_SNAPSHOTS.set(STATE.gameId, cloneState());
+  syncToFirebase();
 }
 
-function loadFromLocalStorage(gameId) {
-  try {
-    const raw = localStorage.getItem('kcsl_live_' + gameId);
-    return raw ? JSON.parse(raw) : null;
-  } catch(e) { return null; }
+// Look up the most recent in-progress snapshot for a game. Reads from the
+// Firestore-backed cache — no localStorage involved.
+function getLiveSnapshot(gameId) {
+  return LIVE_SNAPSHOTS.get(gameId) || null;
 }
+
+// Back-compat shims so the 10+ existing call sites don't have to be
+// renamed. saveToLocalStorage → saveLiveSnapshot,
+// loadFromLocalStorage → getLiveSnapshot.
+const saveToLocalStorage = saveLiveSnapshot;
+const loadFromLocalStorage = getLiveSnapshot;
 
 function showToast(msg, type = '') {
   const wrap = document.getElementById('toast-wrap');
@@ -1071,14 +1084,25 @@ document.addEventListener('keydown', e => {
 // ═══════════════════════════════════════════════════════════════════
 async function loadData() {
   try {
-    const [gSnap, tSnap, pSnap] = await Promise.all([
+    const [gSnap, tSnap, pSnap, liveSnap] = await Promise.all([
       getDocs(collection(db, 'games')),
       getDocs(collection(db, 'teams')),
-      getDocs(collection(db, 'players'))
+      getDocs(collection(db, 'players')),
+      getDocs(collection(db, 'live_games')).catch(() => ({ docs: [] }))
     ]);
     GAMES = gSnap.docs.map(d => ({ id: d.id, ...d.data() }));
     TEAMS = tSnap.docs.map(d => ({ id: d.id, ...d.data() }));
     PLAYERS = pSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    // Cache in-progress game snapshots so the pick screen can render the
+    // Resume button synchronously. Finalized games are skipped.
+    LIVE_SNAPSHOTS.clear();
+    liveSnap.docs.forEach(d => {
+      const data = d.data();
+      if (data && data.status !== 'final') {
+        LIVE_SNAPSHOTS.set(d.id, data);
+      }
+    });
 
     // Always show pick screen — use "⚡ Resume" button on a game card to resume
     renderPickScreen();
@@ -2332,8 +2356,12 @@ window.confirmResetGame = function() {
   });
   hideResetConfirm();
   closeModal('modal-endgame');
-  // Clear saved state so Resume button disappears
-  if (STATE.gameId) localStorage.removeItem('kcsl_live_' + STATE.gameId);
+  // Clear saved state so Resume button disappears (Firebase + local cache)
+  if (STATE.gameId) {
+    const clearingId = STATE.gameId;
+    LIVE_SNAPSHOTS.delete(clearingId);
+    deleteDoc(doc(db, 'live_games', clearingId)).catch(e => console.warn('live_games cleanup failed:', e));
+  }
   STATE.gameId = null;
   showToast('Game reset — pick game and re-enter lineups', 'success');
   goToPickScreen();
@@ -2361,8 +2389,8 @@ window.markGameFinal = async function() {
       ...getFirebaseSyncData(),
       status: 'final'
     });
-
-    localStorage.removeItem('kcsl_live_' + STATE.gameId);
+    // Finalized games don't need the in-progress snapshot anymore.
+    LIVE_SNAPSHOTS.delete(STATE.gameId);
 
     closeModal('modal-endgame');
     showToast('Game marked final!', 'success');

@@ -747,17 +747,7 @@ body.dark .stats-table tbody tr.rank-1{background:transparent!important}
   .teams-div-header h2{font-size:24px}
 }
 
-/* ── DUST INTRO ── */
-#ci{position:fixed;top:0;left:0;right:0;bottom:0;z-index:99999;background:#070709;display:flex;align-items:center;justify-content:center;transition:opacity .9s ease;cursor:pointer}
-.nav{transition:opacity .5s ease}
-body.ci-active .nav{opacity:0;pointer-events:none}
-#ci.gone{opacity:0;pointer-events:none}
-#ci canvas{position:absolute;inset:0;width:100%;height:100%}
-#ci img.ci-logo{position:absolute;opacity:0;display:none;width:clamp(160px,28vw,320px);height:auto;transition:opacity .6s ease,transform .6s ease;transform:scale(1.06);filter:drop-shadow(0 0 40px rgba(96,165,250,.5)) drop-shadow(0 0 80px rgba(96,165,250,.25))}
-#ci img.ci-logo.show{opacity:1;transform:scale(1)}
-#ci .ci-sub{position:absolute;bottom:clamp(16%,22%,28%);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:clamp(10px,1.6vw,15px);letter-spacing:.38em;text-transform:uppercase;color:rgba(180,210,255,.55);opacity:0;transform:translateY(8px);transition:opacity .5s ease,transform .5s ease}
-#ci .ci-sub.show{opacity:1;transform:translateY(0)}
-#ci .ci-skip{position:absolute;bottom:16px;right:20px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.25);pointer-events:none}
+/* (dust intro CSS removed — intro was deleted) */
 
 /* ── ESPN-STYLE SCORE TICKER ─────────────────────────────────────────── */
 #score-ticker{
@@ -4184,17 +4174,14 @@ async function loadSiteBanner(){
   } catch(e){  }
 }
 
-// Handle cross-page navigation — check BEFORE hash routing
+// Handle cross-page navigation — check BEFORE hash routing.
+// All sessionStorage keys here are short-lived deep-link hints only
+// (e.g. "user clicked a team link on leaders.html, open that team page
+// when index.html finishes loading"). They're read once and removed.
 (function(){
   const tid = sessionStorage.getItem('kcsl_goTeam');
   if(tid){
     sessionStorage.removeItem('kcsl_goTeam');
-    // fallback for any old sessionStorage navigations
-    sessionStorage.setItem('ci_played','1');
-    document.body.classList.remove('ci-active');
-    document.body.classList.add('intro-done');
-    const ci = document.getElementById('ci');
-    if(ci) ci.style.display='none';
     buildLeaderboard();buildRecaps();buildHistory();setTimeout(observeAll,100);
     goPage('team',tid);
     return;
@@ -4202,23 +4189,13 @@ async function loadSiteBanner(){
   const pid = sessionStorage.getItem('kcsl_goPlayer');
   if(pid){
     sessionStorage.removeItem('kcsl_goPlayer');
-    sessionStorage.setItem('ci_played','1');
-    document.body.classList.remove('ci-active');
-    document.body.classList.add('intro-done');
-    const ci = document.getElementById('ci');
-    if(ci) ci.style.display='none';
     buildLeaderboard();buildRecaps();buildHistory();setTimeout(observeAll,100);
     setTimeout(()=>openModal(pid),100);
     return;
   }
   const pname = sessionStorage.getItem('kcsl_goPlayerName');
   if(pname){
-    // Skip intro — modal will be opened in _dataPromise.then()
-    sessionStorage.setItem('ci_played','1');
-    document.body.classList.remove('ci-active');
-    document.body.classList.add('intro-done');
-    const ci = document.getElementById('ci');
-    if(ci) ci.style.display='none';
+    // pname is consumed by _dataPromise.then() later in the init flow
     return;
   }
   // Normal hash routing — supports #team/gold format
@@ -4228,133 +4205,12 @@ async function loadSiteBanner(){
   var hashExtra = parts[1]||null;
   var valid = ['home','players','teams','team','recaps','history','leaders','scores','stats','standings'];
   if(hash && valid.includes(hash)){
-    // Skip intro when navigating from another page
-    sessionStorage.setItem('ci_played','1');
-    document.body.classList.remove('ci-active');
-    document.body.classList.add('intro-done');
-    var ci = document.getElementById('ci');
-    if(ci) ci.style.display='none';
     goPage(hash, hashExtra);
   }
-  // Data already loaded above by loadAllData()
 })();
 </script>
 <script>
-(function(){
-  var ci = document.getElementById('ci');
-  var canvas = document.getElementById('ci-canvas');
-  var logo = document.getElementById('ci-logo');
-  var sub = document.getElementById('ci-sub');
-  if(!ci) return;
-
-  var W, H, ctx, particles = [], animId, done = false;
-
-  function init(){
-    W = canvas.width  = ci.offsetWidth  || window.innerWidth;
-    H = canvas.height = ci.offsetHeight || window.innerHeight;
-    ctx = canvas.getContext('2d');
-    particles = [];
-    var N = 200;
-    var cx = W/2, cy = H/2;
-    // Blue & white dust palette
-    var colors = ['#60a5fa','#93c5fd','#bfdbfe','#ffffff','#dbeafe','#3b82f6','#e0f2fe'];
-    for(var i=0;i<N;i++){
-      var angle = Math.random()*Math.PI*2;
-      var r = (0.25 + Math.random()*0.75) * Math.max(W,H) * 0.6;
-      particles.push({
-        x:  cx + Math.cos(angle)*r,
-        y:  cy + Math.sin(angle)*r,
-        tx: cx + (Math.random()-.5)*W*0.18,
-        ty: cy + (Math.random()-.5)*H*0.18,
-        size: .8 + Math.random()*2.8,
-        color: colors[Math.floor(Math.random()*colors.length)],
-        delay: Math.random()*0.35,
-        spin:  (Math.random()-.5)*2.5
-      });
-    }
-  }
-
-  function ease(t){ return t<.5 ? 2*t*t : -1+(4-2*t)*t; }
-
-  var start = null;
-  var DUR = 1100; // ms — whole dust phase
-
-  function draw(ts){
-    if(!start) start=ts;
-    var prog = Math.min((ts-start)/DUR, 1);
-    ctx.clearRect(0,0,W,H);
-
-    particles.forEach(function(p){
-      var t = Math.max(0,(prog-p.delay)/(1-p.delay));
-      var e = ease(Math.min(t,1));
-      var x = p.x + (p.tx-p.x)*e;
-      var y = p.y + (p.ty-p.y)*e;
-      // Fade in then out
-      var alpha = Math.sin(e*Math.PI)*0.9;
-      // Fade out as logo reveals
-      if(prog > 0.65) alpha *= Math.max(0, 1-(prog-0.65)/0.35);
-      ctx.globalAlpha = Math.max(0, alpha);
-      // Glow on larger particles
-      if(p.size > 2){
-        ctx.shadowBlur = 6;
-        ctx.shadowColor = p.color;
-      } else {
-        ctx.shadowBlur = 0;
-      }
-      ctx.fillStyle = p.color;
-      ctx.beginPath();
-      ctx.arc(x, y, p.size, 0, Math.PI*2);
-      ctx.fill();
-    });
-    ctx.globalAlpha = 1;
-    ctx.shadowBlur = 0;
-
-    // Reveal logo at 60%
-    if(prog >= 0.6 && !logo.classList.contains('show')){
-      logo.style.display='block'; logo.classList.add('show');
-    }
-    // Sub-text after logo
-    if(prog >= 0.88 && !sub.classList.contains('show')){
-      sub.classList.add('show');
-    }
-
-    if(prog < 1){
-      animId = requestAnimationFrame(draw);
-    } else {
-      done = true;
-    }
-  }
-
-  function skipCI(){
-    if(animId) cancelAnimationFrame(animId);
-    logo.style.display='block'; logo.classList.add('show');
-    sub.classList.add('show');
-    setTimeout(dismissCI, 400);
-  }
-
-  function dismissCI(){
-    ci.classList.add('gone');
-    document.body.classList.remove('ci-active');
-    setTimeout(function(){ if(ci.parentNode) ci.parentNode.removeChild(ci); }, 1000);
-  }
-
-  window.skipCI = skipCI;
-
-  // Only play once per session
-  if(sessionStorage.getItem('ci_played')){
-    ci.remove();
-    document.body.classList.remove('ci-active');
-    return;
-  }
-  sessionStorage.setItem('ci_played','1');
-
-  // Auto-dismiss after dust + 800ms hold
-  setTimeout(dismissCI, DUR + 800);
-
-  // Kick off
-  init();
-  requestAnimationFrame(draw);
-})();
+// (dust intro IIFE removed — intro was deleted)
 
 // ══════════════════════ SCORE TICKER ════════════════════════════════════
 function getTickerGames(){
