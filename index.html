@@ -762,20 +762,17 @@ body.dark .stats-table tbody tr.rank-1{background:transparent!important}
   .teams-div-header h2{font-size:24px}
 }
 
-/* Big prominent field name in the game preview modal */
+/* Prominent field name in the game preview modal — text only, no frame */
 .pop-field-big{
-  display:flex;align-items:center;justify-content:center;gap:12px;
-  margin-top:18px;padding:16px 20px;
-  background:linear-gradient(135deg,rgba(230,57,70,.08),rgba(29,78,216,.05));
-  border:2px solid rgba(230,57,70,.25);border-radius:12px;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  margin-top:14px;padding:0;background:none;border:none;
 }
-.pop-field-pin{font-size:28px;line-height:1;filter:grayscale(0)}
+.pop-field-pin{font-size:18px;line-height:1}
 .pop-field-name{
   font-family:'Barlow Condensed',Impact,sans-serif;font-weight:900;
-  font-size:clamp(28px,4vw,42px);text-transform:uppercase;letter-spacing:.02em;
+  font-size:clamp(20px,2.8vw,28px);text-transform:uppercase;letter-spacing:.02em;
   color:#0A0E1A;line-height:1;
 }
-body.dark .pop-field-big{background:linear-gradient(135deg,rgba(255,77,94,.12),rgba(96,165,250,.08));border-color:rgba(255,77,94,.3)}
 body.dark .pop-field-name{color:#F8F9FA}
 
 /* (dust intro CSS removed — intro was deleted) */
@@ -974,9 +971,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;height:62px;display:flex;ali
 .scores-rhe-header .rhe-labels{margin-left:auto;display:flex;gap:0}
 
 /* ── SCHEDULE PREVIEW CARDS ── */
-.preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;padding:24px 0}
-.preview-card{background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:10px;padding:14px 16px;cursor:pointer;transition:box-shadow .2s,transform .2s,border-color .2s}
-.preview-card:hover{box-shadow:0 12px 40px rgba(230,57,70,.28), 0 0 0 2px rgba(230,57,70,.2);transform:translateY(-4px) scale(1.02);border-color:var(--gold)}
+/* Grid uses extra padding so hover scale/shadow never gets clipped by the
+   section container. gap stays the same so cards look identical at rest. */
+.preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;padding:24px 8px 32px}
+.preview-card{background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:10px;padding:14px 16px;cursor:pointer;transition:box-shadow .2s,transform .2s,border-color .2s;transform-origin:center}
+.preview-card:hover{box-shadow:0 12px 40px rgba(230,57,70,.28), 0 0 0 2px rgba(230,57,70,.2);transform:translateY(-4px) scale(1.015);border-color:var(--gold);z-index:5;position:relative}
 .preview-datetime{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:.05em;color:rgba(0,0,0,.55);margin-bottom:2px;line-height:1.2}
 .preview-field{font-family:'Inter',-apple-system,sans-serif;font-weight:700;font-size:16px;color:var(--gold);margin-bottom:8px;padding-bottom:8px;border-bottom:2px solid rgba(230,57,70,.15);letter-spacing:-.005em;line-height:1.2}
 .preview-time{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:rgba(0,0,0,.45);margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid rgba(0,0,0,.08)}
@@ -989,8 +988,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;height:62px;display:flex;ali
 .preview-rec{font-size:11px;color:rgba(0,0,0,.4);font-weight:500;display:block;margin-top:1px}
 .preview-field{font-size:12px;color:rgba(0,0,0,.5);font-weight:500;margin-bottom:2px}
 .preview-date{font-size:11px;color:rgba(0,0,0,.35);margin-bottom:6px}
-.preview-link{display:inline-block;margin-top:10px;padding:8px 16px;font-family:'Barlow Condensed',Impact,sans-serif;font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);background:rgba(230,57,70,.08);border:2px solid var(--gold);border-radius:6px;text-decoration:none;transition:all .15s;text-align:center}
-.preview-card:hover .preview-link{background:var(--gold);color:#fff}
+.preview-link{display:inline-block;margin-top:8px;padding:2px 0;font-family:'Inter',-apple-system,sans-serif;font-weight:700;font-size:12px;letter-spacing:.02em;color:var(--gold);background:none;border:none;text-decoration:none;transition:color .15s,transform .15s;text-align:left}
+.preview-card:hover .preview-link{color:var(--gold2,#C81D28);transform:translateX(2px)}
 
 /* ── SCORES PAGE: team name colors come from inline style, not winner/loser class ── */
 #pg-scores .gb-name.winner,
@@ -1298,9 +1297,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;height:62px;display:flex;ali
 .scores-rhe-header .rhe-labels{margin-left:auto;display:flex;gap:0}
 
 /* ── SCHEDULE PREVIEW CARDS ── */
-.preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;padding:24px 0}
-.preview-card{background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:10px;padding:14px 16px;cursor:pointer;transition:box-shadow .2s,transform .2s,border-color .2s}
-.preview-card:hover{box-shadow:0 12px 40px rgba(230,57,70,.28), 0 0 0 2px rgba(230,57,70,.2);transform:translateY(-4px) scale(1.02);border-color:var(--gold)}
+/* Grid uses extra padding so hover scale/shadow never gets clipped by the
+   section container. gap stays the same so cards look identical at rest. */
+.preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;padding:24px 8px 32px}
+.preview-card{background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:10px;padding:14px 16px;cursor:pointer;transition:box-shadow .2s,transform .2s,border-color .2s;transform-origin:center}
+.preview-card:hover{box-shadow:0 12px 40px rgba(230,57,70,.28), 0 0 0 2px rgba(230,57,70,.2);transform:translateY(-4px) scale(1.015);border-color:var(--gold);z-index:5;position:relative}
 .preview-datetime{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:.05em;color:rgba(0,0,0,.55);margin-bottom:2px;line-height:1.2}
 .preview-field{font-family:'Inter',-apple-system,sans-serif;font-weight:700;font-size:16px;color:var(--gold);margin-bottom:8px;padding-bottom:8px;border-bottom:2px solid rgba(230,57,70,.15);letter-spacing:-.005em;line-height:1.2}
 .preview-time{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:rgba(0,0,0,.45);margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid rgba(0,0,0,.08)}
@@ -1313,8 +1314,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;height:62px;display:flex;ali
 .preview-rec{font-size:11px;color:rgba(0,0,0,.4);font-weight:500;display:block;margin-top:1px}
 .preview-field{font-size:12px;color:rgba(0,0,0,.5);font-weight:500;margin-bottom:2px}
 .preview-date{font-size:11px;color:rgba(0,0,0,.35);margin-bottom:6px}
-.preview-link{display:inline-block;margin-top:10px;padding:8px 16px;font-family:'Barlow Condensed',Impact,sans-serif;font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);background:rgba(230,57,70,.08);border:2px solid var(--gold);border-radius:6px;text-decoration:none;transition:all .15s;text-align:center}
-.preview-card:hover .preview-link{background:var(--gold);color:#fff}
+.preview-link{display:inline-block;margin-top:8px;padding:2px 0;font-family:'Inter',-apple-system,sans-serif;font-weight:700;font-size:12px;letter-spacing:.02em;color:var(--gold);background:none;border:none;text-decoration:none;transition:color .15s,transform .15s;text-align:left}
+.preview-card:hover .preview-link{color:var(--gold2,#C81D28);transform:translateX(2px)}
 
 /* ── SCORES PAGE: team name colors come from inline style, not winner/loser class ── */
 #pg-scores .gb-name.winner,
@@ -2111,7 +2112,7 @@ thead th.sorted-col .sarrow{opacity:1}
         <div style="flex:1;min-width:0">
           <div class="sec-eyebrow">2026 Season</div>
           <div class="sec-title">Upcoming Schedule</div>
-          <div class="sched-wrap" id="sched-wrap" style="margin-top:16px"></div>
+          <div class="sched-wrap" id="sched-wrap" style="margin-top:16px;overflow:visible"></div>
           <div style="margin-top:20px"><a href="javascript:void(0)" onclick="goPage('scores');setTimeout(()=>setView('schedule'),100)" style="font-size:14px;font-weight:600;color:#002D72;text-decoration:none">Full Schedule →</a></div>
         </div>
         <!-- Right: Standings sidebar (with division tabs) -->
@@ -3438,10 +3439,10 @@ function buildSchedule(){
     const ac=atm?.color||'#9ca3af', hc=htm?.color||'#9ca3af';
     const aRec=(atm&&atm.w!=null)?`(${atm.w}-${atm.l})`:'';
     const hRec=(htm&&htm.w!=null)?`(${htm.w}-${htm.l})`:'';
-    const dateTimeLine = [g.date || '', g.day || '', g.time || 'TBD'].filter(Boolean).join(' · ');
+    const timeLine = g.time || 'TBD';
     const escField = (g.field||'').replace(/"/g,'&quot;').replace(/'/g,"\\'");
     return `<div class="preview-card" onclick="openGameday('${g.away}','${g.home}','${escField}','${g.time||'TBD'}')">
-      <div class="preview-datetime">${dateTimeLine}</div>
+      <div class="preview-datetime">${timeLine}</div>
       ${g.field ? `<div class="preview-field">${g.field}</div>` : ''}
       <div class="preview-teams">
         <div class="preview-team-row">
@@ -3458,9 +3459,28 @@ function buildSchedule(){
     </div>`;
   }).join('');
 
-  const wkLabel=String(currentWk).startsWith('PL')?'Playoffs':'Week '+currentWk;
+  // Week label gets the date appended ("Week 1 — April 12"). We collect the
+  // unique dates from the games in this week and join them with commas so a
+  // Sun+Mon week would read "Week 1 — April 12, April 13".
+  const MONTHS_LONG = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const formatLong = d => {
+    if (!d) return '';
+    // Accept "Apr 12" (short month + day) or "4/12/2026" (numeric)
+    const m = String(d).match(/^([A-Za-z]{3,})\s+(\d{1,2})$/);
+    if (m) {
+      const idx = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].indexOf(m[1].slice(0,3));
+      if (idx >= 0) return `${MONTHS_LONG[idx]} ${parseInt(m[2],10)}`;
+    }
+    const m2 = String(d).match(/^(\d{1,2})\/(\d{1,2})(?:\/\d+)?$/);
+    if (m2) return `${MONTHS_LONG[parseInt(m2[1],10)-1]} ${parseInt(m2[2],10)}`;
+    return d;
+  };
+  const wkDates = [...new Set(gamesToShow.map(g => formatLong(g.date)).filter(Boolean))];
+  const wkDateStr = wkDates.length ? ' — ' + wkDates.join(', ') : '';
+  const wkLabel = String(currentWk).startsWith('PL') ? 'Playoffs' : `Week ${currentWk}${wkDateStr}`;
+
   wrap.innerHTML =
-    `<div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:rgba(0,0,0,.4);margin-bottom:6px">${wkLabel}</div>` +
+    `<div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:rgba(0,0,0,.55);margin-bottom:10px">${wkLabel}</div>` +
     `<div class="preview-grid">${cards}</div>`;
 }
 
@@ -4150,7 +4170,7 @@ function populateTeamsDropdown(){
     const teams = byDiv[d.code] || [];
     if (!teams.length) return '';
     return `<div class="nav-div-row" onclick="goPage('standings')">
-      <div class="nav-div-label"><span style="color:var(--gold);font-weight:900">${d.code}</span>&nbsp;Division <span style="color:rgba(0,0,0,.35);font-weight:400;font-size:11px;margin-left:4px">${teams.length}</span></div>
+      <div class="nav-div-label"><span style="color:var(--gold);font-weight:900">${d.code}</span>&nbsp;Division</div>
       <span class="nav-div-arrow">›</span>
       <div class="nav-div-submenu">
         ${teams.map(t => `
