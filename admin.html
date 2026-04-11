@@ -309,27 +309,17 @@ select.form-input{cursor:pointer}
 <div id="login-screen" class="login-wrap">
   <div class="login-box">
     <div class="login-logo">KCSL</div>
-    <div class="login-sub">Commissioner &amp; Captain Portal</div>
+    <div class="login-sub">Commissioner Portal</div>
     <div id="login-error" class="login-error"></div>
 
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
-      <div style="flex:1;height:1px;background:rgba(0,0,0,.1)"></div>
-      <span style="font-size:11px;color:#aaa;font-weight:600;text-transform:uppercase;letter-spacing:.08em">Commissioner</span>
-      <div style="flex:1;height:1px;background:rgba(0,0,0,.1)"></div>
-    </div>
+    <!-- Hidden email input — always set to the shared KCSL admin account -->
+    <input type="hidden" id="login-email" value="admin@kcsl.local">
 
     <div class="form-group">
-      <label class="form-label">Email</label>
-      <input type="email" id="login-email" class="form-input" placeholder="admin@kcsl.com" autocomplete="email">
-    </div>
-    <div class="form-group">
       <label class="form-label">Password</label>
-      <input type="password" id="login-pass" class="form-input" placeholder="Enter password" autocomplete="current-password">
+      <input type="password" id="login-pass" class="form-input" placeholder="Enter password" autocomplete="current-password" autofocus>
     </div>
-    <button class="btn btn-outline btn-full" id="login-btn" onclick="doLogin()">Commissioner Sign In</button>
-    <div style="margin-top:10px;text-align:center">
-      <a href="#" onclick="enterAdminNoPass();return false" style="font-size:12px;color:#aaa;text-decoration:underline">Enter admin without password (temporary)</a>
-    </div>
+    <button class="btn btn-outline btn-full" id="login-btn" onclick="doLogin()">Sign In</button>
   </div>
 </div>
 
@@ -871,12 +861,12 @@ import { getFirestore, collection, getDocs, getDoc, addDoc, updateDoc, deleteDoc
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js';
 
 const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyDXuC-R0aPEX4F7lN5AKq48UC3r5whYzdg",
-  authDomain: "kcsl-292dd.firebaseapp.com",
-  projectId: "kcsl-292dd",
-  storageBucket: "kcsl-292dd.firebasestorage.app",
-  messagingSenderId: "145862305559",
-  appId: "1:145862305559:web:153ec455bad57e17517952"
+  apiKey: "AIzaSyBf7_qvDDBF9Ey3oM_TlRp_XpPgeaYOJ64",
+  authDomain: "kcsl-softball.firebaseapp.com",
+  projectId: "kcsl-softball",
+  storageBucket: "kcsl-softball.firebasestorage.app",
+  messagingSenderId: "544013787699",
+  appId: "1:544013787699:web:481da4e82b59ede47cb946"
 };
 
 const app = initializeApp(FIREBASE_CONFIG);
@@ -962,16 +952,16 @@ window.doLogin = async function() {
   const pass = document.getElementById('login-pass').value;
   const errEl = document.getElementById('login-error');
   errEl.style.display = 'none';
-  if (!email || !pass) { errEl.textContent = 'Please enter email and password.'; errEl.style.display = 'block'; return; }
+  if (!pass) { errEl.textContent = 'Please enter your password.'; errEl.style.display = 'block'; return; }
   try {
     document.getElementById('login-btn').disabled = true;
     await signInWithEmailAndPassword(auth, email, pass);
   } catch(e) {
     let msg = e.message || 'Login failed';
     if (e.code === 'auth/invalid-credential' || e.code === 'auth/wrong-password' || e.code === 'auth/user-not-found') {
-      msg = 'Invalid email or password.';
+      msg = 'Wrong password.';
     } else if (e.code === 'auth/configuration-not-found' || e.code === 'auth/operation-not-allowed') {
-      msg = 'Firebase Auth may not be enabled. Go to Firebase Console > Authentication > Sign-in method > Enable Email/Password.';
+      msg = 'Firebase Auth not enabled. Check Firebase Console → Authentication → Sign-in method → Email/Password.';
     } else if (e.code === 'auth/network-request-failed') {
       msg = 'Network error. Check your internet connection.';
     }
@@ -1075,9 +1065,8 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
-// Enter key on login
+// Enter key on login (email is hidden, only password field is interactive)
 document.getElementById('login-pass').addEventListener('keydown', e => { if (e.key === 'Enter') window.doLogin(); });
-document.getElementById('login-email').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('login-pass').focus(); });
 
 // ═══════════════════════════════════════════════════════════════════
 // SIDEBAR NAVIGATION

@@ -2368,12 +2368,12 @@ thead th.sorted-col .sarrow{opacity:1}
 <script>
 // ═══════════════════════════════════════ FIREBASE CONFIG ════════════════════
 const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyDXuC-R0aPEX4F7lN5AKq48UC3r5whYzdg",
-  authDomain: "kcsl-292dd.firebaseapp.com",
-  projectId: "kcsl-292dd",
-  storageBucket: "kcsl-292dd.firebasestorage.app",
-  messagingSenderId: "145862305559",
-  appId: "1:145862305559:web:153ec455bad57e17517952"
+  apiKey: "AIzaSyBf7_qvDDBF9Ey3oM_TlRp_XpPgeaYOJ64",
+  authDomain: "kcsl-softball.firebaseapp.com",
+  projectId: "kcsl-softball",
+  storageBucket: "kcsl-softball.firebasestorage.app",
+  messagingSenderId: "544013787699",
+  appId: "1:544013787699:web:481da4e82b59ede47cb946"
 };
 
 // Firebase SDK loaded via CDN module
@@ -2556,7 +2556,7 @@ let TEAM_CALENDARS_DB = {};
 async function loadAllData() {
   // KCSL: Firebase project not yet created. Use hardcoded fallback data.
   // When Firebase is ready, set USE_FIREBASE=true and the original path below will run.
-  const USE_FIREBASE = false;
+  const USE_FIREBASE = true;
   if (!USE_FIREBASE) {
     loadFallbackData();
     return true;
@@ -4090,8 +4090,10 @@ function observeAll(){document.querySelectorAll('.div-card,.ldr-card,.game-row,.
 
 // ════════════════════════════ INIT ═══════════════════════════════════════
 // ── INIT: Load from Supabase then render ──────────────────────
-// KCSL: loadAllData() is now synchronous (no Firebase), so we can build
-// immediately. We still expose _dataPromise for code that awaits it.
+// KCSL init flow:
+//   1. Kick off loadAllData() (async — fetches from Firebase or falls back)
+//   2. Once the promise resolves, data is in TEAMS/SCHEDULE_PREVIEW globals
+//   3. kcslStartWhenReady() runs kcslInitRender() which builds every widget
 window._dataPromise = loadAllData();
 
 function kcslInitRender() {
@@ -4118,12 +4120,19 @@ function kcslInitRender() {
   setTimeout(()=>{ try{checkActiveAlert()}catch(e){} }, 800);
   setTimeout(()=>{ try{observeAll()}catch(e){} }, 100);
 }
-// Run immediately AND after DOMContentLoaded (belt + suspenders — the scripts
-// live at the end of <body> so DOM is already parsed by this point)
+// Render once the data is actually loaded. Works for both paths:
+//  - Firebase: waits for Firestore fetch to complete
+//  - Fallback: loadAllData() returns almost immediately, kcslInitRender runs next tick
+function kcslStartWhenReady(){
+  Promise.resolve(window._dataPromise).then(kcslInitRender).catch(e => {
+    console.error('Data load failed, rendering with whatever is in globals:', e);
+    kcslInitRender();
+  });
+}
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', kcslInitRender);
+  document.addEventListener('DOMContentLoaded', kcslStartWhenReady);
 } else {
-  kcslInitRender();
+  kcslStartWhenReady();
 }
 
 async function checkActiveAlert(){

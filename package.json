@@ -1,0 +1,13 @@
+{
+  "name": "kcsl-site",
+  "version": "1.0.0",
+  "description": "Kings County Softball League website",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "seed": "node scripts/seed-firebase.mjs"
+  },
+  "dependencies": {
+    "firebase": "^11.10.0"
+  }
+}
