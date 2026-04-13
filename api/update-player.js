@@ -15,7 +15,7 @@ export default async function handler(req, res) {
   }
 
   const FB_KEY = process.env.FIREBASE_API_KEY;
-  const FB_PROJECT = 'dvsl-292dd';
+  const FB_PROJECT = 'kcsl-softball';
   const FB_BASE = `https://firestore.googleapis.com/v1/projects/${FB_PROJECT}/databases/(default)/documents`;
 
   // Only allow updating safe fields

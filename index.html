@@ -241,7 +241,8 @@ body.dark .nav-team-item:hover{background:rgba(255,255,255,.07)}
 /* ── HERO ── */
 .hero{height:calc(100vw / 4);max-height:380px;min-height:280px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0;position:relative;overflow:hidden;gap:0;color:#EDEDED;--white:#EDEDED;--muted:rgba(237,237,237,0.42);--muted2:rgba(237,237,237,0.65);--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12)}
 /* Full-bleed background image */
-#pg-home .hero-img-bg{position:absolute;inset:0;background:url('bannersoftball.jpg') center top/100% auto no-repeat;background-color:#06080f;z-index:0}
+/* hero-img-bg no longer used — replaced by kcsl-hero-header-img */
+#pg-home .hero-img-bg{display:none}
 .hero-mobile-logo{display:none;position:absolute;top:20px;left:0;right:0;width:100%;z-index:1;pointer-events:none}
 /* Dark overlays for readability */
 #pg-home .hero-bg1{position:absolute;inset:0;z-index:1;background:linear-gradient(to bottom, rgba(5,8,20,.55) 0%, rgba(5,8,20,.1) 30%, rgba(5,8,20,.1) 70%, rgba(5,8,20,.75) 100%)}
@@ -1960,10 +1961,7 @@ thead th.sorted-col .sarrow{opacity:1}
 }
 
 @media(max-width:700px){
-  #pg-home .hero-img-bg{
-    filter:brightness(1.35) contrast(1.05)!important;
-    background-image:url('bannersoftball.jpg')!important;
-  }
+  /* hero-img-bg removed — kcsl-hero-header-img used instead */
   #pg-home .hero-bg1{
     background:linear-gradient(to bottom, rgba(5,8,20,.2) 0%, rgba(5,8,20,.05) 50%, rgba(5,8,20,.4) 100%)!important;
   }
@@ -2857,14 +2855,7 @@ function loadFallbackData() {
     {wk:1,date:"Apr 12",day:"Sun",time:"9:00 AM",field:"Marine Pk # 13",addr:"",away:"LEGI",home:"Z-BO",as:null,hs:null,done:false,div:"DD"}
   ];
 
-  HISTORY = [
-    {yr:2024,champ:'Shir Ami',short:'SA',runner:'KI',rec:'9-6',pct:'.600',hr:8,mvp:'Carlos Rivera',champ_team:'sa'},
-    {yr:2023,champ:'Goldsteins',short:'GOLD',runner:'BOB',rec:'11-4',pct:'.733',hr:14,mvp:'Mike Goldstein',champ_team:'gold'},
-    {yr:2022,champ:'KI',short:'KI',runner:'SA',rec:'10-5',pct:'.667',hr:12,mvp:'Brian Kim',champ_team:'ki'},
-    {yr:2021,champ:'BOB',short:'BOB',runner:'TSMC',rec:'9-6',pct:'.600',hr:9,mvp:'Bobby Marchetti',champ_team:'bob'},
-    {yr:2020,champ:'Shir Ami',short:'SA',runner:'AJ',rec:'8-4',pct:'.667',hr:11,mvp:'Tony DeLuca',champ_team:'sa'},
-    {yr:2019,champ:'Beth Am',short:'BA',runner:'SA',rec:'12-3',pct:'.800',hr:15,mvp:'D. Schwartz',champ_team:null},
-  ];
+  HISTORY = []; // KCSL has no championship history yet — 2026 is the first season on this platform
   RECAPS = [];
   PLAYERS = []; // Stats will populate from Firebase as real games are played
 }
@@ -4664,28 +4655,11 @@ const PITCHER_STATS = {
 function pStats(team){ return PITCHER_STATS[team]||{wl:'—',era:'—'}; }
 
 const STAR_NAMES = {
-  GOLD:['Josh Weinberg','Mike Goldstein','Aaron Rosen','David Levy'],
-  SA:['Carlos Rivera','Tony DeLuca','Pete DiNunzio','Ray Kowalski'],
-  KI:['Kevin Park','Brian Kim','Danny Ito','Sam Levy'],
-  BOB:['Bobby Marchetti','Tony Greco','Chris Rosario','Sal Bianco'],
-  TBIR:['Tom Birnbaum','Jake Robbins','Abe Stern','Phil Grossman'],
-  AJ:['Al Jacobs','Barry Kahn','Dave Stein','Hal Becker'],
-  TSMC:['Rob Zwick','Lenny Gross','Rich Herman','Norm Seidel'],
-  BSMC:['Andy Katz','Bob Weiner','Hal Brody','Chuck Levy'],
+  // KCSL player names will populate from Firebase rosters
 };
 function starName(team,i){return(STAR_NAMES[team]||[])[i%4]||team+' Player';}
 
-const LINEUP = [
-  {name:'Marcus Williams',pos:'CF',avg:'.312',hr:4,rbi:18},
-  {name:'David Cohen',    pos:'SS',avg:'.298',hr:2,rbi:12},
-  {name:'Ray Santos',     pos:'1B',avg:'.344',hr:7,rbi:26},
-  {name:'Jake Miller',    pos:'LF',avg:'.276',hr:3,rbi:14},
-  {name:'Eric Goldberg',  pos:'3B',avg:'.322',hr:5,rbi:20},
-  {name:'Tom Levine',     pos:'RF',avg:'.289',hr:1,rbi:9},
-  {name:'Steve Katz',     pos:'2B',avg:'.301',hr:2,rbi:11},
-  {name:'Andy Rubin',     pos:'C', avg:'.265',hr:1,rbi:8},
-  {name:'Pete Shapiro',   pos:'DH',avg:'.334',hr:6,rbi:22},
-];
+const LINEUP = []; // populated from Firebase rosters
 
 const CURRENT_WK_IDX = 9; // weeks index treated as "current"
 let weekOffset = -1; // -1 = auto-set to last completed week on first render
@@ -5529,23 +5503,9 @@ function initStats(){
 // ═══ STANDINGS JS ═══
 
 
-// Team name → id lookup for navigation to index.html team pages
-const TEAM_NAME_TO_ID = {
-  "Goldsteins":"gold","Goldstein's":"gold","Shir Ami":"sa","SA":"sa",
-  "Keneseth Israel":"ki","KI":"ki","Beth Or Blue":"bob","BOB":"bob",
-  "TBI Royals":"tbir","TBIR":"tbir","Adath Jeshurun":"aj","AJ":"aj",
-  "Temple Sinai Mens Club":"tsmc","TSMC":"tsmc","Beth Sholom Mens Club":"bsmc","BSMC":"bsmc",
-  "Beth Am":"ba","BA":"ba","Beth Or Silver":"bos","BOS":"bos",
-  "TBI Jaguars":"tbi","TBIMC":"tbimc","Germantown JC":"gjc","GJC":"gjc",
-  "Beth Am Marlins":"bami","BAMI":"bami","Beth Or Orange":"boo","BOO":"boo",
-  "Or Shalom":"os","OS":"os","Temple Israel":"ti","TI":"ti","Kol Ami":"ka","KA":"ka",
-  "Or Ami":"oa","OA":"oa","Beth Sholom Blue":"bsb","BSB":"bsb",
-  "Beth Tikvah B'Nai Jeshrun":"btbj","BTBJ":"btbj","Chabad":"cha","CHABAD":"cha",
-  "Darchei Noam Lightning":"dn","DN Lightning":"dn","DN":"dn",
-  "Temple Sinai Black/Kol Ami":"tsbka","TSBKA":"tsbka",
-  "Temple Sinai Green":"tsg","TSG":"tsg",
-  "Tifereth Bet Israel Mens Club":"tbimc","Beth Or Red":"bor","BOR":"bor",
-};
+// Team name → id lookup. Built dynamically from TEAMS + ALL_TEAMS.
+// (The old DVSL hardcoded map was removed. goTeamByName now searches the live data.)
+const TEAM_NAME_TO_ID = {};
 function goTeamByName(name){
   const id=TEAM_NAME_TO_ID[name];
   if(id){ goPage('team',id); return; }
@@ -5555,88 +5515,10 @@ function goTeamByName(name){
   if(t) goPage('team',t.id);
 }
 
-const DATA = {
-  2025: [
-    {t:'Goldsteins',      w:17,l:3, ti:0,pct:.850,avg:.900,gb:'—',  pf:226,pa:71, diff:155, strk:'Loss 1', pts:54},
-    {t:'Beth Am',         w:15,l:3, ti:0,pct:.830,avg:.890,gb:1,    pf:167,pa:73, diff:94,  strk:'Won 4',  pts:48},
-    {t:'TBI Royals',      w:12,l:5, ti:1,pct:.690,avg:.800,gb:3.17, pf:124,pa:64, diff:60,  strk:'Loss 2', pts:43},
-    {t:'Keneseth Israel', w:12,l:7, ti:0,pct:.630,avg:.750,gb:4.5,  pf:116,pa:80, diff:36,  strk:'Won 4',  pts:43},
-    {t:'Shir Ami',        w:12,l:5, ti:0,pct:.710,avg:.800,gb:3.5,  pf:163,pa:63, diff:100, strk:'Loss 2', pts:41},
-    {t:'Or Ami',          w:11,l:8, ti:0,pct:.580,avg:.720,gb:5.5,  pf:125,pa:87, diff:38,  strk:'Loss 1', pts:41},
-    {t:'BSMC',            w:10,l:10,ti:0,pct:.500,avg:.670,gb:7,    pf:125,pa:139,diff:-14, strk:'Loss 1', pts:40},
-    {t:'CHABAD',          w:10,l:7, ti:1,pct:.580,avg:.720,gb:5.17, pf:136,pa:99, diff:37,  strk:'Loss 1', pts:39},
-    {t:'Germantown JC',   w:10,l:6, ti:0,pct:.620,avg:.750,gb:5,    pf:123,pa:116,diff:7,   strk:'Loss 3', pts:36},
-    {t:'Beth Or Blue',    w:10,l:6, ti:0,pct:.620,avg:.750,gb:5,    pf:85, pa:79, diff:6,   strk:'Loss 2', pts:36},
-    {t:'TBIMC',           w:8, l:11,ti:0,pct:.420,avg:.610,gb:8.5,  pf:127,pa:166,diff:-39, strk:'Loss 1', pts:35},
-    {t:'BTBJ',            w:6, l:13,ti:0,pct:.320,avg:.540,gb:10.5, pf:116,pa:193,diff:-77, strk:'Loss 1', pts:31},
-    {t:'BSB',             w:6, l:12,ti:0,pct:.330,avg:.560,gb:10,   pf:126,pa:161,diff:-35, strk:'Loss 1', pts:30},
-    {t:'Beth Or Red',     w:6, l:11,ti:0,pct:.350,avg:.570,gb:9.5,  pf:139,pa:199,diff:-60, strk:'Loss 2', pts:29},
-    {t:'DN Lightning',    w:5, l:11,ti:0,pct:.310,avg:.540,gb:10,   pf:123,pa:162,diff:-39, strk:'Loss 7', pts:26},
-    {t:'TOAST',           w:5, l:11,ti:0,pct:.310,avg:.540,gb:10,   pf:108,pa:174,diff:-66, strk:'Loss 8', pts:26},
-    {t:'TSMC',            w:1, l:14,ti:0,pct:.070,avg:.380,gb:13.5, pf:94, pa:192,diff:-98, strk:'Loss 2', pts:17},
-    {t:'TSBKA',           w:1, l:14,ti:0,pct:.070,avg:.380,gb:13.5, pf:64, pa:169,diff:-105,strk:'Loss 1', pts:17},
-  ],
-  2024: [
-    {t:'Shir Ami',           w:13,l:1, ti:0,pct:.930,avg:.950,gb:'—',  pf:137,pa:36, diff:101, strk:'Loss 1', pts:40},
-    {t:'Goldsteins',         w:12,l:2, ti:0,pct:.860,avg:.900,gb:1,    pf:123,pa:26, diff:97,  strk:'Won 6',  pts:38},
-    {t:'Beth Am',            w:11,l:3, ti:0,pct:.790,avg:.860,gb:2,    pf:127,pa:29, diff:98,  strk:'Won 6',  pts:36},
-    {t:'Beth Or Blue',       w:10,l:3, ti:1,pct:.750,avg:.830,gb:2.17, pf:125,pa:80, diff:45,  strk:'Won 4',  pts:35},
-    {t:'Or Ami',             w:10,l:4, ti:0,pct:.710,avg:.810,gb:3,    pf:154,pa:62, diff:92,  strk:'Loss 1', pts:34},
-    {t:'TBI Royals',         w:10,l:4, ti:0,pct:.710,avg:.810,gb:3,    pf:125,pa:44, diff:81,  strk:'Won 1',  pts:34},
-    {t:'Keneseth Israel',    w:9, l:5, ti:0,pct:.640,avg:.760,gb:4,    pf:109,pa:55, diff:54,  strk:'Won 2',  pts:32},
-    {t:'BSB',                w:7, l:7, ti:0,pct:.500,avg:.670,gb:6,    pf:114,pa:142,diff:-28, strk:'Loss 2', pts:28},
-    {t:'Chabad',             w:6, l:7, ti:1,pct:.460,avg:.640,gb:6.17, pf:113,pa:84, diff:29,  strk:'Won 1',  pts:27},
-    {t:'Beth Or Red',        w:6, l:8, ti:0,pct:.430,avg:.620,gb:7,    pf:158,pa:161,diff:-3,  strk:'Loss 2', pts:26},
-    {t:'BSMC',               w:5, l:9, ti:0,pct:.360,avg:.570,gb:8,    pf:101,pa:116,diff:-15, strk:'Loss 1', pts:24},
-    {t:"TBI Men's Club",     w:5, l:9, ti:0,pct:.360,avg:.570,gb:8,    pf:74, pa:148,diff:-74, strk:'Loss 1', pts:24},
-    {t:'BTBJ',               w:4, l:9, ti:1,pct:.320,avg:.550,gb:8.17, pf:72, pa:143,diff:-71, strk:'Loss 3', pts:23},
-    {t:'AJ Softball',        w:4, l:9, ti:1,pct:.320,avg:.550,gb:8.17, pf:132,pa:154,diff:-22, strk:'Loss 2', pts:23},
-    {t:'TSBKA',              w:4, l:10,ti:0,pct:.290,avg:.500,gb:9,    pf:84, pa:145,diff:-61, strk:'Loss 2', pts:21},
-    {t:'Germantown JC',      w:3, l:11,ti:0,pct:.210,avg:.480,gb:10,   pf:83, pa:174,diff:-91, strk:'Won 1',  pts:20},
-    {t:"Temple Sinai Men's", w:3, l:11,ti:0,pct:.210,avg:.480,gb:10,   pf:78, pa:160,diff:-82, strk:'Loss 6', pts:20},
-    {t:'DN Lightning',       w:2, l:12,ti:0,pct:.140,avg:.430,gb:11,   pf:50, pa:200,diff:-150,strk:'Loss 3', pts:18},
-  ],
-  2023: [
-    {t:'Shir Ami',           w:17,l:2, ti:0,pct:.890,avg:.930,gb:'—',  pf:216,pa:56, diff:160, strk:'Won 3',  pts:53},
-    {t:'Beth Am',            w:14,l:4, ti:0,pct:.780,avg:.850,gb:2.5,  pf:153,pa:75, diff:78,  strk:'Loss 2', pts:46},
-    {t:'Keneseth Israel',    w:14,l:3, ti:0,pct:.820,avg:.880,gb:2,    pf:121,pa:65, diff:56,  strk:'Loss 2', pts:45},
-    {t:'Goldsteins',         w:14,l:3, ti:0,pct:.820,avg:.880,gb:2,    pf:164,pa:49, diff:115, strk:'Won 12', pts:45},
-    {t:'TBI Royals',         w:10,l:9, ti:0,pct:.530,avg:.680,gb:7,    pf:117,pa:74, diff:43,  strk:'Loss 1', pts:39},
-    {t:'BSB',                w:11,l:7, ti:0,pct:.610,avg:.720,gb:5.5,  pf:137,pa:109,diff:28,  strk:'Won 3',  pts:39},
-    {t:'Chabad',             w:10,l:8, ti:0,pct:.560,avg:.700,gb:6.5,  pf:117,pa:81, diff:36,  strk:'Loss 1', pts:38},
-    {t:'BSMC',               w:8, l:11,ti:0,pct:.420,avg:.610,gb:9,    pf:121,pa:146,diff:-25, strk:'Loss 1', pts:35},
-    {t:'Or Ami',             w:9, l:7, ti:0,pct:.560,avg:.710,gb:6.5,  pf:139,pa:77, diff:62,  strk:'Loss 3', pts:34},
-    {t:'Beth Or Blue',       w:9, l:7, ti:0,pct:.560,avg:.710,gb:6.5,  pf:132,pa:88, diff:44,  strk:'Loss 2', pts:34},
-    {t:'AJ Softball',        w:7, l:11,ti:0,pct:.390,avg:.590,gb:9.5,  pf:117,pa:136,diff:-19, strk:'Won 1',  pts:32},
-    {t:'BTBJ',               w:6, l:11,ti:0,pct:.350,avg:.570,gb:10,   pf:99, pa:114,diff:-15, strk:'Loss 1', pts:29},
-    {t:"TBI Men's Club",     w:6, l:11,ti:0,pct:.350,avg:.570,gb:10,   pf:145,pa:213,diff:-68, strk:'Loss 1', pts:29},
-    {t:'Germantown JC',      w:6, l:11,ti:0,pct:.350,avg:.570,gb:10,   pf:97, pa:186,diff:-89, strk:'Loss 4', pts:29},
-    {t:'TSBKA',              w:5, l:11,ti:0,pct:.310,avg:.540,gb:10.5, pf:127,pa:172,diff:-45, strk:'Loss 3', pts:26},
-    {t:'Beth Or Red',        w:4, l:12,ti:0,pct:.250,avg:.480,gb:11.5, pf:110,pa:191,diff:-81, strk:'Loss 1', pts:23},
-    {t:"Temple Sinai Men's", w:4, l:11,ti:0,pct:.270,avg:.510,gb:11,   pf:111,pa:231,diff:-120,strk:'Loss 1', pts:23},
-    {t:'Darchei Noam',       w:0, l:15,ti:0,pct:.000,avg:.330,gb:15,   pf:66, pa:226,diff:-160,strk:'Loss 15',pts:15},
-  ],
-  2021: [
-    {t:'Beth Or Orange',     w:14,l:1, ti:0,pct:.930,avg:.960,gb:0,    pf:130,pa:57, diff:73,  strk:'Won 11', pts:43},
-    {t:'Shir Ami',           w:13,l:4, ti:0,pct:.760,avg:.840,gb:'—',  pf:157,pa:49, diff:108, strk:'Loss 1', pts:43},
-    {t:'Beth Am',            w:11,l:4, ti:1,pct:.720,avg:.810,gb:0.67, pf:121,pa:78, diff:43,  strk:'Loss 1', pts:39},
-    {t:'Keneseth Israel',    w:11,l:5, ti:0,pct:.690,avg:.790,gb:1.5,  pf:122,pa:64, diff:58,  strk:'Loss 1', pts:38},
-    {t:"Goldstein's",        w:10,l:6, ti:0,pct:.620,avg:.750,gb:2.5,  pf:161,pa:100,diff:61,  strk:'Won 3',  pts:36},
-    {t:'TBI Royals',         w:9, l:6, ti:1,pct:.590,avg:.730,gb:2.67, pf:109,pa:73, diff:36,  strk:'Loss 1', pts:35},
-    {t:'Beth Or Blue',       w:9, l:6, ti:0,pct:.600,avg:.730,gb:3,    pf:130,pa:62, diff:68,  strk:'Loss 1', pts:33},
-    {t:'BTBJ',               w:7, l:10,ti:0,pct:.410,avg:.610,gb:6,    pf:106,pa:124,diff:-18, strk:'Won 4',  pts:31},
-    {t:'AJ',                 w:8, l:6, ti:0,pct:.570,avg:.710,gb:3.5,  pf:99, pa:90, diff:9,   strk:'Loss 2', pts:30},
-    {t:'Beth Or Red',        w:8, l:6, ti:0,pct:.570,avg:.710,gb:3.5,  pf:108,pa:99, diff:9,   strk:'Loss 2', pts:30},
-    {t:'Or Ami',             w:7, l:9, ti:0,pct:.440,avg:.620,gb:5.5,  pf:116,pa:145,diff:-29, strk:'Loss 2', pts:30},
-    {t:'Kol Ami',            w:6, l:9, ti:0,pct:.400,avg:.600,gb:6,    pf:112,pa:113,diff:-1,  strk:'Loss 1', pts:27},
-    {t:'Chabad',             w:6, l:9, ti:0,pct:.400,avg:.600,gb:6,    pf:83, pa:145,diff:-62, strk:'Loss 2', pts:27},
-    {t:"TBI Men's Club",     w:5, l:10,ti:0,pct:.330,avg:.560,gb:7,    pf:130,pa:193,diff:-63, strk:'Loss 2', pts:25},
-    {t:'BSB',                w:5, l:9, ti:0,pct:.360,avg:.570,gb:6.5,  pf:116,pa:121,diff:-5,  strk:'Loss 2', pts:24},
-    {t:'Temple Sinai Black', w:3, l:9, ti:0,pct:.250,avg:.500,gb:7.5,  pf:77, pa:125,diff:-48, strk:'Loss 1', pts:18},
-    {t:'Germantown JC',      w:2, l:12,ti:0,pct:.140,avg:.430,gb:9.5,  pf:81, pa:170,diff:-89, strk:'Loss 2', pts:18},
-    {t:'TSMC',               w:0, l:13,ti:0,pct:.000,avg:.310,gb:11,   pf:61, pa:211,diff:-150,strk:'Loss 13',pts:12},
-  ],
-};
+// Historical standings data — KCSL has no prior seasons on this platform.
+// When the 2026 season ends, buildStand2026() will write 2026 data into
+// this object for archival display. For now it's empty.
+const DATA = {};
 
 function medal(i){return ''}
 
