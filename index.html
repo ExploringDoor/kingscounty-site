@@ -4353,20 +4353,50 @@ async function loadSiteBanner(){
 // ══════════════════════ SCORE TICKER ════════════════════════════════════
 function getTickerGames(){
   if(!SCHEDULE_PREVIEW.length) return [];
-  // Find current week (first with upcoming games)
+
+  // Group games by week
   const wkMap={};
   SCHEDULE_PREVIEW.forEach(g=>{
     if(!wkMap[g.wk])wkMap[g.wk]=[];
     wkMap[g.wk].push(g);
   });
   const allWks=Object.keys(wkMap).sort((a,b)=>String(a).localeCompare(String(b),undefined,{numeric:true}));
-  const curWk=allWks.find(w=>wkMap[w].some(g=>!g.done));
-  if(!curWk) return SCHEDULE_PREVIEW.slice(-10); // all done, show last 10
-  // Show current week + next week
-  const curIdx=allWks.indexOf(curWk);
-  const wksToShow=allWks.slice(curIdx, curIdx+2);
-  const games=[];
-  wksToShow.forEach(w=>games.push(...wkMap[w]));
+
+  // Find the most recently completed week — keep showing its results
+  // until Wednesday (day 3) of the following week, then roll to the
+  // next week's upcoming games. This keeps opening-day scores visible
+  // in the ticker through Tuesday night.
+  const today = new Date();
+  const dayOfWeek = today.getDay(); // 0=Sun, 3=Wed
+
+  // Find last completed week (all games done)
+  const lastDoneWkIdx = (() => {
+    for (let i = allWks.length - 1; i >= 0; i--) {
+      if (wkMap[allWks[i]].some(g => g.done)) return i;
+    }
+    return -1;
+  })();
+
+  // Find first week with upcoming games
+  const nextUpWkIdx = allWks.findIndex(w => wkMap[w].some(g => !g.done));
+
+  const games = [];
+
+  // Always show the last completed week's results if we're before Wednesday
+  if (lastDoneWkIdx >= 0 && dayOfWeek < 3) {
+    games.push(...wkMap[allWks[lastDoneWkIdx]]);
+  }
+
+  // Also show the next upcoming week
+  if (nextUpWkIdx >= 0) {
+    // Don't double-add if it's the same week
+    if (allWks[nextUpWkIdx] !== allWks[lastDoneWkIdx] || dayOfWeek >= 3) {
+      games.push(...wkMap[allWks[nextUpWkIdx]]);
+    }
+  }
+
+  // Fallback: if nothing matched, show the last 10 games
+  if (!games.length) return SCHEDULE_PREVIEW.slice(-10);
   return games;
 }
 
