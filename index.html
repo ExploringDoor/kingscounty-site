@@ -2116,7 +2116,7 @@ thead th.sorted-col .sarrow{opacity:1}
         <!-- Left: Schedule -->
         <div style="flex:1;min-width:0">
           <div class="sec-eyebrow">2026 Season</div>
-          <div class="sec-title">Upcoming Schedule</div>
+          <div class="sec-title" id="home-sched-title">Upcoming Schedule</div>
           <div class="sched-wrap" id="sched-wrap" style="margin-top:16px;overflow:visible"></div>
           <div style="margin-top:20px"><a href="javascript:void(0)" onclick="goPage('scores');setTimeout(()=>setView('schedule'),100)" style="font-size:14px;font-weight:600;color:#002D72;text-decoration:none">Full Schedule →</a></div>
         </div>
@@ -3413,10 +3413,13 @@ function buildHomeSidebar(){
 // ════════════════════════════ SCHEDULE PREVIEW ═══════════════════════════
 function buildSchedule(){
   const wrap=document.getElementById('sched-wrap');
+  const titleEl=document.getElementById('home-sched-title');
   if(!wrap) return;
   if(!SCHEDULE_PREVIEW.length){ wrap.innerHTML='<div style="text-align:center;padding:40px;color:rgba(0,0,0,.4);font-size:14px">Loading schedule...</div>'; return; }
 
-  // Find the current week: first week with upcoming games
+  // Find the most relevant week: first week with upcoming games, or if
+  // all games that week are done, show results from the most recently
+  // completed week.
   const wkMap={};
   SCHEDULE_PREVIEW.forEach(g=>{
     if(!wkMap[g.wk])wkMap[g.wk]=[];
@@ -3429,41 +3432,70 @@ function buildSchedule(){
 
   const weekGames=wkMap[currentWk];
   const upGames=weekGames.filter(g=>!g.done);
-  const gamesToShow=upGames.length?upGames:weekGames;
+  const doneGames=weekGames.filter(g=>g.done);
+  // If there are upcoming games this week, show them. Otherwise show results.
+  const showingResults = upGames.length === 0 && doneGames.length > 0;
+  const gamesToShow = showingResults ? doneGames : (upGames.length ? upGames : weekGames);
 
-  // Render as preview cards. The whole card is clickable → openGameday().
-  const cards=gamesToShow.slice(0,6).map(g=>{
+  // Update the section title
+  if(titleEl) titleEl.textContent = showingResults ? 'Recent Scores' : 'Upcoming Schedule';
+
+  // Render cards
+  const cards=gamesToShow.slice(0,12).map(g=>{
     const atm=getTeamByShort(g.away), htm=getTeamByShort(g.home);
-    const ac=atm?.color||'#9ca3af', hc=htm?.color||'#9ca3af';
     const aRec=(atm&&atm.w!=null)?`(${atm.w}-${atm.l})`:'';
     const hRec=(htm&&htm.w!=null)?`(${htm.w}-${htm.l})`:'';
-    const timeLine = g.time || 'TBD';
     const escField = (g.field||'').replace(/"/g,'&quot;').replace(/'/g,"\\'");
-    return `<div class="preview-card" onclick="openGameday('${g.away}','${g.home}','${escField}','${g.time||'TBD'}')">
-      <div class="preview-datetime">${timeLine}</div>
-      ${g.field ? `<div class="preview-field">${g.field}</div>` : ''}
-      <div class="preview-teams">
-        <div class="preview-team-row">
-          <div class="preview-logo">${teamLogoEl(atm?.id,atm?.short||g.away)}</div>
-          <div style="display:flex;align-items:center;min-width:0"><span class="preview-name" onclick="event.stopPropagation();goPage('team','${atm?.id||g.away}')">${atm?.name||g.away}</span><span class="preview-name-mob" onclick="event.stopPropagation();goPage('team','${atm?.id||g.away}')" style="line-height:1.1">${getMobileAbbr(g.away)}</span><span class="preview-rec">${aRec}</span></div>
+    const isDone = g.done && g.as != null && g.hs != null;
+    const awayWon = isDone && g.as > g.hs;
+    const homeWon = isDone && g.hs > g.as;
+
+    if (isDone) {
+      // ── SCORE RESULT CARD ──
+      return `<div class="preview-card" onclick="openRecap2('${g.away}','${g.home}',${g.as},${g.hs},'${escField}','${g.date||''}')">
+        <div class="preview-datetime">Final${g.field ? ' · '+g.field : ''}</div>
+        <div class="preview-teams">
+          <div class="preview-team-row">
+            <div class="preview-logo">${teamLogoEl(atm?.id,atm?.short||g.away)}</div>
+            <div style="display:flex;align-items:center;flex:1;min-width:0;gap:6px">
+              <span class="preview-name" style="${awayWon?'font-weight:900':''}" onclick="event.stopPropagation();goPage('team','${atm?.id||g.away}')">${atm?.name||g.away}</span>
+            </div>
+            <div style="font-family:'Oswald',sans-serif;font-weight:${awayWon?'900':'500'};font-size:28px;color:${awayWon?'#0A0E1A':'rgba(0,0,0,.35)'};min-width:36px;text-align:right">${g.as}</div>
+          </div>
+          <div class="preview-team-row">
+            <div class="preview-logo">${teamLogoEl(htm?.id,htm?.short||g.home)}</div>
+            <div style="display:flex;align-items:center;flex:1;min-width:0;gap:6px">
+              <span class="preview-name" style="${homeWon?'font-weight:900':''}" onclick="event.stopPropagation();goPage('team','${htm?.id||g.home}')">${htm?.name||g.home}</span>
+            </div>
+            <div style="font-family:'Oswald',sans-serif;font-weight:${homeWon?'900':'500'};font-size:28px;color:${homeWon?'#0A0E1A':'rgba(0,0,0,.35)'};min-width:36px;text-align:right">${g.hs}</div>
+          </div>
         </div>
-        <div class="preview-team-row">
-          <div class="preview-logo">${teamLogoEl(htm?.id,htm?.short||g.home)}</div>
-          <div style="display:flex;align-items:center;min-width:0"><span class="preview-name" onclick="event.stopPropagation();goPage('team','${htm?.id||g.home}')">${htm?.name||g.home}</span><span class="preview-name-mob" onclick="event.stopPropagation();goPage('team','${htm?.id||g.home}')" style="line-height:1.1">${getMobileAbbr(g.home)}</span><span class="preview-rec">${hRec}</span></div>
+        <span class="preview-link">Box Score →</span>
+      </div>`;
+    } else {
+      // ── UPCOMING GAME CARD ──
+      return `<div class="preview-card" onclick="openGameday('${g.away}','${g.home}','${escField}','${g.time||'TBD'}')">
+        <div class="preview-datetime">${g.time || 'TBD'}</div>
+        ${g.field ? `<div class="preview-field">${g.field}</div>` : ''}
+        <div class="preview-teams">
+          <div class="preview-team-row">
+            <div class="preview-logo">${teamLogoEl(atm?.id,atm?.short||g.away)}</div>
+            <div style="display:flex;align-items:center;min-width:0"><span class="preview-name" onclick="event.stopPropagation();goPage('team','${atm?.id||g.away}')">${atm?.name||g.away}</span><span class="preview-rec">${aRec}</span></div>
+          </div>
+          <div class="preview-team-row">
+            <div class="preview-logo">${teamLogoEl(htm?.id,htm?.short||g.home)}</div>
+            <div style="display:flex;align-items:center;min-width:0"><span class="preview-name" onclick="event.stopPropagation();goPage('team','${htm?.id||g.home}')">${htm?.name||g.home}</span><span class="preview-rec">${hRec}</span></div>
+          </div>
         </div>
-      </div>
-      <span class="preview-link">Preview →</span>
-      ${g.done?`<span class="preview-link" style="margin-top:4px" onclick="event.stopPropagation();shareGame('${g.away}','${g.home}',${g.as},${g.hs},'${escField}','${g.date||''}')">Share</span>`:''}
-    </div>`;
+        <span class="preview-link">Preview →</span>
+      </div>`;
+    }
   }).join('');
 
-  // Week label gets the date appended ("Week 1 — April 12"). We collect the
-  // unique dates from the games in this week and join them with commas so a
-  // Sun+Mon week would read "Week 1 — April 12, April 13".
+  // Week label
   const MONTHS_LONG = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   const formatLong = d => {
     if (!d) return '';
-    // Accept "Apr 12" (short month + day) or "4/12/2026" (numeric)
     const m = String(d).match(/^([A-Za-z]{3,})\s+(\d{1,2})$/);
     if (m) {
       const idx = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].indexOf(m[1].slice(0,3));
@@ -4983,25 +5015,47 @@ function renderScores(){
 
 // ── POPUPS ──────────────────────────────────────────────────────────────────
 function openRecap(away,home,as,hs,field,date){
-  const ac=tc(away),hc=tc(home),aW=as>hs;
+  const at=getTeamByShort(away), ht=getTeamByShort(home);
+  const aW=as>hs;
   const recap=RECAPS.find(r=>r.away===away&&r.home===home);
   const starsHtml=recap&&recap.stars
     ?`<div class="pop-stars"><div class="pop-stars-lbl">Stars of the Game</div>${recap.stars.map(s=>`<div class="pop-star"><span style="color:var(--gold)">★</span>${s}</div>`).join('')}</div>`:'';
+  // Logos for header
+  const awayLogo = at&&LOGO_TEAMS.has(at.id) ? `<img src="logos/${at.id}.png" style="width:72px;height:72px;object-fit:contain">` : '';
+  const homeLogo = ht&&LOGO_TEAMS.has(ht.id) ? `<img src="logos/${ht.id}.png" style="width:72px;height:72px;object-fit:contain">` : '';
+  const awayName = at?.name || away;
+  const homeName = ht?.name || home;
   document.getElementById('scPopContent').innerHTML=`
-    <div class="pop-hd">
+    <div class="pop-hd" style="background:#fff">
       <div class="pop-matchup">
-        <div class="pop-team" style="cursor:pointer" onclick="goTeam('${away}')"><div class="pop-abbr" style="color:${ac}">${away}</div><div class="pop-role-lbl">Away ↗</div></div>
+        <div class="pop-team" style="cursor:pointer" onclick="goTeam('${away}')">
+          ${awayLogo}
+          <div class="pop-role-lbl" style="color:#0A0E1A;font-weight:700;font-size:14px;margin-top:6px">${awayName}</div>
+          <div class="pop-role-lbl" style="font-size:11px">Away ↗</div>
+        </div>
         <div class="pop-sc-mid">
-          <div class="pop-sc"><span style="color:${aW?ac:'rgba(239,239,239,.3)'}">${as}</span><span class="pop-dash">–</span><span style="color:${!aW?hc:'rgba(239,239,239,.3)'}">${hs}</span></div>
+          <div class="pop-sc" style="display:flex;align-items:center;gap:8px">
+            <span style="font-family:'Oswald',sans-serif;font-weight:900;font-size:48px;color:${aW?'#0A0E1A':'rgba(0,0,0,.3)'}">${as}</span>
+            <span style="font-size:28px;color:rgba(0,0,0,.2);font-weight:300">–</span>
+            <span style="font-family:'Oswald',sans-serif;font-weight:900;font-size:48px;color:${!aW?'#0A0E1A':'rgba(0,0,0,.3)'}">${hs}</span>
+          </div>
           <div class="pop-badge">Final</div>
         </div>
-        <div class="pop-team" style="cursor:pointer" onclick="goTeam('${home}')"><div class="pop-abbr" style="color:${hc}">${home}</div><div class="pop-role-lbl">Home ↗</div></div>
+        <div class="pop-team" style="cursor:pointer" onclick="goTeam('${home}')">
+          ${homeLogo}
+          <div class="pop-role-lbl" style="color:#0A0E1A;font-weight:700;font-size:14px;margin-top:6px">${homeName}</div>
+          <div class="pop-role-lbl" style="font-size:11px">Home ↗</div>
+        </div>
       </div>
-      <div class="pop-meta"><span>📅 ${date}</span><span>📍 ${field}</span></div>
+      <div class="pop-field-big">
+        <span class="pop-field-pin">📍</span>
+        <span class="pop-field-name">${field}</span>
+      </div>
+      <div class="pop-meta" style="margin-top:8px"><span>📅 ${date}</span></div>
     </div>
     <div class="pop-body">
       <div class="pop-sec-title">Game Recap</div>
-      <div class="pop-recap">${recap?.text||'Recap coming soon — check back after the game.'}</div>
+      <div class="pop-recap">${recap?.text||'No recap available yet.'}</div>
       ${starsHtml}
     </div>`;
   openScPop();
