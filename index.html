@@ -4868,33 +4868,27 @@ function scheduleBlock(g, isNext){
 
   if(g.done){
     const aw=g.as>g.hs;
-    const _bsArgs=`'${g.away}','${g.home}',${g.as},${g.hs},'${g.field||''}','${g.date||''}','${g.id||''}'`;
-    return `<div class="score-row" style="cursor:pointer" onclick="openBox(${_bsArgs})">
-      <div class="score-status">FINAL</div>
-      <div class="score-teams">
-        <div class="score-team-row">
-          <div class="score-logo">${teamLogoEl(atm?.id,aShort)}</div>
-          <div class="score-team-info">
-            <span class="score-team-name${aw?'':' loser'}" onclick="event.stopPropagation();goTeam('${atm?.id||g.away}')">${atm?.name||aShort.toUpperCase()}</span>
-            <span class="score-record">${aRec}</span>
+    const escField = (g.field||'').replace(/"/g,'&quot;').replace(/'/g,"\\'");
+    // Matches the home-page "Recent Scores" card layout exactly
+    return `<div class="preview-card" onclick="openRecap2('${g.away}','${g.home}',${g.as},${g.hs},'${escField}','${g.date||''}')">
+      <div class="preview-datetime">Final${g.field ? ' · '+g.field : ''}</div>
+      <div class="preview-teams">
+        <div class="preview-team-row">
+          <div class="preview-logo">${teamLogoEl(atm?.id,aShort)}</div>
+          <div style="display:flex;align-items:center;flex:1;min-width:0;gap:6px">
+            <span class="preview-name" style="${aw?'font-weight:900':''}" onclick="event.stopPropagation();goTeam('${atm?.id||g.away}')">${atm?.name||aShort.toUpperCase()}</span>
           </div>
-          <div class="score-rhe"><span class="rhe-val${aw?' winner':''}">${g.as}</span><span class="rhe-val">\u2014</span><span class="rhe-val">0</span></div>
-          <div class="score-arrow">${aw?'\u25C0':''}</div>
+          <div style="font-family:'Oswald',sans-serif;font-weight:${aw?'900':'500'};font-size:28px;color:${aw?'#0A0E1A':'rgba(0,0,0,.35)'};min-width:36px;text-align:right">${g.as}</div>
         </div>
-        <div class="score-team-row">
-          <div class="score-logo">${teamLogoEl(htm?.id,hShort)}</div>
-          <div class="score-team-info">
-            <span class="score-team-name${!aw?'':' loser'}" onclick="event.stopPropagation();goTeam('${htm?.id||g.home}')">${htm?.name||hShort.toUpperCase()}</span>
-            <span class="score-record">${hRec}</span>
+        <div class="preview-team-row">
+          <div class="preview-logo">${teamLogoEl(htm?.id,hShort)}</div>
+          <div style="display:flex;align-items:center;flex:1;min-width:0;gap:6px">
+            <span class="preview-name" style="${!aw?'font-weight:900':''}" onclick="event.stopPropagation();goTeam('${htm?.id||g.home}')">${htm?.name||hShort.toUpperCase()}</span>
           </div>
-          <div class="score-rhe"><span class="rhe-val${!aw?' winner':''}">${g.hs}</span><span class="rhe-val">\u2014</span><span class="rhe-val">0</span></div>
-          <div class="score-arrow">${!aw?'\u25C0':''}</div>
+          <div style="font-family:'Oswald',sans-serif;font-weight:${!aw?'900':'500'};font-size:28px;color:${!aw?'#0A0E1A':'rgba(0,0,0,.35)'};min-width:36px;text-align:right">${g.hs}</div>
         </div>
       </div>
-      <div class="score-actions">
-        <button class="score-btn" onclick="event.stopPropagation();openRecap2('${g.away}','${g.home}',${g.as},${g.hs},'${g.field||''}','${g.date||''}')">Recap</button>
-        <button class="score-btn" onclick="event.stopPropagation();shareGame('${g.away}','${g.home}',${g.as},${g.hs},'${g.field||''}','${g.date||''}')">Share</button>
-      </div>
+      <span class="preview-link">Box Score →</span>
     </div>`;
   } else {
     const timeStr=g.time||'TBD';
@@ -4977,7 +4971,7 @@ function renderScores(){
     const w=doneWks[off];
     const doneGames=w.games.filter(g=>g.done);
     wrap.innerHTML=`<div class="sb-week-head">Week ${w.wk} · ${w.date} <span style="font-size:13px;color:var(--muted);font-weight:400">${doneGames.length} game${doneGames.length!==1?'s':''}</span></div>`
-      +`<div style="background:#fff;border:1px solid var(--border);border-radius:8px;overflow:hidden;max-width:1060px;">`
+      +`<div class="preview-grid">`
       +doneGames.map(g=>scheduleBlock(g,false)).join('')
       +`</div>`;
   } else {
